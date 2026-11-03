@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>BGPL 2026 - Registration</title>
+    <title>BGPL 2027 - Registration</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
@@ -16,7 +16,7 @@
             <a href="/" class="flex items-center space-x-3 group">
                 <img src="./static/logo-n.png" alt="BGPL Logo" class="w-10 h-10 object-contain rounded-xl bg-slate-900/80 p-1 border border-amber-500/30 group-hover:border-amber-400 transition">
                 <div>
-                    <h1 class="text-lg font-black tracking-wider text-transparent bg-clip-text bg-gradient-to-r from-amber-400 via-amber-200 to-yellow-400">BGPL 2026</h1>
+                    <h1 class="text-lg font-black tracking-wider text-transparent bg-clip-text bg-gradient-to-r from-amber-400 via-amber-200 to-yellow-400">BGPL 2027</h1>
                     <p class="text-[10px] text-slate-400 font-medium tracking-widest uppercase">Bamundi Gram Premier League</p>
                 </div>
             </a>
@@ -267,7 +267,7 @@
 
         feeAmountEl.innerText = `₹${currentFee}`;
         // Generate UPI deep link (upi://pay?pa=...&am=...)
-        upiDeeplink.href = `upi://pay?pa=${encodeURIComponent(tournamentConfig.upiId)}&pn=BGPL%202026&am=${currentFee}&cu=INR`;
+        upiDeeplink.href = `upi://pay?pa=${encodeURIComponent(tournamentConfig.upiId)}&pn=BGPL%202027&am=${currentFee}&cu=INR`;
     }
     async function handleRegistration(e) {
         e.preventDefault();
@@ -305,7 +305,7 @@
         box.classList.remove('hidden');
         if (res.ok) document.getElementById('registration-form').reset();
     }
-    let tournamentConfig = { playerFee: 500, ownerFee: 2000, bothFee: 2500, upiId: 'bgpl2026@upi', qrCodeUrl: '' };
+    let tournamentConfig = { playerFee: 500, ownerFee: 2000, bothFee: 2500, upiId: 'bgpl2027@upi', qrCodeUrl: '' };
 
     // Fetch config on load
     fetch('/api/public/config')
@@ -313,7 +313,7 @@
         .then(data => {
             if (data) {
                 tournamentConfig = data;
-                document.getElementById('display-upi-id').innerText = data.upiId || 'bgpl2026@upi';
+                document.getElementById('display-upi-id').innerText = data.upiId || 'bgpl2027@upi';
                 if (data.qrCodeUrl) {
                     document.getElementById('qr-code-img').src = data.qrCodeUrl;
                 }

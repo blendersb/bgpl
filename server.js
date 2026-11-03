@@ -94,7 +94,7 @@ async function seedDefaultContent() {
                 playerFee: 500,
                 ownerFee: 2000,
                 bothFee: 2500,
-                upiId: 'bgpl2026@upi',
+                upiId: 'bgpl2027@upi',
                 qrCodeUrl: '/uploads/qr-default.png'
             });
         }
@@ -192,7 +192,7 @@ const feesSchema = new mongoose.Schema({
     playerFee: { type: Number, default: 500 },
     ownerFee: { type: Number, default: 2000 },
     bothFee: { type: Number, default: 2500 },
-    upiId: { type: String, default: 'bgpl2026@upi' },
+    upiId: { type: String, default: 'bgpl2027@upi' },
     qrCodeUrl: { type: String, default: '/uploads/qr-default.png' }
 });
 
@@ -330,7 +330,7 @@ app.post('/api/profile/request-edit', async (req, res) => {
 app.get('/api/public/config', async (req, res) => {
     try {
         const config = await FeeConfig.findOne({ key: 'tournament_settings' }) || {
-            playerFee: 500, ownerFee: 2000, bothFee: 2500, upiId: 'bgpl2026@upi', qrCodeUrl: ''
+            playerFee: 500, ownerFee: 2000, bothFee: 2500, upiId: 'bgpl2027@upi', qrCodeUrl: ''
         };
         res.json(config);
     } catch (err) {
