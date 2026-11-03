@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BGPL 2026 - Edit Profile</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body class="bg-slate-900 text-slate-100 font-sans min-h-screen flex flex-col">
+    <header class="glass-nav sticky top-0 z-50 shadow-2xl bg-slate-950/80 backdrop-blur-md border-b border-slate-800">
+        <div class="max-w-7xl mx-auto px-4 py-3 flex justify-between items-center">
+            
+            <!-- BRAND LOGO & TITLE -->
+            <a href="/" class="flex items-center space-x-3 group">
+                <img src="./static/logo-n.png" alt="BGPL Logo" class="w-10 h-10 object-contain rounded-xl bg-slate-900/80 p-1 border border-amber-500/30 group-hover:border-amber-400 transition">
+                <div>
+                    <h1 class="text-lg font-black tracking-wider text-transparent bg-clip-text bg-gradient-to-r from-amber-400 via-amber-200 to-yellow-400">BGPL 2026</h1>
+                    <p class="text-[10px] text-slate-400 font-medium tracking-widest uppercase">Bamundi Gram Premier League</p>
+                </div>
+            </a>
+
+            <!-- DESKTOP NAVIGATION LINKS -->
+            <nav class="hidden md:flex items-center space-x-5 text-sm font-semibold">
+                <a href="/" class="text-amber-400 transition hover:text-amber-300 flex items-center space-x-1.5 px-3 py-1.5 rounded-xl ">
+                    <i class="fa-solid fa-house text-xs"></i>
+                    <span>Home</span>
+                </a>
+                <a href="/directory?filter=Player" class="text-slate-300 transition hover:text-amber-400 flex items-center space-x-1.5 px-3 py-1.5 rounded-xl hover:bg-slate-900">
+                    <i class="fa-solid fa-users text-xs text-amber-500"></i>
+                    <span>Players</span>
+                </a>
+                <a href="/directory?filter=Team" class="text-slate-300 transition hover:text-amber-400 flex items-center space-x-1.5 px-3 py-1.5 rounded-xl hover:bg-slate-900">
+                    <i class="fa-solid fa-shield-halved text-xs text-indigo-400"></i>
+                    <span>Teams</span>
+                </a>
+                <a href="/directory?filter=Owner" class="text-slate-300 transition hover:text-amber-400 flex items-center space-x-1.5 px-3 py-1.5 rounded-xl hover:bg-slate-900">
+                    <i class="fa-solid fa-user-tie text-xs text-emerald-400"></i>
+                    <span>Owners</span>
+                </a>
+                <a href="/register" class="text-slate-300 transition hover:text-amber-400 flex items-center space-x-1.5 px-3 py-1.5 rounded-xl hover:bg-slate-900">
+                    <i class="fa-solid fa-user-plus text-xs text-rose-400"></i>
+                    <span>Registration</span>
+                </a>
+                <a href="/edit-profile" class="text-emerald-400 transition hover:text-emerald-300 flex items-center space-x-1 px-2.5 py-1.5 rounded-xl bg-amber-500/10 border border-amber-500/20">
+                    <i class="fa-solid fa-user-pen text-xs"></i>
+                    <span>Edit Profile</span>
+                </a>
+                <a href="/admin" class="bg-amber-500/10 border border-amber-500/30 text-amber-400 px-3.5 py-1.5 rounded-xl transition hover:bg-amber-500 hover:text-slate-950 shadow-lg shadow-amber-500/10 flex items-center space-x-1.5">
+                    <i class="fa-solid fa-lock text-xs"></i>
+                    <span>Admin</span>
+                </a>
+            </nav>
+
+            <!-- MOBILE HAMBURGER TOGGLE BUTTON -->
+            <div class="md:hidden flex items-center space-x-2">
+                <a href="/admin" class="bg-amber-500/10 border border-amber-500/30 text-amber-400 px-3 py-1.5 rounded-xl text-xs font-bold">
+                    <i class="fa-solid fa-lock mr-1"></i> Admin
+                </a>
+                <button id="mobile-menu-button" onclick="toggleMobileMenu()" class="text-slate-300 hover:text-amber-400 focus:outline-none p-2 rounded-xl bg-slate-900 border border-slate-800">
+                    <i class="fa-solid fa-bars text-lg" id="menu-icon"></i>
+                </button>
+            </div>
+        </div>
+
+        <!-- COLLAPSIBLE MOBILE MENU DROPDOWN -->
+        <div id="mobile-menu" class="hidden md:hidden bg-slate-950/95 backdrop-blur-xl border-t border-slate-800 px-4 pt-3 pb-5 space-y-2 shadow-2xl">
+            <a href="/" class="flex items-center space-x-3 text-amber-400 font-semibold py-2.5 px-3 rounded-xl bg-amber-500/10 border border-amber-500/20">
+                <i class="fa-solid fa-house w-5 text-center text-amber-500"></i>
+                <span>Home</span>
+            </a>
+            <a href="/directory?filter=Player" class="flex items-center space-x-3 text-slate-300 font-semibold py-2.5 px-3 rounded-xl hover:bg-slate-900 transition">
+                <i class="fa-solid fa-users w-5 text-center text-amber-500"></i>
+                <span>Players Directory</span>
+            </a>
+            <a href="/directory?filter=Team" class="flex items-center space-x-3 text-slate-300 font-semibold py-2.5 px-3 rounded-xl hover:bg-slate-900 transition">
+                <i class="fa-solid fa-shield-halved w-5 text-center text-indigo-400"></i>
+                <span>Teams</span>
+            </a>
+            <a href="/directory?filter=Owner" class="flex items-center space-x-3 text-slate-300 font-semibold py-2.5 px-3 rounded-xl hover:bg-slate-900 transition">
+                <i class="fa-solid fa-user-tie w-5 text-center text-emerald-400"></i>
+                <span>Team Owners</span>
+            </a>
+            <a href="/register" class="flex items-center space-x-3 text-slate-300 font-semibold py-2.5 px-3 rounded-xl hover:bg-slate-900 transition">
+                <i class="fa-solid fa-user-plus w-5 text-center text-rose-400"></i>
+                <span>Registration</span>
+            </a>
+            <a href="/edit-profile" class="flex items-center space-x-3 text-emerald-400 font-semibold py-2.5 px-3 rounded-xl hover:bg-slate-900 transition">
+                <i class="fa-solid fa-user-pen w-5 text-center"></i>
+                <span>Edit Profile</span>
+            </a>
+        </div>
+    </header>
+    <main class="max-w-2xl w-full mx-auto p-4 flex-grow">
+        <div id="alert-box" class="hidden mb-4 p-3 rounded text-sm font-medium border"></div>
+        <div class="bg-slate-800 rounded-xl p-6 border border-slate-700 shadow-2xl space-y-6">
+            <h2 class="text-2xl font-bold text-emerald-400">Edit Profile Details</h2>
+            <p class="text-xs text-slate-400">Request updates (spelling, photo, screenshot). Requires admin approval.</p>
+            <form id="edit-form" onsubmit="handleEdit(event)" class="space-y-4">
+                <div>
+                    <label class="block text-xs text-slate-400 mb-1">Registered Phone Number</label>
+                    <input type="tel" id="edit-phone" required class="w-full bg-slate-900 border border-slate-700 rounded-lg p-3 text-white">
+                </div>
+                <div>
+                    <label class="block text-xs text-slate-400 mb-1">New Full Name</label>
+                    <input type="text" id="edit-name" class="w-full bg-slate-900 border border-slate-700 rounded-lg p-3 text-white">
+                </div>
+                <div>
+                    <label class="block text-xs text-slate-400 mb-1">New Aadhaar Number</label>
+                    <input type="text" id="edit-aadhaar" class="w-full bg-slate-900 border border-slate-700 rounded-lg p-3 text-white">
+                </div>
+                <div>
+                    <label class="block text-xs text-slate-400 mb-1">New Photo URL</label>
+                    <input type="text" id="edit-photo" class="w-full bg-slate-900 border border-slate-700 rounded-lg p-3 text-white">
+                </div>
+                <div>
+                    <label class="block text-xs text-slate-400 mb-1">New Payment Screenshot URL</label>
+                    <input type="text" id="edit-payment" class="w-full bg-slate-900 border border-slate-700 rounded-lg p-3 text-white">
+                </div>
+                <button type="submit" class="w-full bg-emerald-500 hover:bg-emerald-600 text-slate-950 font-bold py-3 rounded-lg shadow-lg">Submit Edits for Approval</button>
+            </form>
+        </div>
+    </main>
+    <script>
+        async function handleEdit(e) {
+            e.preventDefault();
+            const payload = {
+                phone: document.getElementById('edit-phone').value,
+                fullName: document.getElementById('edit-name').value || undefined,
+                aadhaar: document.getElementById('edit-aadhaar').value || undefined,
+                photoUrl: document.getElementById('edit-photo').value || undefined,
+                paymentScreenshotUrl: document.getElementById('edit-payment').value || undefined
+            };
+            const res = await fetch('/api/profile/request-edit', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload)
+            });
+            const data = await res.json();
+            const box = document.getElementById('alert-box');
+            box.className = res.ok ? 'mb-4 p-3 rounded text-sm font-medium border bg-emerald-500/10 border-emerald-500/30 text-emerald-400' : 'mb-4 p-3 rounded text-sm font-medium border bg-rose-500/10 border-rose-500/30 text-rose-400';
+            box.innerText = data.message || data.error;
+            box.classList.remove('hidden');
+            if (res.ok) document.getElementById('edit-form').reset();
+        }
+    </script>
+    <script src="./static/js/common.js"></script>
+</body>
+</html>

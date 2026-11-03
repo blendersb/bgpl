@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BGPL 2026 - Players & Owners Directory</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body class="bg-slate-950 text-slate-100 font-sans min-h-screen flex flex-col">
+    <!-- NAVIGATION -->
+    <!-- NAVIGATION HEADER -->
+    <header class="glass-nav sticky top-0 z-50 shadow-2xl bg-slate-950/80 backdrop-blur-md border-b border-slate-800">
+        <div class="max-w-7xl mx-auto px-4 py-3 flex justify-between items-center">
+            
+            <!-- BRAND LOGO & TITLE -->
+            <a href="/" class="flex items-center space-x-3 group">
+                <img src="./static/logo-n.png" alt="BGPL Logo" class="w-10 h-10 object-contain rounded-xl bg-slate-900/80 p-1 border border-amber-500/30 group-hover:border-amber-400 transition">
+                <div>
+                    <h1 class="text-lg font-black tracking-wider text-transparent bg-clip-text bg-gradient-to-r from-amber-400 via-amber-200 to-yellow-400">BGPL 2026</h1>
+                    <p class="text-[10px] text-slate-400 font-medium tracking-widest uppercase">Bamundi Gram Premier League</p>
+                </div>
+            </a>
+
+            <!-- DESKTOP NAVIGATION LINKS -->
+            <nav class="hidden md:flex items-center space-x-5 text-sm font-semibold">
+                <a href="/" class="text-amber-400 transition hover:text-amber-300 flex items-center space-x-1.5 px-3 py-1.5 rounded-xl ">
+                    <i class="fa-solid fa-house text-xs"></i>
+                    <span>Home</span>
+                </a>
+                <a href="/directory?filter=Player" class="text-slate-300 transition hover:text-amber-400 flex items-center space-x-1.5 px-3 py-1.5 rounded-xl hover:bg-slate-900 bg-amber-500/10 border border-amber-500/20">
+                    <i class="fa-solid fa-users text-xs text-amber-500"></i>
+                    <span>Players</span>
+                </a>
+                <a href="/directory?filter=Team" class="text-slate-300 transition hover:text-amber-400 flex items-center space-x-1.5 px-3 py-1.5 rounded-xl hover:bg-slate-900">
+                    <i class="fa-solid fa-shield-halved text-xs text-indigo-400"></i>
+                    <span>Teams</span>
+                </a>
+                <a href="/directory?filter=Owner" class="text-slate-300 transition hover:text-amber-400 flex items-center space-x-1.5 px-3 py-1.5 rounded-xl hover:bg-slate-900">
+                    <i class="fa-solid fa-user-tie text-xs text-emerald-400"></i>
+                    <span>Owners</span>
+                </a>
+                <a href="/register" class="text-slate-300 transition hover:text-amber-400 flex items-center space-x-1.5 px-3 py-1.5 rounded-xl hover:bg-slate-900">
+                    <i class="fa-solid fa-user-plus text-xs text-rose-400"></i>
+                    <span>Registration</span>
+                </a>
+                <a href="/edit-profile" class="text-emerald-400 transition hover:text-emerald-300 flex items-center space-x-1 px-2.5 py-1.5 rounded-xl">
+                    <i class="fa-solid fa-user-pen text-xs"></i>
+                    <span>Edit Profile</span>
+                </a>
+                <a href="/admin" class="bg-amber-500/10 border border-amber-500/30 text-amber-400 px-3.5 py-1.5 rounded-xl transition hover:bg-amber-500 hover:text-slate-950 shadow-lg shadow-amber-500/10 flex items-center space-x-1.5">
+                    <i class="fa-solid fa-lock text-xs"></i>
+                    <span>Admin</span>
+                </a>
+            </nav>
+
+            <!-- MOBILE HAMBURGER TOGGLE BUTTON -->
+            <div class="md:hidden flex items-center space-x-2">
+                <a href="/admin" class="bg-amber-500/10 border border-amber-500/30 text-amber-400 px-3 py-1.5 rounded-xl text-xs font-bold">
+                    <i class="fa-solid fa-lock mr-1"></i> Admin
+                </a>
+                <button id="mobile-menu-button" onclick="toggleMobileMenu()" class="text-slate-300 hover:text-amber-400 focus:outline-none p-2 rounded-xl bg-slate-900 border border-slate-800">
+                    <i class="fa-solid fa-bars text-lg" id="menu-icon"></i>
+                </button>
+            </div>
+        </div>
+
+        <!-- COLLAPSIBLE MOBILE MENU DROPDOWN -->
+        <div id="mobile-menu" class="hidden md:hidden bg-slate-950/95 backdrop-blur-xl border-t border-slate-800 px-4 pt-3 pb-5 space-y-2 shadow-2xl">
+            <a href="/" class="flex items-center space-x-3 text-amber-400 font-semibold py-2.5 px-3 rounded-xl bg-amber-500/10 border border-amber-500/20">
+                <i class="fa-solid fa-house w-5 text-center text-amber-500"></i>
+                <span>Home</span>
+            </a>
+            <a href="/directory?filter=Player" class="flex items-center space-x-3 text-slate-300 font-semibold py-2.5 px-3 rounded-xl hover:bg-slate-900 transition">
+                <i class="fa-solid fa-users w-5 text-center text-amber-500"></i>
+                <span>Players Directory</span>
+            </a>
+            <a href="/directory?filter=Team" class="flex items-center space-x-3 text-slate-300 font-semibold py-2.5 px-3 rounded-xl hover:bg-slate-900 transition">
+                <i class="fa-solid fa-shield-halved w-5 text-center text-indigo-400"></i>
+                <span>Teams</span>
+            </a>
+            <a href="/directory?filter=Owner" class="flex items-center space-x-3 text-slate-300 font-semibold py-2.5 px-3 rounded-xl hover:bg-slate-900 transition">
+                <i class="fa-solid fa-user-tie w-5 text-center text-emerald-400"></i>
+                <span>Team Owners</span>
+            </a>
+            <a href="/register" class="flex items-center space-x-3 text-slate-300 font-semibold py-2.5 px-3 rounded-xl hover:bg-slate-900 transition">
+                <i class="fa-solid fa-user-plus w-5 text-center text-rose-400"></i>
+                <span>Registration</span>
+            </a>
+            <a href="/edit-profile" class="flex items-center space-x-3 text-emerald-400 font-semibold py-2.5 px-3 rounded-xl hover:bg-slate-900 transition">
+                <i class="fa-solid fa-user-pen w-5 text-center"></i>
+                <span>Edit Profile</span>
+            </a>
+        </div>
+    </header>
+
+    <main class="max-w-7xl w-full mx-auto p-4 space-y-6 flex-grow">
+        <div class="flex flex-col md:flex-row justify-between items-center gap-4 bg-slate-900/60 p-6 rounded-2xl border border-slate-800">
+            <div>
+                <h2 class="text-2xl font-black text-white">Approved Players & Franchise Owners</h2>
+                <p class="text-xs text-slate-400">Browse verified participants ready for the auction and tournament matches.</p>
+            </div>
+            <div class="relative w-full md:w-72">
+                <span class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-400"><i class="fa-solid fa-search"></i></span>
+                <input type="text" id="directory-search" oninput="renderDirectory()" placeholder="Search participant..." class="w-full bg-slate-950 border border-slate-700/80 rounded-xl pl-10 pr-4 py-2.5 text-sm text-white focus:outline-none focus:border-amber-400 shadow-inner">
+            </div>
+        </div>
+        <div id="directory-grid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6"></div>
+    </main>
+
+    <script>
+        let allRegistrants = [];
+        // Read query parameters from URL (e.g., ?filter=Player)
+        const urlParams = new URLSearchParams(window.location.search);
+        const currentFilter = urlParams.get('filter') || 'All';
+        // Update page title/header based on filter
+        const headerTitle = document.getElementById('directory-header-title');
+        if (headerTitle) {
+            if (currentFilter === 'Owner') headerTitle.innerText = "Team Owners Directory";
+            else if (currentFilter === 'Team') headerTitle.innerText = "Participating Teams & Squads";
+            else if (currentFilter === 'Player') headerTitle.innerText = "Players Directory";
+            else headerTitle.innerText = "Tournament Directory";
+        }
+        // Fetch data with filter applied
+        fetch(`/api/public/data${currentFilter !== 'All' ? `?filter=${currentFilter}` : ''}`)
+            .then(res => res.json())
+            .then(data => {
+                allRegistrants = data.players || [];
+                renderDirectory();
+            });
+
+        function renderDirectory() {
+        const query = document.getElementById('directory-search').value.toLowerCase();
+        const grid = document.getElementById('directory-grid');
+
+        // Filter based on role or team grouping
+        let filtered = allRegistrants.filter(p => p.fullName.toLowerCase().includes(query));
+
+        if (currentFilter === 'Owner') {
+            // Show only Owners
+            filtered = filtered.filter(p => p.role === 'Team Owner' || p.role === 'Both');
+            
+            if (filtered.length === 0) {
+                grid.innerHTML = `<div class="col-span-full py-16 text-center text-slate-400 bg-slate-900/40 rounded-2xl border border-slate-800">No team owners found.</div>`;
+                return;
+            }
+
+            grid.innerHTML = filtered.map(owner => `
+                <div class="glass-card rounded-2xl overflow-hidden border border-slate-800 shadow-xl flex flex-col justify-between hover:border-amber-500/50 transition">
+                    <div>
+                        <div class="h-52 overflow-hidden bg-slate-950 relative">
+                            <img src="${owner.photoUrl || 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=400&q=80'}" class="w-full h-full object-cover">
+                            <span class="absolute top-3 right-3 bg-indigo-500/20 backdrop-blur text-indigo-400 border border-indigo-500/30 text-[10px] font-extrabold px-2.5 py-1 rounded-md uppercase tracking-wider">Team Owner</span>
+                        </div>
+                        <div class="p-5 space-y-3">
+                            <h4 class="font-black text-white text-lg tracking-wide truncate">${owner.fullName}</h4>
+                            <div class="space-y-1.5 text-xs text-slate-300 pt-2 border-t border-slate-800">
+                                <div class="flex justify-between"><span class="text-slate-500">Franchise Team:</span> <span class="font-bold text-amber-400">${owner.assignedTeam && owner.assignedTeam !== 'None' ? owner.assignedTeam : 'Independent'}</span></div>
+                                <div class="flex justify-between"><span class="text-slate-500">Phone:</span> <span class="font-medium text-slate-300">${owner.phone || 'N/A'}</span></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+
+        } else if (currentFilter === 'Team') {
+            // Group by Teams
+            const owners = allRegistrants.filter(p => p.role === 'Team Owner' || p.role === 'Both');
+            
+            // Collect unique team names from owners and assigned players
+            const teamNames = [...new Set([
+                ...owners.map(o => o.assignedTeam).filter(t => t && t !== 'None'),
+                ...allRegistrants.map(p => p.assignedTeam).filter(t => t && t !== 'None')
+            ])];
+
+            if (teamNames.length === 0) {
+                grid.innerHTML = `<div class="col-span-full py-16 text-center text-slate-400 bg-slate-900/40 rounded-2xl border border-slate-800">No teams formed yet.</div>`;
+                return;
+            }
+
+            grid.innerHTML = teamNames.map(teamName => {
+                const teamOwner = owners.find(o => o.assignedTeam === teamName) || { fullName: 'Unassigned', phone: 'N/A', photoUrl: '' };
+                const squad = allRegistrants.filter(p => p.assignedTeam === teamName);
+                const logoUrl = teamOwner.photoUrl || `https://api.dicebear.com/7.x/identicon/svg?seed=${encodeURIComponent(teamName)}`;
+
+                return `
+                    <div class="glass-card rounded-2xl p-6 space-y-5 border border-slate-800 shadow-xl col-span-1 md:col-span-2">
+                        <!-- Team Header -->
+                        <div class="flex items-center space-x-4 border-b border-slate-800 pb-4">
+                            <img src="${logoUrl}" class="w-16 h-16 rounded-full bg-slate-900 border-2 border-amber-500/40 p-1 object-cover">
+                            <div>
+                                <h3 class="text-xl font-black text-white">${teamName}</h3>
+                                <p class="text-xs text-amber-400 font-semibold mt-0.5"><i class="fa-solid fa-user-tie mr-1"></i> Owner: ${teamOwner.fullName}</p>
+                            </div>
+                        </div>
+
+                        <!-- Squad List Table -->
+                        <div class="space-y-3">
+                            <h4 class="text-xs font-extrabold text-slate-400 uppercase tracking-wider">Squad Roster (${squad.length} Members)</h4>
+                            <div class="overflow-x-auto">
+                                <table class="w-full text-left text-xs text-slate-300">
+                                    <thead class="bg-slate-900/80 text-slate-400 uppercase text-[10px]">
+                                        <tr>
+                                            <th class="p-2.5">Player Name</th>
+                                            <th class="p-2.5">Designation / Role</th>
+                                            <th class="p-2.5">Batting Style</th>
+                                            <th class="p-2.5 text-right">Auction Price</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody class="divide-y divide-slate-800/80">
+                                        ${squad.length > 0 ? squad.map(player => `
+                                            <tr class="hover:bg-slate-900/40 transition">
+                                                <td class="p-2.5 font-bold text-white flex items-center space-x-2">
+                                                    <img src="${player.photoUrl || 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=100&q=80'}" class="w-6 h-6 rounded-full object-cover">
+                                                    <span>${player.fullName}</span>
+                                                </td>
+                                                <td class="p-2.5">
+                                                    <span class="px-2 py-0.5 rounded font-semibold ${player.role === 'Team Owner' ? 'bg-indigo-500/20 text-indigo-400' : 'bg-amber-500/20 text-amber-400'}">
+                                                        ${player.role}
+                                                    </span>
+                                                </td>
+                                                <td class="p-2.5 text-slate-400">${player.battingStyle || 'Right-hand bat'}</td>
+                                                <td class="p-2.5 text-right font-black text-emerald-400">₹${player.soldPrice || 500}</td>
+                                            </tr>
+                                        `).join('') : `<tr><td colspan="4" class="p-3 text-center text-slate-500">No players assigned to this team yet.</td></tr>`}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+
+        } else {
+            // Default Player View
+            filtered = filtered.filter(p => p.role === 'Player' || p.role === 'Both');
+            
+            if (filtered.length === 0) {
+                grid.innerHTML = `<div class="col-span-full py-16 text-center text-slate-400 bg-slate-900/40 rounded-2xl border border-slate-800">No players found.</div>`;
+                return;
+            }
+
+            grid.innerHTML = filtered.map(player => `
+                <div class="glass-card rounded-2xl overflow-hidden border border-slate-800 shadow-xl flex flex-col justify-between hover:border-slate-700 transition">
+                    <div>
+                        <div class="h-48 overflow-hidden bg-slate-950 relative">
+                            <img src="${player.photoUrl || 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=400&q=80'}" class="w-full h-full object-cover">
+                            <span class="absolute top-3 right-3 bg-slate-950/80 backdrop-blur text-amber-400 border border-amber-500/30 text-[10px] font-extrabold px-2.5 py-1 rounded-md uppercase tracking-wider">${player.role}</span>
+                        </div>
+                        <div class="p-5 space-y-3">
+                            <h4 class="font-black text-white text-lg tracking-wide truncate">${player.fullName}</h4>
+                            <div class="space-y-1.5 text-xs text-slate-300 pt-2 border-t border-slate-800">
+                                <div class="flex justify-between"><span class="text-slate-500">Batting Style:</span> <span class="font-medium text-slate-300">${player.battingStyle || 'Right-hand bat'}</span></div>
+                                <div class="flex justify-between"><span class="text-slate-500">Assigned Team:</span> <span class="font-bold text-amber-400">${player.assignedTeam || 'Unassigned'}</span></div>
+                                <div class="flex justify-between"><span class="text-slate-500">Auction Price:</span> <span class="font-bold text-emerald-400">₹${player.soldPrice || 500}</span></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+    }
+
+    </script>
+    <script src="./static/js/common.js"></script>
+</body>
+</html>

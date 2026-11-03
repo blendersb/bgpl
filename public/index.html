@@ -1,514 +1,559 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="dark">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Bamundi Gram Premier League (BGPL) 2026</title>
+    <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        brand: { 400: '#fbbf24', 500: '#f59e0b', 600: '#d97706' }
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Teko:wght@600;700&family=Poppins:wght@400;600;800;900&display=swap');
-        
-        .font-teko { font-family: 'Teko', sans-serif; }
-        .font-poppins { font-family: 'Poppins', sans-serif; }
-
-        /* Custom Poster Gradient BG */
-        .bg-poster-dark {
-            background: radial-gradient(circle at top, #1e1b00 0%, #0d0e12 60%, #050505 100%);
-        }
-        
-        /* Gold metallic text effect */
-        .gold-text {
-            background: linear-gradient(180deg, #FFF6BD 0%, #FACC15 50%, #CA8A04 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
-
-        .gold-border {
-            border-color: #EAB308;
-        }
+        .marquee-container { overflow: hidden; white-space: nowrap; position: relative; }
+        .marquee-content { display: inline-block; animation: marquee 30s linear infinite; }
+        @keyframes marquee { 0% { transform: translateX(100%); } 100% { transform: translateX(-100%); } }
+        .glass-card { background: rgba(15, 23, 42, 0.75); backdrop-filter: blur(16px); border: 1px solid rgba(255, 255, 255, 0.08); }
+        .glass-nav { background: rgba(15, 23, 42, 0.85); backdrop-filter: blur(12px); border-bottom: 1px solid rgba(255, 255, 255, 0.08); }
+        .hero-gradient { background: radial-gradient(circle at top right, rgba(245, 158, 11, 0.12), transparent 50%), radial-gradient(circle at bottom left, rgba(79, 70, 229, 0.12), transparent 50%); }
     </style>
 </head>
-<body class="bg-poster-dark text-slate-100 min-h-screen font-poppins selection:bg-yellow-500 selection:text-black">
+<body class="bg-slate-950 text-slate-100 font-sans min-h-screen flex flex-col hero-gradient selection:bg-amber-500 selection:text-slate-950">
 
-    <!-- Navigation Bar -->
-    <nav class="bg-black/80 backdrop-blur-md border-b border-yellow-500/30 sticky top-0 z-50">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="flex items-center justify-between h-16">
-                <div class="flex items-center space-x-3">
-                    <div class="w-10 h-10 rounded-full border-2 border-yellow-400 bg-yellow-500/20 flex items-center justify-center">
-                        <img src="./static/logo-n.png" class="w-6 h-6">
-                    </div>
-                    <div>
-                        <span class="font-teko text-2xl tracking-wide uppercase gold-text leading-none block">BGPL 2026</span>
-                        <span class="text-[9px] text-yellow-400/80 uppercase font-bold tracking-widest block">Version 1</span>
-                    </div>
+    <!-- NAVIGATION HEADER -->
+    <header class="glass-nav sticky top-0 z-50 shadow-2xl bg-slate-950/80 backdrop-blur-md border-b border-slate-800">
+        <div class="max-w-7xl mx-auto px-4 py-3 flex justify-between items-center">
+            
+            <!-- BRAND LOGO & TITLE -->
+            <a href="/" class="flex items-center space-x-3 group">
+                <img src="./static/logo-n.png" alt="BGPL Logo" class="w-10 h-10 object-contain rounded-xl bg-slate-900/80 p-1 border border-amber-500/30 group-hover:border-amber-400 transition">
+                <div>
+                    <h1 class="text-lg font-black tracking-wider text-transparent bg-clip-text bg-gradient-to-r from-amber-400 via-amber-200 to-yellow-400">BGPL 2026</h1>
+                    <p class="text-[10px] text-slate-400 font-medium tracking-widest uppercase">Bamundi Gram Premier League</p>
                 </div>
-                <div class="flex space-x-2">
-                    <button onclick="switchTab('dashboard')" id="nav-dashboard" class="px-3.5 py-1.5 rounded-lg text-xs font-bold uppercase tracking-wider bg-yellow-400 text-slate-950 transition">Dashboard</button>
-                    <button onclick="switchTab('register')" id="nav-register" class="px-3.5 py-1.5 rounded-lg text-xs font-bold uppercase tracking-wider text-slate-300 hover:bg-slate-800 transition">Register</button>
-                    <button onclick="switchTab('admin')" id="nav-admin" class="px-3.5 py-1.5 rounded-lg text-xs font-bold uppercase tracking-wider text-slate-300 hover:bg-slate-800 transition">Admin Panel</button>
-                </div>
+            </a>
+
+            <!-- DESKTOP NAVIGATION LINKS -->
+            <nav class="hidden md:flex items-center space-x-5 text-sm font-semibold">
+                <a href="/" class="text-amber-400 transition hover:text-amber-300 flex items-center space-x-1.5 px-3 py-1.5 rounded-xl bg-amber-500/10 border border-amber-500/20">
+                    <i class="fa-solid fa-house text-xs"></i>
+                    <span>Home</span>
+                </a>
+                <a href="/directory?filter=Player" class="text-slate-300 transition hover:text-amber-400 flex items-center space-x-1.5 px-3 py-1.5 rounded-xl hover:bg-slate-900">
+                    <i class="fa-solid fa-users text-xs text-amber-500"></i>
+                    <span>Players</span>
+                </a>
+                <a href="/directory?filter=Team" class="text-slate-300 transition hover:text-amber-400 flex items-center space-x-1.5 px-3 py-1.5 rounded-xl hover:bg-slate-900">
+                    <i class="fa-solid fa-shield-halved text-xs text-indigo-400"></i>
+                    <span>Teams</span>
+                </a>
+                <a href="/directory?filter=Owner" class="text-slate-300 transition hover:text-amber-400 flex items-center space-x-1.5 px-3 py-1.5 rounded-xl hover:bg-slate-900">
+                    <i class="fa-solid fa-user-tie text-xs text-emerald-400"></i>
+                    <span>Owners</span>
+                </a>
+                <a href="/register" class="text-slate-300 transition hover:text-amber-400 flex items-center space-x-1.5 px-3 py-1.5 rounded-xl hover:bg-slate-900">
+                    <i class="fa-solid fa-user-plus text-xs text-rose-400"></i>
+                    <span>Registration</span>
+                </a>
+                <a href="/edit-profile" class="text-emerald-400 transition hover:text-emerald-300 flex items-center space-x-1 px-2.5 py-1.5 rounded-xl">
+                    <i class="fa-solid fa-user-pen text-xs"></i>
+                    <span>Edit Profile</span>
+                </a>
+                <a href="/admin" class="bg-amber-500/10 border border-amber-500/30 text-amber-400 px-3.5 py-1.5 rounded-xl transition hover:bg-amber-500 hover:text-slate-950 shadow-lg shadow-amber-500/10 flex items-center space-x-1.5">
+                    <i class="fa-solid fa-lock text-xs"></i>
+                    <span>Admin</span>
+                </a>
+            </nav>
+
+            <!-- MOBILE HAMBURGER TOGGLE BUTTON -->
+            <div class="md:hidden flex items-center space-x-2">
+                <a href="/admin" class="bg-amber-500/10 border border-amber-500/30 text-amber-400 px-3 py-1.5 rounded-xl text-xs font-bold">
+                    <i class="fa-solid fa-lock mr-1"></i> Admin
+                </a>
+                <button id="mobile-menu-button" onclick="toggleMobileMenu()" class="text-slate-300 hover:text-amber-400 focus:outline-none p-2 rounded-xl bg-slate-900 border border-slate-800">
+                    <i class="fa-solid fa-bars text-lg" id="menu-icon"></i>
+                </button>
             </div>
         </div>
-    </nav>
 
-    <!-- Main Container -->
-    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-6">
+        <!-- COLLAPSIBLE MOBILE MENU DROPDOWN -->
+        <div id="mobile-menu" class="hidden md:hidden bg-slate-950/95 backdrop-blur-xl border-t border-slate-800 px-4 pt-3 pb-5 space-y-2 shadow-2xl">
+            <a href="/" class="flex items-center space-x-3 text-amber-400 font-semibold py-2.5 px-3 rounded-xl bg-amber-500/10 border border-amber-500/20">
+                <i class="fa-solid fa-house w-5 text-center text-amber-500"></i>
+                <span>Home</span>
+            </a>
+            <a href="/directory?filter=Player" class="flex items-center space-x-3 text-slate-300 font-semibold py-2.5 px-3 rounded-xl hover:bg-slate-900 transition">
+                <i class="fa-solid fa-users w-5 text-center text-amber-500"></i>
+                <span>Players Directory</span>
+            </a>
+            <a href="/directory?filter=Team" class="flex items-center space-x-3 text-slate-300 font-semibold py-2.5 px-3 rounded-xl hover:bg-slate-900 transition">
+                <i class="fa-solid fa-shield-halved w-5 text-center text-indigo-400"></i>
+                <span>Teams</span>
+            </a>
+            <a href="/directory?filter=Owner" class="flex items-center space-x-3 text-slate-300 font-semibold py-2.5 px-3 rounded-xl hover:bg-slate-900 transition">
+                <i class="fa-solid fa-user-tie w-5 text-center text-emerald-400"></i>
+                <span>Team Owners</span>
+            </a>
+            <a href="/register" class="flex items-center space-x-3 text-slate-300 font-semibold py-2.5 px-3 rounded-xl hover:bg-slate-900 transition">
+                <i class="fa-solid fa-user-plus w-5 text-center text-rose-400"></i>
+                <span>Registration</span>
+            </a>
+            <a href="/edit-profile" class="flex items-center space-x-3 text-emerald-400 font-semibold py-2.5 px-3 rounded-xl hover:bg-slate-900 transition">
+                <i class="fa-solid fa-user-pen w-5 text-center"></i>
+                <span>Edit Profile</span>
+            </a>
+        </div>
+    </header>
 
-        <!-- DASHBOARD TAB -->
-        <section id="tab-dashboard" class="space-y-6">
+    <!-- MAIN CONTENT -->
+    <main class="max-w-7xl w-full mx-auto px-4 py-6 space-y-12 flex-grow">
 
-            <!-- POSTER HERO HEADER -->
-            <div class="relative bg-gradient-to-b from-yellow-500/10 via-slate-900 to-black border-2 border-yellow-500/40 rounded-3xl p-6 sm:p-8 overflow-hidden shadow-2xl text-center space-y-4">
-                
-                <div class="flex items-center justify-between text-yellow-400/80 text-xs sm:text-sm font-bold uppercase tracking-widest">
-                    <span>⚡ Play For Glory</span>
-                    <span>Cricket Brings Us Together ⚡</span>
-                </div>
+        <!-- NOTICE TICKER BANNER -->
+        <div class="bg-gradient-to-r from-amber-500/10 via-amber-500/5 to-transparent border border-amber-500/30 rounded-2xl p-3 flex items-center space-x-4 text-amber-300 shadow-xl shadow-amber-500/5">
+            <span class="bg-amber-500 text-slate-950 px-3 py-1 rounded-xl text-xs font-black uppercase tracking-wider shrink-0 flex items-center shadow-md">
+                <i class="fa-solid fa-bullhorn mr-1.5 animate-bounce"></i> Notice
+            </span>
+            <div class="marquee-container w-full">
+                <div id="notice-ticker" class="marquee-content text-sm font-bold tracking-wide">Loading latest tournament updates...</div>
+            </div>
+        </div>
 
-                <!-- Main Emblem / Title -->
-                <div class="space-y-1">
-                    <div class="inline-block bg-yellow-400 text-black px-4 py-0.5 rounded-full font-teko text-lg tracking-widest uppercase font-bold">ESTD 2026</div>
-                    <h1 class="font-teko text-5xl sm:text-7xl font-extrabold uppercase tracking-tight gold-text leading-none">
-                        BAMUNDI GRAM PREMIER LEAGUE
-                    </h1>
-                    <div class="inline-block bg-gradient-to-r from-yellow-500 to-amber-600 text-black font-extrabold px-6 py-1 rounded-md text-sm uppercase tracking-widest shadow-lg">
-                        VERSION 1
-                    </div>
-                </div>
-
-                <p class="text-xs sm:text-sm font-bold tracking-wider text-slate-300 uppercase pt-2">
-                    BIGGER DREAMS &nbsp;|&nbsp; STRONGER TEAMS &nbsp;|&nbsp; ONE CHAMPION
-                </p>
-
-                <!-- STATS & PRIZE GRID (MATCHING POSTER) -->
-                <div class="grid grid-cols-2 md:grid-cols-4 gap-3 pt-4">
-                    <!-- Prize Money Card -->
-                    <div class="bg-black/70 border border-yellow-500/40 rounded-2xl p-4 text-center space-y-1">
-                        <div class="flex justify-center items-center gap-1.5 text-yellow-400 text-xs font-bold uppercase">
-                            <i class="fa-solid fa-trophy"></i> Prize Money
-                        </div>
-                        <div class="text-xs text-slate-400 uppercase font-semibold">Winners</div>
-                        <div class="text-2xl font-teko font-extrabold text-yellow-400 leading-none">₹1,70,000</div>
-                        <div class="text-[10px] text-slate-400 uppercase font-semibold">Runners: <span class="text-white font-bold">₹1,30,000</span></div>
-                    </div>
-
-                    <!-- Total Teams Card -->
-                    <div class="bg-black/70 border border-yellow-500/40 rounded-2xl p-4 text-center flex flex-col justify-center items-center">
-                        <div class="flex justify-center items-center gap-1 text-yellow-400 text-xs font-bold uppercase">
-                            <i class="fa-solid fa-people-group"></i> Total Teams
-                        </div>
-                        <div class="text-4xl font-teko font-extrabold gold-text leading-none mt-1">12</div>
-                    </div>
-
-                    <!-- Ownership Card -->
-                    <div class="bg-black/70 border border-yellow-500/40 rounded-2xl p-4 text-center flex flex-col justify-center items-center">
-                        <div class="flex justify-center items-center gap-1 text-yellow-400 text-xs font-bold uppercase">
-                            <i class="fa-solid fa-handshake"></i> Ownership
-                        </div>
-                        <div class="text-2xl font-teko font-extrabold text-yellow-400 leading-none mt-2">₹ 50,000</div>
-                    </div>
-
-                    <!-- Region Card -->
-                    <div class="bg-black/70 border border-yellow-500/40 rounded-2xl p-3 text-center flex flex-col justify-center items-center">
-                        <div class="flex justify-center items-center gap-1 text-yellow-400 text-[11px] font-bold uppercase">
-                            <i class="fa-solid fa-location-dot"></i> Player Registration
-                        </div>
-                        <div class="text-[10px] text-slate-400 font-semibold uppercase mt-1">Under</div>
-                        <div class="text-xs font-bold text-yellow-400 uppercase tracking-wide">BOLPUR, KANDI, KATWA</div>
-                        <div class="text-[9px] text-slate-500 uppercase">(SUBDIVISION)</div>
-                    </div>
-                </div>
-
-                <!-- GROUND PAYMENT HIGHLIGHT BANNER -->
-                <div class="bg-gradient-to-r from-yellow-500 via-amber-500 to-yellow-400 text-slate-950 rounded-2xl p-3 sm:p-4 text-center font-extrabold uppercase shadow-lg space-y-1">
-                    <div class="text-xs tracking-widest text-black/80 font-bold">ORGANISED BY BAMUNDI GRAM</div>
-                    <div class="text-xl sm:text-2xl font-teko tracking-wider leading-none text-black">
-                        PRIZE MONEY & PLAYER PAYMENT ON GROUND <i class="fa-solid fa-circle-check text-black"></i>
-                    </div>
+        <!-- HERO BANNER CAROUSEL & ATTRACTIVE PRIZE POOL -->
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            <!-- Dynamic Photo Carousel -->
+            <div class="lg:col-span-2 relative rounded-3xl overflow-hidden bg-slate-900 h-72 md:h-96 border border-slate-800 shadow-2xl group">
+                <img id="carousel-img" src="https://images.unsplash.com/photo-1540747913346-19e32dc3e97e?auto=format&fit=crop&w=1200&q=80" alt="Tournament Slide" class="w-full h-full object-cover transition duration-700 group-hover:scale-105">
+                <div class="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/40 to-transparent flex flex-col justify-end p-6 space-y-2">
+                    <span class="bg-amber-500 text-slate-950 text-xs font-black px-3 py-1 rounded-lg w-max uppercase tracking-wider shadow-lg">Featured Event</span>
+                    <h2 id="carousel-caption" class="text-2xl md:text-3xl font-black text-white tracking-wide">Bamundi Gram Premier League Season 2026</h2>
                 </div>
             </div>
 
-            <!-- Notice Board (Shows Newest First) -->
-            <div class="bg-slate-900/90 border border-yellow-500/30 rounded-2xl p-4 shadow-lg space-y-3">
-                <div class="flex items-center space-x-2 border-b border-slate-800 pb-2">
-                    <i class="fa-solid fa-bullhorn text-yellow-400"></i>
-                    <h3 class="text-xs font-bold uppercase tracking-wider text-yellow-400">Latest Announcements</h3>
+            <!-- ATTRACTIVE PRIZE MONEY CARD -->
+            <div class="glass-card rounded-3xl p-6 shadow-2xl flex flex-col justify-between space-y-4 relative overflow-hidden">
+                <div class="absolute -right-6 -top-6 w-32 h-32 bg-amber-500/10 rounded-full blur-2xl pointer-events-none"></div>
+                <div>
+                    <h3 class="text-xl font-black text-amber-400 flex items-center mb-4">
+                        <i class="fa-solid fa-trophy mr-2.5 text-amber-500 animate-pulse text-2xl"></i> Prize Money Pool
+                    </h3>
+                    <div id="prize-list" class="space-y-3">
+                        <div class="p-4 bg-gradient-to-r from-amber-500/20 to-slate-900 rounded-2xl border border-amber-500/40 flex justify-between items-center shadow-xl">
+                            <div>
+                                <p class="font-black text-white text-base">🥇 1st Champions</p>
+                                <p class="text-xs text-amber-200/80">Grand Trophy + Gold Medals</p>
+                            </div>
+                            <span class="text-amber-400 font-black text-xl tracking-tight">₹50,000</span>
+                        </div>
+                        <div class="p-4 bg-gradient-to-r from-slate-800 to-slate-900 rounded-2xl border border-slate-700 flex justify-between items-center shadow-lg">
+                            <div>
+                                <p class="font-extrabold text-white text-sm">🥈 2nd Runners-Up</p>
+                                <p class="text-[11px] text-slate-400">Runner Trophy + Silver Medals</p>
+                            </div>
+                            <span class="text-slate-200 font-black text-lg">₹25,000</span>
+                        </div>
+                        <div class="p-3.5 bg-slate-900/90 rounded-2xl border border-slate-800 flex justify-between items-center">
+                            <div>
+                                <p class="font-bold text-slate-300 text-xs">⭐ Man of the Tournament</p>
+                                <p class="text-[10px] text-slate-500">Individual Trophy & Kit</p>
+                            </div>
+                            <span class="text-emerald-400 font-bold text-sm">₹5,000</span>
+                        </div>
+                    </div>
                 </div>
-                <div id="dashboard-notices-list" class="space-y-2 max-h-48 overflow-y-auto pr-1">
-                    <!-- Dynamic Notices Injected Here -->
-                </div>
+                <a href="/register" class="block text-center bg-gradient-to-r from-amber-500 via-amber-400 to-amber-600 hover:from-amber-600 hover:to-amber-700 text-slate-950 font-black py-3.5 rounded-2xl shadow-xl shadow-amber-500/20 transition transform active:scale-95">
+                    <i class="fa-solid fa-user-plus mr-2"></i> Register Now
+                </a>
             </div>
+        </div>
 
-            <!-- Dynamic Prize Pool Breakdown -->
-            <div class="bg-slate-900/90 border border-slate-800 rounded-2xl p-5 shadow space-y-4">
-                <h3 class="text-md font-bold text-white uppercase tracking-wider flex items-center gap-2">
-                    <i class="fa-solid fa-award text-yellow-400"></i> Additional Prize Breakdown
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-4 my-6">
+            <!-- Button 1: All Players -->
+            <a href="/directory?filter=Player" class="glass-card rounded-2xl p-4 flex items-center space-x-3.5 hover:border-amber-500/50 transition transform active:scale-95 shadow-xl group">
+                <div class="w-12 h-12 rounded-xl bg-gradient-to-tr from-amber-500/20 to-amber-500/10 border border-amber-500/30 flex items-center justify-center text-amber-400 group-hover:bg-amber-500 group-hover:text-slate-950 transition">
+                    <i class="fa-solid fa-users text-lg"></i>
+                </div>
+                <div>
+                    <h4 class="font-black text-sm text-white group-hover:text-amber-400 transition">All Players</h4>
+                    <p class="text-[11px] text-slate-400">View Roster</p>
+                </div>
+            </a>
+
+            <!-- Button 2: Team Owners -->
+            <a href="/directory?filter=Owner" class="glass-card rounded-2xl p-4 flex items-center space-x-3.5 hover:border-indigo-500/50 transition transform active:scale-95 shadow-xl group">
+                <div class="w-12 h-12 rounded-xl bg-gradient-to-tr from-indigo-500/20 to-indigo-500/10 border border-indigo-500/30 flex items-center justify-center text-indigo-400 group-hover:bg-indigo-500 group-hover:text-white transition">
+                    <i class="fa-solid fa-user-tie text-lg"></i>
+                </div>
+                <div>
+                    <h4 class="font-black text-sm text-white group-hover:text-indigo-400 transition">Team Owners</h4>
+                    <p class="text-[11px] text-slate-400">Franchise Bosses</p>
+                </div>
+            </a>
+
+            <!-- Button 3: Live Auction -->
+            <a href="/directory?filter=Auction" class="glass-card rounded-2xl p-4 flex items-center space-x-3.5 hover:border-emerald-500/50 transition transform active:scale-95 shadow-xl group relative overflow-hidden">
+                <span class="absolute top-2 right-2 flex h-2 w-2">
+                    <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                    <span class="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
+                </span>
+                <div class="w-12 h-12 rounded-xl bg-gradient-to-tr from-emerald-500/20 to-emerald-500/10 border border-emerald-500/30 flex items-center justify-center text-emerald-400 group-hover:bg-emerald-500 group-hover:text-slate-950 transition">
+                    <i class="fa-solid fa-gavel text-lg"></i>
+                </div>
+                <div>
+                    <h4 class="font-black text-sm text-white group-hover:text-emerald-400 transition">Live Auction</h4>
+                    <p class="text-[11px] text-slate-400">Bidding Portal</p>
+                </div>
+            </a>
+
+            
+        </div>
+
+        <!-- RUNNABLE TEAMS SECTION (WITH LOGOS & NAMES) -->
+        <section class="space-y-6">
+            <div class="flex justify-between items-center">
+                <h3 class="text-2xl font-black text-white flex items-center">
+                    <i class="fa-solid fa-shield-halved mr-2.5 text-amber-500"></i> Participating Franchises
                 </h3>
-                <div id="prize-money-grid" class="grid grid-cols-1 sm:grid-cols-3 gap-4"></div>
+                <a href="/directory?filter=Team" class="group flex items-center space-x-1 text-xs font-bold text-amber-400 hover:text-amber-300 transition">
+                    <span>See All Franchises</span>
+                    <i class="fa-solid fa-arrow-right transition transform group-hover:translate-x-1"></i>
+                </a>    
             </div>
-
-            <!-- Players Table -->
-            <div class="bg-slate-900/90 border border-slate-800 rounded-2xl p-5 shadow space-y-4">
-                <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 pb-3 border-b border-slate-800">
-                    <h3 class="text-md font-bold text-white uppercase tracking-wider flex items-center gap-2">
-                        <i class="fa-solid fa-users text-yellow-400"></i> Registered Player Auction Roster
-                    </h3>
-                    <input type="text" id="search-player" oninput="renderApp()" placeholder="Search player name..." class="bg-slate-950 border border-slate-800 text-xs rounded-xl px-4 py-2 text-white w-full sm:w-56 focus:outline-none focus:border-yellow-400">
-                </div>
-                <div class="overflow-x-auto">
-                    <table class="w-full text-left text-sm text-slate-300">
-                        <thead class="bg-slate-950 text-xs uppercase text-yellow-400/80 border-b border-slate-800">
-                            <tr>
-                                <th class="p-3">Player Name</th>
-                                <th class="p-3">Role</th>
-                                <th class="p-3">Assigned Team</th>
-                                <th class="p-3">Auction Rate</th>
-                                <th class="p-3">Status</th>
-                            </tr>
-                        </thead>
-                        <tbody id="player-table-body" class="divide-y divide-slate-800/60"></tbody>
-                    </table>
-                </div>
-            </div>
-        </section>
-
-        <!-- REGISTRATION TAB -->
-        <section id="tab-register" class="hidden max-w-xl mx-auto bg-slate-900/90 border border-yellow-500/40 rounded-2xl p-6 shadow-2xl space-y-5">
-            <h2 class="text-xl font-bold uppercase tracking-wider text-yellow-400 border-b border-slate-800 pb-3 flex items-center gap-2">
-                <i class="fa-solid fa-id-card"></i> Player Registration Form
-            </h2>
-            <form onsubmit="submitRegistration(event)" class="space-y-4">
-                <div>
-                    <label class="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-1">Full Name</label>
-                    <input type="text" id="reg-name" required placeholder="Enter full name" class="w-full bg-slate-950 border border-slate-800 rounded-xl p-3 text-white text-sm focus:outline-none focus:border-yellow-400">
-                </div>
-                <div>
-                    <label class="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-1">Playing Role</label>
-                    <select id="reg-role" class="w-full bg-slate-950 border border-slate-800 rounded-xl p-3 text-white text-sm focus:outline-none focus:border-yellow-400">
-                        <option value="Batsman">Batsman</option>
-                        <option value="Bowler">Bowler</option>
-                        <option value="All-Rounder">All-Rounder</option>
-                        <option value="Wicket Keeper">Wicket Keeper</option>
-                    </select>
-                </div>
-                <div>
-                    <label class="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-1">Phone Number</label>
-                    <input type="tel" id="reg-phone" required placeholder="Enter 10-digit mobile number" class="w-full bg-slate-950 border border-slate-800 rounded-xl p-3 text-white text-sm focus:outline-none focus:border-yellow-400">
-                </div>
-                <div class="bg-slate-950 p-4 rounded-xl text-center space-y-3 border border-slate-800">
-                    <span class="text-xs text-yellow-400 block font-bold uppercase tracking-wider">Scan & Pay Registration Fee (₹500)</span>
-                    <img src="https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=upi://pay?pa=bamundileague@upi&pn=BGPL&am=500&cu=INR" class="w-36 h-36 mx-auto bg-white p-2 rounded-xl shadow-md">
-                    <input type="text" id="reg-utr" required placeholder="Enter UPI Ref / Transaction UTR No." class="w-full bg-slate-900 border border-slate-800 rounded-xl p-2.5 text-xs text-center text-white focus:outline-none focus:border-yellow-400">
-                </div>
-                <button type="submit" class="w-full bg-yellow-400 hover:bg-yellow-300 text-slate-950 font-extrabold py-3.5 rounded-xl text-sm uppercase tracking-wider transition shadow-lg">Submit Player Registration</button>
-            </form>
-        </section>
-
-        <!-- ADMIN TAB -->
-        <section id="tab-admin" class="hidden space-y-6">
-            <!-- Login Box -->
-            <div id="admin-login-box" class="max-w-md mx-auto bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow-xl space-y-4">
-                <h2 class="text-xl font-bold text-yellow-400 uppercase tracking-wider text-center">Admin Authentication</h2>
-                <input type="text" id="admin-user" placeholder="Username" class="w-full bg-slate-950 border border-slate-800 rounded-xl p-3 text-sm text-white focus:outline-none">
-                <input type="password" id="admin-pass" placeholder="Password" class="w-full bg-slate-950 border border-slate-800 rounded-xl p-3 text-sm text-white focus:outline-none">
-                <button onclick="loginAdmin()" class="w-full bg-yellow-500 hover:bg-yellow-400 text-slate-950 font-extrabold py-3 rounded-xl text-sm uppercase tracking-wider transition">Secure Admin Login</button>
-            </div>
-
-            <!-- Secured Control Panel -->
-            <div id="admin-dashboard-box" class="hidden space-y-6">
-                <!-- Notice Manager -->
-                <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 space-y-4">
-                    <h3 class="font-bold text-white uppercase tracking-wider flex items-center gap-2">
-                        <i class="fa-solid fa-bullhorn text-yellow-400"></i> Manage Announcements
-                    </h3>
-                    <div class="flex gap-2">
-                        <input type="text" id="admin-notice-input" placeholder="Type new announcement here..." class="flex-grow bg-slate-950 border border-slate-800 rounded-xl p-3 text-sm text-white focus:outline-none focus:border-yellow-400">
-                        <button onclick="addNotice()" class="bg-yellow-500 hover:bg-yellow-400 text-black font-extrabold px-4 py-3 rounded-xl text-xs uppercase tracking-wider transition shrink-0">+ Add Notice</button>
+            <div id="teams-grid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4">
+                <!-- Franchise Team 1 -->
+                <div class="glass-card rounded-2xl p-4 text-center space-y-3 hover:border-amber-500/50 transition duration-300">
+                    <img src="https://api.dicebear.com/7.x/identicon/svg?seed=BamundiStrikers" class="w-16 h-16 mx-auto rounded-full bg-slate-900 border-2 border-amber-500/40 p-2">
+                    <div>
+                        <h4 class="font-black text-sm text-white truncate">Bamundi Strikers</h4>
+                        <p class="text-[11px] text-amber-400 font-medium">Captain: Rahat Ali</p>
                     </div>
-                    <div id="admin-notices-list" class="space-y-2 max-h-60 overflow-y-auto pt-2"></div>
                 </div>
-
-                <!-- Prize Editor -->
-                <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 space-y-3">
-                    <div class="flex justify-between items-center">
-                        <h3 class="font-bold text-white uppercase tracking-wider">Edit Prize Pool</h3>
-                        <button onclick="addPrizeRow()" class="bg-slate-800 hover:bg-slate-700 text-yellow-400 font-bold px-3 py-1.5 rounded-lg text-xs">+ Add Position</button>
+                <!-- Franchise Team 2 -->
+                <div class="glass-card rounded-2xl p-4 text-center space-y-3 hover:border-amber-500/50 transition duration-300">
+                    <img src="https://api.dicebear.com/7.x/identicon/svg?seed=GramWarriors" class="w-16 h-16 mx-auto rounded-full bg-slate-900 border-2 border-indigo-500/40 p-2">
+                    <div>
+                        <h4 class="font-black text-sm text-white truncate">Gram Warriors</h4>
+                        <p class="text-[11px] text-indigo-400 font-medium">Captain: Vikram Roy</p>
                     </div>
-                    <form onsubmit="savePrizeChanges(event)" class="space-y-3">
-                        <div id="admin-prize-editor" class="space-y-2"></div>
-                        <button type="submit" class="w-full bg-yellow-400 hover:bg-yellow-300 text-black font-extrabold py-3 rounded-xl text-sm uppercase tracking-wider transition">Save Prize Pool to DB</button>
-                    </form>
                 </div>
-
-                <!-- Player Approvals & Auction -->
-                <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 space-y-3">
-                    <h3 class="font-bold text-white uppercase tracking-wider">Player Approval & Auction Assignment</h3>
-                    <div class="overflow-x-auto">
-                        <table class="w-full text-left text-sm text-slate-300">
-                            <thead class="bg-slate-950 text-xs uppercase text-yellow-400/80">
-                                <tr>
-                                    <th class="p-3">Player</th>
-                                    <th class="p-3">UTR / Payment</th>
-                                    <th class="p-3">Team</th>
-                                    <th class="p-3">Auction Rate (₹)</th>
-                                    <th class="p-3">Action</th>
-                                </tr>
-                            </thead>
-                            <tbody id="admin-player-body" class="divide-y divide-slate-800/60"></tbody>
-                        </table>
+                <!-- Franchise Team 3 -->
+                <div class="glass-card rounded-2xl p-4 text-center space-y-3 hover:border-amber-500/50 transition duration-300">
+                    <img src="https://api.dicebear.com/7.x/identicon/svg?seed=RoyalRiders" class="w-16 h-16 mx-auto rounded-full bg-slate-900 border-2 border-emerald-500/40 p-2">
+                    <div>
+                        <h4 class="font-black text-sm text-white truncate">Royal Riders</h4>
+                        <p class="text-[11px] text-emerald-400 font-medium">Captain: Aman Khan</p>
+                    </div>
+                </div>
+                <!-- Franchise Team 4 -->
+                <div class="glass-card rounded-2xl p-4 text-center space-y-3 hover:border-amber-500/50 transition duration-300">
+                    <img src="https://api.dicebear.com/7.x/identicon/svg?seed=SuperKings" class="w-16 h-16 mx-auto rounded-full bg-slate-900 border-2 border-rose-500/40 p-2">
+                    <div>
+                        <h4 class="font-black text-sm text-white truncate">Super Kings BG</h4>
+                        <p class="text-[11px] text-rose-400 font-medium">Captain: Sourav D.</p>
+                    </div>
+                </div>
+                <!-- Franchise Team 5 -->
+                <div class="glass-card rounded-2xl p-4 text-center space-y-3 hover:border-amber-500/50 transition duration-300">
+                    <img src="https://api.dicebear.com/7.x/identicon/svg?seed=Thunderbolts" class="w-16 h-16 mx-auto rounded-full bg-slate-900 border-2 border-purple-500/40 p-2">
+                    <div>
+                        <h4 class="font-black text-sm text-white truncate">Thunderbolts XI</h4>
+                        <p class="text-[11px] text-purple-400 font-medium">Captain: Rohit Das</p>
+                    </div>
+                </div>
+                <!-- Franchise Team 6 -->
+                <div class="glass-card rounded-2xl p-4 text-center space-y-3 hover:border-amber-500/50 transition duration-300">
+                    <img src="https://api.dicebear.com/7.x/identicon/svg?seed=RisingStars" class="w-16 h-16 mx-auto rounded-full bg-slate-900 border-2 border-teal-500/40 p-2">
+                    <div>
+                        <h4 class="font-black text-sm text-white truncate">Rising Stars</h4>
+                        <p class="text-[11px] text-teal-400 font-medium">Captain: Tuhin Sen</p>
                     </div>
                 </div>
             </div>
         </section>
 
-        <!-- CONTACT FOOTER BAR (MATCHING POSTER CONTACTS) -->
-        <footer class="bg-slate-900/90 border border-yellow-500/30 rounded-2xl p-4 shadow-xl">
-            <div class="flex flex-col md:flex-row items-center justify-between gap-4">
-                <div class="flex items-center gap-2 text-yellow-400 font-extrabold uppercase text-sm tracking-wider">
-                    <i class="fa-solid fa-phone-volume text-lg"></i>
-                    <span>Contact Info:</span>
-                </div>
-                <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 w-full md:w-auto text-xs">
-                    <a href="tel:7076317963" class="bg-slate-950 border border-slate-800 hover:border-yellow-400/60 px-4 py-2 rounded-xl flex items-center gap-2 transition">
-                        <i class="fa-solid fa-user text-yellow-400"></i>
-                        <span><strong class="text-white">RINKU:</strong> 7076317963</span>
-                    </a>
-                    <a href="tel:6294953527" class="bg-slate-950 border border-slate-800 hover:border-yellow-400/60 px-4 py-2 rounded-xl flex items-center gap-2 transition">
-                        <i class="fa-solid fa-user text-yellow-400"></i>
-                        <span><strong class="text-white">TAJ:</strong> 6294953527</span>
-                    </a>
-                    <a href="tel:7076103664" class="bg-slate-950 border border-slate-800 hover:border-yellow-400/60 px-4 py-2 rounded-xl flex items-center gap-2 transition">
-                        <i class="fa-solid fa-user text-yellow-400"></i>
-                        <span><strong class="text-white">SONY:</strong> 7076103664</span>
-                    </a>
-                </div>
+        <!-- ABOUT SECTION -->
+        <section class="glass-card rounded-3xl p-8 space-y-4">
+            <div class="flex items-center space-x-3">
+                <div class="w-8 h-8 rounded-lg bg-indigo-500/20 flex items-center justify-center text-indigo-400"><i class="fa-solid fa-circle-info text-lg"></i></div>
+                <h3 id="about-title" class="text-2xl font-black text-white">About the League</h3>
             </div>
-        </footer>
+            <p id="about-content" class="text-slate-300 text-sm leading-relaxed">
+                Loading about details...
+            </p>
+        </section>
+
+        <!-- RULES & REGULATIONS SECTION -->
+        <section class="glass-card rounded-3xl p-8 space-y-6">
+            <div class="flex items-center space-x-3">
+                <div class="w-8 h-8 rounded-lg bg-amber-500/20 flex items-center justify-center text-amber-400"><i class="fa-solid fa-gavel text-lg"></i></div>
+                <h3 class="text-2xl font-black text-white">Tournament Rules & Guidelines</h3>
+            </div>
+            <div id="rules-grid" class="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs text-slate-300">
+                <!-- Dynamically rendered rules -->
+            </div>
+        </section>
+
+        <!-- UPCOMING FIXTURES -->
+        <div class="space-y-4">
+            <h3 class="text-2xl font-black text-white flex items-center">
+                <i class="fa-solid fa-calendar-days mr-2.5 text-indigo-400"></i> Upcoming Fixtures
+            </h3>
+            <div id="matches-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+                <!-- Rendered dynamically -->
+            </div>
+        </div>
+
+        <!-- ORGANIZING COMMITTEE MEMBERS SECTION (AT THE BOTTOM) -->
+        <section class="space-y-6 pt-6 border-t border-slate-800">
+            <div class="text-center space-y-1">
+                <h3 class="text-2xl font-black text-white">Organizing Committee</h3>
+                <p class="text-xs text-slate-400">The dedicated team behind Bamundi Gram Premier League</p>
+            </div>
+            <div id="committee-grid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4">
+                <!-- Committee cards rendered dynamically -->
+            </div>
+        </section>
 
     </main>
 
-    <!-- Frontend Application Logic -->
+    <!-- FOOTER WITH ADDRESS & DEVELOPER SECTION -->
+    <footer class="bg-slate-950 border-t border-slate-800/80 pt-12 pb-8 px-4 mt-16">
+        <div class="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-8 pb-8 border-b border-slate-800 text-xs">
+            <!-- Address Section -->
+            <div class="space-y-3">
+                <h4 class="font-black text-white text-sm uppercase tracking-wider text-amber-400">Tournament Grounds</h4>
+                <p class="text-slate-400 leading-relaxed">
+                    <i class="fa-solid fa-location-dot text-amber-500 mr-2"></i>Bamundi Play Ground, Vill: Bamundi, Dist: Kamrup, Assam, India - 781102
+                </p>
+                <p class="text-slate-400"><i class="fa-solid fa-phone text-amber-500 mr-2"></i>Helpline: +91 98765 43210</p>
+            </div>
+
+            <!-- Quick Links -->
+            <div class="space-y-3">
+                <h4 class="font-black text-white text-sm uppercase tracking-wider text-amber-400">Quick Links</h4>
+                <ul class="space-y-1.5 text-slate-400">
+                    <li><a href="/" class="hover:text-amber-400 transition">Home Dashboard</a></li>
+                    <li><a href="/directory" class="hover:text-amber-400 transition">Players Directory</a></li>
+                    <li><a href="/register" class="hover:text-amber-400 transition">Registration & Fee Payment</a></li>
+                    <li><a href="/edit-profile" class="hover:text-emerald-400 transition">Self-Service Profile Edit</a></li>
+                </ul>
+            </div>
+
+            <!-- Developer Section -->
+            <div class="space-y-3">
+                <h4 class="font-black text-white text-sm uppercase tracking-wider text-amber-400">Developer & Tech Credits</h4>
+                <p class="text-slate-400 leading-relaxed">
+                    Designed & Engineered by <span class="font-bold text-white">BGPL Tech Wing</span> 
+                </p>
+                <p class="text-slate-500 text-[11px]">System Status: <span class="text-emerald-400 font-bold">Online</span></p>
+            </div>
+        </div>
+
+        <div class="max-w-7xl mx-auto pt-6 text-center text-xs text-slate-500">
+            <p>© 2026 Bamundi Gram Premier League (BGPL). All Rights Reserved.</p>
+        </div>
+    </footer>
+    <!-- TEAM DETAILS MODAL -->
+<div id="team-modal" class="hidden fixed inset-0 bg-slate-950/80 backdrop-blur-md flex justify-center items-center z-50 p-4">
+    <div class="glass-card rounded-3xl max-w-2xl w-full p-6 space-y-6 shadow-2xl border border-slate-700/80 max-h-[90vh] overflow-y-auto">
+        <div class="flex justify-between items-center border-b border-slate-800 pb-4">
+            <div class="flex items-center space-x-3">
+                <img id="modal-team-logo" src="" class="w-12 h-12 rounded-full bg-slate-900 border border-amber-500/40 p-1 object-cover">
+                <div>
+                    <h3 id="modal-team-name" class="text-xl font-black text-white">Team Details</h3>
+                    <p id="modal-team-owner" class="text-xs text-amber-400 font-semibold">Owner: Loading...</p>
+                </div>
+            </div>
+            <button onclick="closeTeamModal()" class="text-slate-400 hover:text-white text-2xl font-bold px-2">&times;</button>
+        </div>
+
+        <div class="space-y-4">
+            <h4 class="text-sm font-extrabold text-slate-300 uppercase tracking-wider">Squad Roster & Auction Pricing</h4>
+            <div class="overflow-x-auto">
+                <table class="w-full text-left text-sm text-slate-300">
+                    <thead class="bg-slate-900/80 text-xs uppercase text-slate-400">
+                        <tr>
+                            <th class="p-3">Player Name</th>
+                            <th class="p-3">Designation / Role</th>
+                            <th class="p-3 text-right">Auction Price</th>
+                        </tr>
+                    </thead>
+                    <tbody id="modal-squad-list" class="divide-y divide-slate-800">
+                        <!-- Dynamic rows -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div class="flex justify-end pt-2">
+            <button onclick="closeTeamModal()" class="bg-slate-800 hover:bg-slate-700 text-slate-200 px-5 py-2.5 rounded-xl text-xs font-bold transition">Close</button>
+        </div>
+    </div>
+</div>
+    <!-- FRONTEND DATA HYDRATION SCRIPT -->
     <script>
-        let appData = { notices: [], prize: [], teams: [], players: [] };
-        let adminToken = localStorage.getItem('bgpl_token') || '';
+        let globalRegistrants = [];
+        fetch('/api/public/data')
+            .then(res => res.json())
+            .then(data => {
+                // Notices Marquee
+                
+                if (data.notices && data.notices.length > 0) {
+                    document.getElementById('notice-ticker').innerText = data.notices.map(n => `📢 ${n.title}: ${n.content}`).join('   |   ');
+                } else {
+                    document.getElementById('notice-ticker').innerText = '🔥 Welcome to Bamundi Gram Premier League 2026! Registration for players and team owners is currently open.';
+                }
 
-        async function fetchAppData() {
-            try {
-                const res = await fetch('/api/data');
-                appData = await res.json();
-                renderApp();
-            } catch (err) {
-                console.error("Failed to load app state:", err);
-            }
-        }
+                // Slides Carousel
+                if (data.slides && data.slides.length > 0) {
+                    document.getElementById('carousel-img').src = data.slides[0].imageUrl;
+                    document.getElementById('carousel-caption').innerText = data.slides[0].caption || 'Bamundi Gram Premier League Season 2026';
+                }
 
-        function switchTab(tab) {
-            ['dashboard', 'register', 'admin'].forEach(t => {
-                document.getElementById(`tab-${t}`).classList.add('hidden');
-                document.getElementById(`nav-${t}`).className = "px-3.5 py-1.5 rounded-lg text-xs font-bold uppercase tracking-wider text-slate-300 hover:bg-slate-800 transition";
-            });
-            document.getElementById(`tab-${tab}`).classList.remove('hidden');
-            document.getElementById(`nav-${tab}`).className = "px-3.5 py-1.5 rounded-lg text-xs font-bold uppercase tracking-wider bg-yellow-400 text-slate-950 transition";
-            if(tab === 'admin') checkAdminAuthState();
-        }
-
-        function renderApp() {
-            // Sort Notices (Newest First)
-            const sortedNotices = [...(appData.notices || [])].sort((a, b) => b.timestamp - a.timestamp);
-
-            // Dashboard Notices Render
-            const dashNoticesList = document.getElementById('dashboard-notices-list');
-            if (sortedNotices.length === 0) {
-                dashNoticesList.innerHTML = `<div class="text-xs text-slate-500 italic p-2">No active announcements.</div>`;
-            } else {
-                dashNoticesList.innerHTML = sortedNotices.map((n, idx) => `
-                    <div class="bg-slate-950 border-l-4 ${idx === 0 ? 'border-yellow-400' : 'border-slate-700'} p-3 rounded-r-xl flex justify-between items-center gap-3">
-                        <div class="text-xs font-medium text-slate-200">
-                            ${n.text}
+                // Fixtures Grid
+                const matchesGrid = document.getElementById('matches-grid');
+                if (data.matches && data.matches.length > 0) {
+                    matchesGrid.innerHTML = data.matches.map(m => `
+                        <div class="glass-card rounded-2xl p-5 shadow-xl space-y-3 hover:border-slate-700 transition">
+                            <div class="flex justify-between items-center text-xs font-semibold">
+                                <span class="bg-indigo-500/10 text-indigo-400 border border-indigo-500/20 px-2.5 py-1 rounded-md">Scheduled</span>
+                                <span class="text-slate-400"><i class="fa-regular fa-clock mr-1"></i>${new Date(m.matchDate).toLocaleDateString()}</span>
+                            </div>
+                            <div class="flex justify-between items-center py-2">
+                                <span class="font-black text-white text-lg">${m.teamA}</span>
+                                <span class="text-xs font-bold text-amber-400 px-2 py-1 bg-amber-500/10 rounded">VS</span>
+                                <span class="font-black text-white text-lg">${m.teamB}</span>
+                            </div>
+                            <p class="text-xs text-slate-400 pt-2 border-t border-slate-800 flex items-center"><i class="fa-solid fa-location-dot mr-1.5 text-amber-500"></i>${m.venue}</p>
                         </div>
-                        <span class="text-[10px] bg-slate-900 text-yellow-400 px-2 py-0.5 rounded font-mono shrink-0">
-                            ${new Date(n.timestamp).toLocaleDateString('en-IN', { month: 'short', day: 'numeric' })}
-                        </span>
-                    </div>
-                `).join('');
-            }
+                    `).join('');
+                } else {
+                    matchesGrid.innerHTML = `<div class="col-span-full p-8 text-center glass-card rounded-2xl text-slate-400 text-sm">No matches scheduled at the moment. Check back soon!</div>`;
+                }
 
-            // Admin Notices Render
-            const adminNoticesList = document.getElementById('admin-notices-list');
-            if (sortedNotices.length === 0) {
-                adminNoticesList.innerHTML = `<div class="text-xs text-slate-500 italic">No announcements posted yet.</div>`;
-            } else {
-                adminNoticesList.innerHTML = sortedNotices.map(n => `
-                    <div class="flex justify-between items-center bg-slate-950 p-2.5 rounded-xl border border-slate-800 text-xs">
-                        <span class="text-slate-200">${n.text}</span>
-                        <button onclick="deleteNotice(${n.id})" class="text-red-400 hover:text-red-300 ml-3 p-1"><i class="fa-solid fa-trash"></i></button>
-                    </div>
-                `).join('');
-            }
+                // Committee Members Grid
+                const committeeGrid = document.getElementById('committee-grid');
+                if (data.committee && data.committee.length > 0) {
+                    committeeGrid.innerHTML = data.committee.map(c => `
+                        <div class="glass-card rounded-2xl p-4 text-center space-y-2 shadow-lg hover:border-amber-500/40 transition">
+                            <img src="${c.photoUrl || 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=200&q=80'}" class="w-16 h-16 rounded-full mx-auto object-cover border-2 border-amber-500/50 shadow-md">
+                            <div>
+                                <h4 class="font-bold text-sm text-white truncate">${c.name}</h4>
+                                <p class="text-[11px] text-amber-400 font-semibold truncate">${c.designation}</p>
+                            </div>
+                        </div>
+                    `).join('');
+                } else {
+                    committeeGrid.innerHTML = `<div class="col-span-full text-slate-500 text-xs text-center py-4">Committee member directory updating.</div>`;
+                }
+                
+                // Render Dynamic About Section
+                if (data.about) {
+                    console.log("About Section Data:", data.about);
+                    document.getElementById('about-title').innerText = data.about.title || 'About the League';
+                    document.getElementById('about-content').innerText = data.about.content || '';
+                }
 
-            // Prize Grid
-            const prizeGrid = document.getElementById('prize-money-grid');
-            prizeGrid.innerHTML = appData.prize.map(p => `
-                <div class="bg-slate-950 border border-slate-800 rounded-xl p-4">
-                    <span class="text-xs text-slate-400 uppercase font-semibold block">${p.position}</span>
-                    <span class="text-xl font-extrabold text-yellow-400">₹${Number(p.amount).toLocaleString('en-IN')}</span>
-                </div>
-            `).join('');
+                // Render Dynamic Rules Grid
+                const rulesGrid = document.getElementById('rules-grid');
+                if (data.rules && data.rules.length > 0) {
+                    console.log("Rules Section Data:", data.rules);
+                    rulesGrid.innerHTML = data.rules.map(r => `
+                        <div class="p-4 bg-slate-900/80 rounded-2xl border border-slate-800 space-y-1">
+                            <p class="font-bold text-amber-400 text-sm">${r.ruleNumber}. ${r.title}</p>
+                            <p class="text-xs text-slate-300">${r.description}</p>
+                        </div>
+                    `).join('');
+                } else {
+                    rulesGrid.innerHTML = `<div class="col-span-full text-slate-400 text-xs">No rules configured yet.</div>`;
+                }
 
-            // Admin Prize Editor
-            const prizeEdit = document.getElementById('admin-prize-editor');
-            prizeEdit.innerHTML = appData.prize.map((p, i) => `
-                <div class="flex gap-2">
-                    <input type="text" value="${p.position}" class="prize-pos flex-grow bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-xs text-white" required>
-                    <input type="number" value="${p.amount}" class="prize-amt w-28 bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-xs text-white" required>
-                    <button type="button" onclick="this.parentElement.remove()" class="text-red-400 hover:text-red-300 p-1"><i class="fa-solid fa-trash"></i></button>
-                </div>
-            `).join('');
-
-            // Players Table (Dashboard)
-            const search = (document.getElementById('search-player').value || '').toLowerCase();
-            const tableBody = document.getElementById('player-table-body');
-            const filtered = appData.players.filter(p => p.name.toLowerCase().includes(search));
+                globalRegistrants = data.players || [];
             
-            tableBody.innerHTML = filtered.map(p => `
-                <tr class="hover:bg-slate-800/40">
-                    <td class="p-3 font-bold text-white">${p.name} <span class="text-xs text-slate-400 font-normal">(${p.role})</span></td>
-                    <td class="p-3 text-slate-400">${p.role}</td>
-                    <td class="p-3"><span class="px-2.5 py-1 rounded-md text-xs font-semibold ${p.team==='Unsold'?'bg-slate-800 text-slate-300':'bg-yellow-500/20 text-yellow-400 border border-yellow-500/30'}">${p.team}</span></td>
-                    <td class="p-3 font-bold text-yellow-400">₹${Number(p.auctionRate).toLocaleString('en-IN')}</td>
-                    <td class="p-3"><span class="px-2.5 py-1 rounded-md text-xs font-bold ${p.status==='Approved'?'bg-green-500/20 text-green-400 border border-green-500/30':'bg-yellow-500/20 text-yellow-400 border border-yellow-500/30'}">${p.status}</span></td>
-                </tr>
-            `).join('');
+                // Render Dynamic Franchises with Click Trigger
+                const teamsGrid = document.getElementById('teams-grid');
+                const owners = globalRegistrants.filter(p => p.role === 'Team Owner' || p.role === 'Both');
+                
+                if (owners.length > 0) {
+                    teamsGrid.innerHTML = owners.map(owner => {
+                        const teamName = owner.assignedTeam && owner.assignedTeam !== 'None' ? owner.assignedTeam : owner.fullName + ' XI';
+                        const logoUrl = owner.photoUrl || 'https://api.dicebear.com/7.x/identicon/svg?seed=' + encodeURIComponent(teamName);
+                        
+                        return `
+                            <div onclick="openTeamModal('${teamName}', '${owner.fullName}', '${logoUrl}')" class="glass-card rounded-2xl p-4 text-center space-y-3 hover:border-amber-500/50 transition duration-300 cursor-pointer group">
+                                <img src="${logoUrl}" class="w-16 h-16 mx-auto rounded-full bg-slate-900 border-2 border-amber-500/40 p-1 object-cover group-hover:scale-105 transition">
+                                <div>
+                                    <h4 class="font-black text-sm text-white truncate">${teamName}</h4>
+                                    <p class="text-[11px] text-amber-400 font-medium truncate"><i class="fa-solid fa-user-tie mr-1"></i> Owner: ${owner.fullName}</p>
+                                </div>
+                            </div>
+                        `;
+                    }).join('');
+                }
 
-            // Admin Approval Table
-            const adminBody = document.getElementById('admin-player-body');
-            adminBody.innerHTML = appData.players.map(p => {
-                const teamOpts = ['Pending', 'Unsold', ...appData.teams.map(t=>t.name)].map(t=> `<option value="${t}" ${p.team===t?'selected':''}>${t}</option>`).join('');
-                return `
-                    <tr class="hover:bg-slate-800/40">
-                        <td class="p-3 font-bold text-white">${p.name}<br><span class="text-xs text-slate-400">${p.phone}</span></td>
-                        <td class="p-3 font-mono text-yellow-400 text-xs">${p.utr}</td>
-                        <td class="p-3"><select onchange="updatePlayer(${p.id}, {team: this.value})" class="bg-slate-950 border border-slate-800 text-xs rounded-lg p-1.5 text-white">${teamOpts}</select></td>
-                        <td class="p-3"><input type="number" value="${p.auctionRate}" onchange="updatePlayer(${p.id}, {auctionRate: this.value})" class="w-24 bg-slate-950 border border-slate-800 text-xs rounded-lg p-1.5 text-white"></td>
-                        <td class="p-3">${p.status==='Pending'?`<button onclick="updatePlayer(${p.id}, {status: 'Approved'})" class="bg-green-600 hover:bg-green-500 text-white px-3 py-1 rounded-lg text-xs font-bold">Approve</button>`:`<span class="text-green-400 text-xs font-bold">Approved</span>`}</td>
+
+            })
+            .catch(err => console.error("Error loading home dashboard data:", err));
+
+           //});
+            function openTeamModal(teamName, ownerName, logoUrl) {
+            document.getElementById('modal-team-name').innerText = teamName;
+            document.getElementById('modal-team-owner').innerText = `Franchise Owner: ${ownerName}`;
+            document.getElementById('modal-team-logo').src = logoUrl;
+
+            // Filter players assigned to this team
+            const squad = globalRegistrants.filter(p => p.assignedTeam === teamName || (p.role === 'Team Owner' && p.fullName === ownerName));
+            
+            const squadList = document.getElementById('modal-squad-list');
+            if (squad.length > 0) {
+                squadList.innerHTML = squad.map(member => `
+                    <tr class="hover:bg-slate-900/40 transition">
+                        <td class="p-3 font-bold text-white flex items-center space-x-2">
+                            <img src="${member.photoUrl || 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=100&q=80'}" class="w-7 h-7 rounded-full object-cover">
+                            <span>${member.fullName}</span>
+                        </td>
+                        <td class="p-3">
+                            <span class="text-xs px-2 py-0.5 rounded-md font-semibold ${member.role === 'Team Owner' ? 'bg-indigo-500/20 text-indigo-400' : 'bg-amber-500/20 text-amber-400'}">
+                                ${member.role}
+                            </span>
+                        </td>
+                        <td class="p-3 text-right font-black text-emerald-400">
+                            ₹${member.soldPrice || 0}
+                        </td>
                     </tr>
-                `;
-            }).join('');
-        }
-
-        async function loginAdmin() {
-            const user = document.getElementById('admin-user').value;
-            const pass = document.getElementById('admin-pass').value;
-            const res = await fetch('/api/admin/login', {
-                method: 'POST',
-                headers: {'Content-Type': 'application/json'},
-                body: JSON.stringify({username: user, password: pass})
-            });
-            const data = await res.json();
-            if(data.success) {
-                adminToken = data.token;
-                localStorage.setItem('bgpl_token', adminToken);
-                checkAdminAuthState();
-                alert('Admin login successful!');
+                `).join('');
             } else {
-                alert('Invalid credentials!');
+                squadList.innerHTML = `<tr><td colspan="3" class="p-4 text-center text-slate-500 text-xs">No players assigned to this team yet.</td></tr>`;
             }
+
+            document.getElementById('team-modal').classList.remove('hidden');
         }
 
-        function checkAdminAuthState() {
-            if(adminToken) {
-                document.getElementById('admin-login-box').classList.add('hidden');
-                document.getElementById('admin-dashboard-box').classList.remove('hidden');
+        function closeTeamModal() {
+            document.getElementById('team-modal').classList.add('hidden');
+        }
+        function toggleMobileMenu() {
+            const menu = document.getElementById('mobile-menu');
+            const icon = document.getElementById('menu-icon');
+            if (menu.classList.contains('hidden')) {
+                menu.classList.remove('hidden');
+                icon.className = 'fa-solid fa-xmark text-lg text-amber-400';
             } else {
-                document.getElementById('admin-login-box').classList.remove('hidden');
-                document.getElementById('admin-dashboard-box').classList.add('hidden');
+                menu.classList.add('hidden');
+                icon.className = 'fa-solid fa-bars text-lg';
             }
         }
-
-        async function addNotice() {
-            const input = document.getElementById('admin-notice-input');
-            const text = input.value;
-            if(!text.trim()) return alert('Please enter notice text');
-
-            const res = await fetch('/api/notice', {
-                method: 'POST',
-                headers: {'Content-Type': 'application/json', 'Authorization': `Bearer ${adminToken}`},
-                body: JSON.stringify({text})
-            });
-            if(res.ok) { 
-                input.value = ''; 
-                fetchAppData(); 
-                alert('Notice published!'); 
-            } else { 
-                alert('Unauthorized or error publishing notice'); 
-            }
-        }
-
-        async function deleteNotice(id) {
-            if(!confirm('Are you sure you want to delete this notice?')) return;
-            const res = await fetch(`/api/notice/${id}`, {
-                method: 'DELETE',
-                headers: {'Authorization': `Bearer ${adminToken}`}
-            });
-            if(res.ok) fetchAppData(); else alert('Unauthorized action');
-        }
-
-        function addPrizeRow() {
-            const container = document.getElementById('admin-prize-editor');
-            const div = document.createElement('div');
-            div.className = "flex gap-2";
-            div.innerHTML = `<input type="text" placeholder="Position" class="prize-pos flex-grow bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-xs text-white" required><input type="number" placeholder="Amount" class="prize-amt w-28 bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-xs text-white" required><button type="button" onclick="this.parentElement.remove()" class="text-red-400 p-1"><i class="fa-solid fa-trash"></i></button>`;
-            container.appendChild(div);
-        }
-
-        async function savePrizeChanges(e) {
-            e.preventDefault();
-            const pos = document.querySelectorAll('.prize-pos');
-            const amt = document.querySelectorAll('.prize-amt');
-            const prize = [];
-            pos.forEach((el, i) => prize.push({position: el.value, amount: Number(amt[i].value), order: i+1}));
-
-            const res = await fetch('/api/prize', {
-                method: 'PUT',
-                headers: {'Content-Type': 'application/json', 'Authorization': `Bearer ${adminToken}`},
-                body: JSON.stringify({prize})
-            });
-            if(res.ok) { fetchAppData(); alert('Prize pool saved securely to MongoDB!'); } else { alert('Unauthorized'); }
-        }
-
-        async function updatePlayer(id, payload) {
-            const res = await fetch(`/api/player/${id}`, {
-                method: 'PUT',
-                headers: {'Content-Type': 'application/json', 'Authorization': `Bearer ${adminToken}`},
-                body: JSON.stringify(payload)
-            });
-            if(res.ok) fetchAppData(); else alert('Unauthorized action');
-        }
-
-        async function submitRegistration(e) {
-            e.preventDefault();
-            const payload = {
-                name: document.getElementById('reg-name').value,
-                role: document.getElementById('reg-role').value,
-                phone: document.getElementById('reg-phone').value,
-                utr: document.getElementById('reg-utr').value
-            };
-            const res = await fetch('/api/register', {
-                method: 'POST',
-                headers: {'Content-Type': 'application/json'},
-                body: JSON.stringify(payload)
-            });
-            if(res.ok) {
-                alert('Registration submitted successfully! Pending admin approval.');
-                e.target.reset();
-                switchTab('dashboard');
-                fetchAppData();
-            }
-        }
-
-        document.addEventListener('DOMContentLoaded', fetchAppData);
     </script>
+    <script src="./static/js/common.js"></script>
 </body>
 </html>

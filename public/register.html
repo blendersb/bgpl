@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BGPL 2026 - Registration</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body class="bg-slate-900 text-slate-100 font-sans min-h-screen flex flex-col">
+    <!-- NAVIGATION HEADER -->
+    <header class="glass-nav sticky top-0 z-50 shadow-2xl bg-slate-950/80 backdrop-blur-md border-b border-slate-800">
+        <div class="max-w-7xl mx-auto px-4 py-3 flex justify-between items-center">
+            
+            <!-- BRAND LOGO & TITLE -->
+            <a href="/" class="flex items-center space-x-3 group">
+                <img src="./static/logo-n.png" alt="BGPL Logo" class="w-10 h-10 object-contain rounded-xl bg-slate-900/80 p-1 border border-amber-500/30 group-hover:border-amber-400 transition">
+                <div>
+                    <h1 class="text-lg font-black tracking-wider text-transparent bg-clip-text bg-gradient-to-r from-amber-400 via-amber-200 to-yellow-400">BGPL 2026</h1>
+                    <p class="text-[10px] text-slate-400 font-medium tracking-widest uppercase">Bamundi Gram Premier League</p>
+                </div>
+            </a>
+
+            <!-- DESKTOP NAVIGATION LINKS -->
+            <nav class="hidden md:flex items-center space-x-5 text-sm font-semibold">
+                <a href="/" class="text-amber-400 transition hover:text-amber-300 flex items-center space-x-1.5 px-3 py-1.5 rounded-xl ">
+                    <i class="fa-solid fa-house text-xs"></i>
+                    <span>Home</span>
+                </a>
+                <a href="/directory?filter=Player" class="text-slate-300 transition hover:text-amber-400 flex items-center space-x-1.5 px-3 py-1.5 rounded-xl hover:bg-slate-900">
+                    <i class="fa-solid fa-users text-xs text-amber-500"></i>
+                    <span>Players</span>
+                </a>
+                <a href="/directory?filter=Team" class="text-slate-300 transition hover:text-amber-400 flex items-center space-x-1.5 px-3 py-1.5 rounded-xl hover:bg-slate-900">
+                    <i class="fa-solid fa-shield-halved text-xs text-indigo-400"></i>
+                    <span>Teams</span>
+                </a>
+                <a href="/directory?filter=Owner" class="text-slate-300 transition hover:text-amber-400 flex items-center space-x-1.5 px-3 py-1.5 rounded-xl hover:bg-slate-900">
+                    <i class="fa-solid fa-user-tie text-xs text-emerald-400"></i>
+                    <span>Owners</span>
+                </a>
+                <a href="/register" class="text-slate-300 transition hover:text-amber-400 flex items-center space-x-1.5 px-3 py-1.5 rounded-xl hover:bg-slate-900 bg-amber-500/10 border border-amber-500/20">
+                    <i class="fa-solid fa-user-plus text-xs text-rose-400"></i>
+                    <span>Registration</span>
+                </a>
+                <a href="/edit-profile" class="text-emerald-400 transition hover:text-emerald-300 flex items-center space-x-1 px-2.5 py-1.5 rounded-xl">
+                    <i class="fa-solid fa-user-pen text-xs"></i>
+                    <span>Edit Profile</span>
+                </a>
+                <a href="/admin" class="bg-amber-500/10 border border-amber-500/30 text-amber-400 px-3.5 py-1.5 rounded-xl transition hover:bg-amber-500 hover:text-slate-950 shadow-lg shadow-amber-500/10 flex items-center space-x-1.5">
+                    <i class="fa-solid fa-lock text-xs"></i>
+                    <span>Admin</span>
+                </a>
+            </nav>
+
+            <!-- MOBILE HAMBURGER TOGGLE BUTTON -->
+            <div class="md:hidden flex items-center space-x-2">
+                <a href="/admin" class="bg-amber-500/10 border border-amber-500/30 text-amber-400 px-3 py-1.5 rounded-xl text-xs font-bold">
+                    <i class="fa-solid fa-lock mr-1"></i> Admin
+                </a>
+                <button id="mobile-menu-button" onclick="toggleMobileMenu()" class="text-slate-300 hover:text-amber-400 focus:outline-none p-2 rounded-xl bg-slate-900 border border-slate-800">
+                    <i class="fa-solid fa-bars text-lg" id="menu-icon"></i>
+                </button>
+            </div>
+        </div>
+
+        <!-- COLLAPSIBLE MOBILE MENU DROPDOWN -->
+        <div id="mobile-menu" class="hidden md:hidden bg-slate-950/95 backdrop-blur-xl border-t border-slate-800 px-4 pt-3 pb-5 space-y-2 shadow-2xl">
+            <a href="/" class="flex items-center space-x-3 text-amber-400 font-semibold py-2.5 px-3 rounded-xl bg-amber-500/10 border border-amber-500/20">
+                <i class="fa-solid fa-house w-5 text-center text-amber-500"></i>
+                <span>Home</span>
+            </a>
+            <a href="/directory?filter=Player" class="flex items-center space-x-3 text-slate-300 font-semibold py-2.5 px-3 rounded-xl hover:bg-slate-900 transition">
+                <i class="fa-solid fa-users w-5 text-center text-amber-500"></i>
+                <span>Players Directory</span>
+            </a>
+            <a href="/directory?filter=Team" class="flex items-center space-x-3 text-slate-300 font-semibold py-2.5 px-3 rounded-xl hover:bg-slate-900 transition">
+                <i class="fa-solid fa-shield-halved w-5 text-center text-indigo-400"></i>
+                <span>Teams</span>
+            </a>
+            <a href="/directory?filter=Owner" class="flex items-center space-x-3 text-slate-300 font-semibold py-2.5 px-3 rounded-xl hover:bg-slate-900 transition">
+                <i class="fa-solid fa-user-tie w-5 text-center text-emerald-400"></i>
+                <span>Team Owners</span>
+            </a>
+            <a href="/register" class="flex items-center space-x-3 text-slate-300 font-semibold py-2.5 px-3 rounded-xl hover:bg-slate-900 transition">
+                <i class="fa-solid fa-user-plus w-5 text-center text-rose-400"></i>
+                <span>Registration</span>
+            </a>
+            <a href="/edit-profile" class="flex items-center space-x-3 text-emerald-400 font-semibold py-2.5 px-3 rounded-xl hover:bg-slate-900 transition">
+                <i class="fa-solid fa-user-pen w-5 text-center"></i>
+                <span>Edit Profile</span>
+            </a>
+        </div>
+    </header>
+    <main class="max-w-2xl w-full mx-auto p-4 flex-grow">
+        <div id="alert-box" class="hidden mb-4 p-3 rounded text-sm font-medium border"></div>
+        <div class="bg-slate-800 rounded-xl p-6 border border-slate-700 shadow-2xl space-y-6">
+            <h2 class="text-2xl font-bold text-amber-400 text-center">Tournament Registration</h2>
+            <!-- REGISTRATION FORM -->
+<form id="registration-form" onsubmit="handleRegistration(event)" class="space-y-4">
+    <!-- Full Name -->
+    <div>
+        <label class="block text-xs font-bold text-slate-300 mb-1">Full Name *</label>
+        <input type="text" id="reg-name" required placeholder="Enter full name" class="w-full bg-slate-900 border border-slate-700 rounded-xl p-3 text-white text-sm focus:outline-none focus:border-amber-400">
+    </div>
+
+    <!-- Role Selection (Triggers Conditional Upload Inputs) -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <div>
+            <label class="block text-xs font-bold text-slate-300 mb-1">Role *</label>
+            <select id="reg-role" onchange="toggleRoleFields()" required class="w-full bg-slate-900 border border-slate-700 rounded-xl p-3 text-white text-sm focus:outline-none focus:border-amber-400">
+                <option value="Player">Player</option>
+                <option value="Team Owner">Team Owner</option>
+                <option value="Both">Both (Player & Owner)</option>
+            </select>
+        </div>
+        <div>
+            <label class="block text-xs font-bold text-slate-300 mb-1">Age *</label>
+            <input type="number" id="reg-age" required min="10" max="70" placeholder="e.g. 24" class="w-full bg-slate-900 border border-slate-700 rounded-xl p-3 text-white text-sm focus:outline-none focus:border-amber-400">
+        </div>
+    </div>
+
+    <!-- Phone & Aadhaar -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <div>
+            <label class="block text-xs font-bold text-slate-300 mb-1">Phone Number *</label>
+            <input type="tel" id="reg-phone" required placeholder="10-digit mobile number" class="w-full bg-slate-900 border border-slate-700 rounded-xl p-3 text-white text-sm focus:outline-none focus:border-amber-400">
+        </div>
+        <div>
+            <label class="block text-xs font-bold text-slate-300 mb-1">Aadhaar Number *</label>
+            <input type="text" id="reg-aadhaar" required placeholder="XXXX XXXX XXXX" class="w-full bg-slate-900 border border-slate-700 rounded-xl p-3 text-white text-sm focus:outline-none focus:border-amber-400">
+        </div>
+    </div>
+
+    <!-- PLAYER SPECIFIC FIELDS -->
+    <div id="player-spec-fields" class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <div>
+            <label class="block text-xs font-bold text-slate-300 mb-1">Player Category *</label>
+            <select id="reg-category" class="w-full bg-slate-900 border border-slate-700 rounded-xl p-3 text-white text-sm focus:outline-none focus:border-amber-400">
+                <option value="Batsman">Batsman</option>
+                <option value="Bowler">Bowler</option>
+                <option value="All-Rounder">All-Rounder</option>
+                <option value="Wicket-Keeper">Wicket-Keeper Batsman</option>
+            </select>
+        </div>
+        <div>
+            <label class="block text-xs font-bold text-slate-300 mb-1">Batting / Bowling Style *</label>
+            <select id="reg-style" class="w-full bg-slate-900 border border-slate-700 rounded-xl p-3 text-white text-sm focus:outline-none focus:border-amber-400">
+                <option value="Right-Handed">Right-Handed</option>
+                <option value="Left-Handed">Left-Handed</option>
+            </select>
+        </div>
+    </div>
+
+    <!-- Address & Description -->
+    <div>
+        <label class="block text-xs font-bold text-slate-300 mb-1">Address / Village *</label>
+        <input type="text" id="reg-address" required placeholder="Full residential address" class="w-full bg-slate-900 border border-slate-700 rounded-xl p-3 text-white text-sm focus:outline-none focus:border-amber-400">
+    </div>
+    <div>
+        <label class="block text-xs font-bold text-slate-300 mb-1">Player Bio / Description</label>
+        <textarea id="reg-description" placeholder="Brief details about cricketing experience, previous teams, etc." class="w-full bg-slate-900 border border-slate-700 rounded-xl p-3 text-white text-sm h-20 focus:outline-none focus:border-amber-400"></textarea>
+    </div>
+
+    <!-- LOCAL FILE UPLOADS -->
+    <div class="space-y-4 pt-2 border-t border-slate-800">
+        <!-- Photo Upload (Player / Both) -->
+        <div id="photo-upload-group">
+            <label class="block text-xs font-bold text-slate-300 mb-1">Upload Photo (Local File) *</label>
+            <input type="file" id="reg-photo-file" accept="image/*" class="w-full bg-slate-900 border border-slate-700 rounded-xl p-2.5 text-white text-xs file:mr-4 file:py-1.5 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-amber-500 file:text-slate-950 hover:file:bg-amber-400">
+        </div>
+
+        <!-- Team Logo Upload (Team Owner / Both) -->
+        <div id="team-logo-upload-group" class="hidden">
+            <label class="block text-xs font-bold text-slate-300 mb-1">Upload Team Logo (Local File) *</label>
+            <input type="file" id="reg-logo-file" accept="image/*" class="w-full bg-slate-900 border border-slate-700 rounded-xl p-2.5 text-white text-xs file:mr-4 file:py-1.5 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-indigo-500 file:text-white hover:file:bg-indigo-400">
+        </div>
+        <!-- PAYMENT & FEE BOX -->
+        <div class="bg-slate-900/80 border border-slate-700 p-5 rounded-2xl space-y-4">
+            <div class="flex justify-between items-center">
+                <div>
+                    <p class="text-xs text-slate-400">Required Registration Fee</p>
+                    <h4 id="fee-amount" class="text-2xl font-black text-amber-400">₹--</h4>
+                </div>
+                <div class="text-right">
+                    <p class="text-[10px] text-slate-400">Pay via any UPI App</p>
+                    <p id="display-upi-id" class="text-xs font-bold text-emerald-400">Loading UPI...</p>
+                </div>
+            </div>
+
+            <!-- QR Code & Deep Link Container -->
+            <div class="flex flex-col sm:flex-row items-center gap-4 pt-3 border-t border-slate-800">
+                <div class="w-32 h-32 bg-slate-950 p-2 rounded-xl border border-slate-700 flex items-center justify-center">
+                    <img id="qr-code-img" src="" alt="Payment QR Code" class="w-full h-full object-contain rounded-lg">
+                </div>
+                <div class="space-y-2 flex-1 text-xs text-slate-300 text-center sm:text-left">
+                    <p class="font-bold text-white">How to pay:</p>
+                    <p>1. Scan the QR code using Google Pay, PhonePe, Paytm, or BHIM.</p>
+                    <p>2. Complete the payment corresponding to your role fee.</p>
+                    <p>3. Upload your payment screenshot below to submit verification.</p>
+                    <a id="upi-deeplink" href="#" class="inline-block mt-2 bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 hover:bg-emerald-500 hover:text-slate-950 font-bold px-4 py-2 rounded-xl transition">
+                        <i class="fa-solid fa-mobile-screen-button mr-1"></i> Pay via UPI App
+                    </a>
+                </div>
+            </div>
+        </div>
+        <!-- Payment Screenshot Upload -->
+        <div>
+            <label class="block text-xs font-bold text-slate-300 mb-1">Upload Payment Screenshot (Local File) *</label>
+            <input type="file" id="reg-payment-file" accept="image/*" required class="w-full bg-slate-900 border border-slate-700 rounded-xl p-2.5 text-white text-xs file:mr-4 file:py-1.5 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-emerald-500 file:text-slate-950 hover:file:bg-emerald-400">
+        </div>
+    </div>
+
+    <button type="submit" class="w-full bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 text-slate-950 font-black py-3.5 rounded-xl shadow-lg transition transform active:scale-95">
+        Submit Registration
+    </button>
+</form>
+        </div>
+    </main>
+    <script>
+    //     function toggleRoleFields() {
+    //     const role = document.getElementById('reg-role').value;
+    //     const playerSpec = document.getElementById('player-spec-fields');
+    //     const photoGroup = document.getElementById('photo-upload-group');
+    //     const logoGroup = document.getElementById('team-logo-upload-group');
+
+    //     if (role === 'Player') {
+    //         playerSpec.classList.remove('hidden');
+    //         photoGroup.classList.remove('hidden');
+    //         logoGroup.classList.add('hidden');
+    //     } else if (role === 'Team Owner') {
+    //         playerSpec.classList.remove('hidden');
+    //         photoGroup.classList.remove('hidden');
+    //         logoGroup.classList.remove('hidden');
+    //     } else {
+    //         // Both
+    //         playerSpec.classList.remove('hidden');
+    //         photoGroup.classList.remove('hidden');
+    //         logoGroup.classList.remove('hidden');
+    //     }
+    // }
+    function toggleRoleFields() {
+        const role = document.getElementById('reg-role').value;
+        const playerSpec = document.getElementById('player-spec-fields');
+        const photoGroup = document.getElementById('photo-upload-group');
+        const logoGroup = document.getElementById('team-logo-upload-group');
+        const feeAmountEl = document.getElementById('fee-amount');
+        const upiDeeplink = document.getElementById('upi-deeplink');
+
+        let currentFee = 500;
+        if (role === 'Player') {
+            playerSpec.classList.remove('hidden');
+            photoGroup.classList.remove('hidden');
+            logoGroup.classList.add('hidden');
+            currentFee = tournamentConfig.playerFee;
+        } else if (role === 'Team Owner') {
+            playerSpec.classList.add('hidden');
+            photoGroup.classList.add('hidden');
+            logoGroup.classList.remove('hidden');
+            currentFee = tournamentConfig.ownerFee;
+        } else {
+            playerSpec.classList.remove('hidden');
+            photoGroup.classList.remove('hidden');
+            logoGroup.classList.remove('hidden');
+            currentFee = tournamentConfig.bothFee;
+        }
+
+        feeAmountEl.innerText = `₹${currentFee}`;
+        // Generate UPI deep link (upi://pay?pa=...&am=...)
+        upiDeeplink.href = `upi://pay?pa=${encodeURIComponent(tournamentConfig.upiId)}&pn=BGPL%202026&am=${currentFee}&cu=INR`;
+    }
+    async function handleRegistration(e) {
+        e.preventDefault();
+
+        // Use FormData for multi-part file binary upload
+        const formData = new FormData();
+        formData.append('fullName', document.getElementById('reg-name').value);
+        formData.append('role', document.getElementById('reg-role').value);
+        formData.append('age', document.getElementById('reg-age').value);
+        formData.append('phone', document.getElementById('reg-phone').value);
+        formData.append('aadhaar', document.getElementById('reg-aadhaar').value);
+        formData.append('category', document.getElementById('reg-category').value);
+        formData.append('battingStyle', document.getElementById('reg-style').value);
+        formData.append('address', document.getElementById('reg-address').value);
+        formData.append('description', document.getElementById('reg-description').value);
+
+        // Files
+        const photoInput = document.getElementById('reg-photo-file');
+        const logoInput = document.getElementById('reg-logo-file');
+        const paymentInput = document.getElementById('reg-payment-file');
+
+        if (photoInput.files[0]) formData.append('photo', photoInput.files[0]);
+        if (logoInput.files[0]) formData.append('teamLogo', logoInput.files[0]);
+        if (paymentInput.files[0]) formData.append('paymentScreenshot', paymentInput.files[0]);
+
+        const res = await fetch('/api/register', {
+            method: 'POST',
+            body: formData // No Content-Type header needed; browser automatically sets multipart/form-data
+        });
+
+        const data = await res.json();
+        const box = document.getElementById('alert-box');
+        box.className = res.ok ? 'mb-4 p-3 rounded text-sm font-medium border bg-emerald-500/10 border-emerald-500/30 text-emerald-400' : 'mb-4 p-3 rounded text-sm font-medium border bg-rose-500/10 border-rose-500/30 text-rose-400';
+        box.innerText = data.message || data.error;
+        box.classList.remove('hidden');
+        if (res.ok) document.getElementById('registration-form').reset();
+    }
+    let tournamentConfig = { playerFee: 500, ownerFee: 2000, bothFee: 2500, upiId: 'bgpl2026@upi', qrCodeUrl: '' };
+
+    // Fetch config on load
+    fetch('/api/public/config')
+        .then(res => res.json())
+        .then(data => {
+            if (data) {
+                tournamentConfig = data;
+                document.getElementById('display-upi-id').innerText = data.upiId || 'bgpl2026@upi';
+                if (data.qrCodeUrl) {
+                    document.getElementById('qr-code-img').src = data.qrCodeUrl;
+                }
+                toggleRoleFields(); // Refresh fee values
+            }
+        });
+    // Initialize toggle state on page load
+    toggleRoleFields();
+    </script>
+    <script src="./static/js/common.js"></script>
+</body>
+</html>
