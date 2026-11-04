@@ -40,7 +40,7 @@
         <div class="flex flex-wrap gap-2 border-b border-slate-800 pb-3 text-sm font-bold">
             <button onclick="switchTab('tab-registrants')" id="btn-tab-registrants" class="px-4 py-2 rounded-xl bg-amber-500 text-slate-950 transition">Registrants & Approvals</button>
             <button onclick="switchTab('tab-auction')" id="btn-tab-auction" class="px-4 py-2 rounded-xl bg-slate-800 text-slate-300 hover:bg-slate-700 transition">Auction Control</button>
-            <button onclick="switchTab('tab-payment-settings')" id="btn-tab-payment-settings" class="px-4 py-2 rounded-xl bg-slate-800 text-slate-300 hover:bg-slate-700 transition">Payment Settings</button>
+            <button onclick="switchTab('tab-payment-settings')" id="btn-tab-payment-settings" class="px-4 py-2 rounded-xl bg-slate-800 text-slate-300 hover:bg-slate-700 transition">Payment & Prize Settings</button>
             <button onclick="switchTab('tab-notices')" id="btn-tab-notices" class="px-4 py-2 rounded-xl bg-slate-800 text-slate-300 hover:bg-slate-700 transition">Notices</button>
             <button onclick="switchTab('tab-committee')" id="btn-tab-committee" class="px-4 py-2 rounded-xl bg-slate-800 text-slate-300 hover:bg-slate-700 transition">Committee & Matches</button>
             <button onclick="switchTab('tab-about-rules')" id="btn-tab-about-rules" class="px-4 py-2 rounded-xl bg-slate-800 text-slate-300 hover:bg-slate-700 transition">About & Rules</button>
@@ -98,53 +98,96 @@
                 </div>
             </div>
         </div>
-        <!-- ADMIN PAYMENT & FEE SETTINGS TAB -->
-        <div id="tab-payment-settings" class="space-y-6 admin-tab hidden">
+ <!-- TAB 3: payment-settings CENTER -->
+    <div id="tab-payment-settings" class="space-y-6 admin-tab hidden">
+        <!-- GRID CONTAINER FOR 2-COLUMN DESKTOP LAYOUT -->
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 items-start">
+            <!-- ADMIN PAYMENT & FEE SETTINGS TAB -->
+        
             <div class="bg-slate-800 rounded-xl p-4 border border-slate-700 overflow-hidden">
                 <div class="overflow-x-auto">
-            <h3 class="text-lg font-bold text-white"><i class="fa-solid fa-qrcode mr-2 text-emerald-400"></i> Registration Fees & Payment QR Setup</h3>
-            <form onsubmit="handleSaveConfig(event)" class="space-y-4">
-                <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                    <div>
-                        <label class="block text-xs text-slate-400 mb-1">Player Fee (₹)</label>
-                        <input type="number" id="admin-player-fee" required class="w-full bg-slate-900 border border-slate-700 rounded-xl p-3 text-white text-sm">
+                <h3 class="text-lg font-bold text-white"><i class="fa-solid fa-qrcode mr-2 text-emerald-400"></i> Registration Fees & Payment QR Setup</h3>
+                <form onsubmit="handleSaveConfig(event)" class="space-y-4">
+                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                        <div>
+                            <label class="block text-xs text-slate-400 mb-1">Player Fee (₹)</label>
+                            <input type="number" id="admin-player-fee" required class="w-full bg-slate-900 border border-slate-700 rounded-xl p-3 text-white text-sm">
+                        </div>
+                        <div>
+                            <label class="block text-xs text-slate-400 mb-1">Owner Fee (₹)</label>
+                            <input type="number" id="admin-owner-fee" required class="w-full bg-slate-900 border border-slate-700 rounded-xl p-3 text-white text-sm">
+                        </div>
+                        <div>
+                            <label class="block text-xs text-slate-400 mb-1">Both Fee (₹)</label>
+                            <input type="number" id="admin-both-fee" required class="w-full bg-slate-900 border border-slate-700 rounded-xl p-3 text-white text-sm">
+                        </div>
                     </div>
+
                     <div>
-                        <label class="block text-xs text-slate-400 mb-1">Owner Fee (₹)</label>
-                        <input type="number" id="admin-owner-fee" required class="w-full bg-slate-900 border border-slate-700 rounded-xl p-3 text-white text-sm">
+                        <label class="block text-xs text-slate-400 mb-1">UPI ID (e.g., merchant@upi)</label>
+                        <input type="text" id="admin-upi-id" required class="w-full bg-slate-900 border border-slate-700 rounded-xl p-3 text-white text-sm">
                     </div>
+
                     <div>
-                        <label class="block text-xs text-slate-400 mb-1">Both Fee (₹)</label>
-                        <input type="number" id="admin-both-fee" required class="w-full bg-slate-900 border border-slate-700 rounded-xl p-3 text-white text-sm">
+                        <label class="block text-xs text-slate-400 mb-1">Upload New Payment QR Image (Local File)</label>
+                        <input type="file" id="admin-qr-file" accept="image/*" class="w-full bg-slate-900 border border-slate-700 rounded-xl p-2.5 text-white text-xs file:mr-4 file:py-1.5 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-emerald-500 file:text-slate-950">
                     </div>
-                </div>
 
-                <div>
-                    <label class="block text-xs text-slate-400 mb-1">UPI ID (e.g., merchant@upi)</label>
-                    <input type="text" id="admin-upi-id" required class="w-full bg-slate-900 border border-slate-700 rounded-xl p-3 text-white text-sm">
-                </div>
+                    <button type="submit" class="bg-emerald-500 hover:bg-emerald-600 text-slate-950 font-bold px-5 py-2.5 rounded-xl text-xs transition">Save Payment Settings</button>
+                </form>
+                    </div>
+            </div>
+        
+            <!-- DYNAMIC PRIZE MANAGEMENT PANEL -->
+                <div class="bg-slate-800 rounded-xl p-4 border border-slate-700 overflow-hidden">
+                    <div class="overflow-x-auto">
+                        <div class="flex justify-between items-center border-b border-slate-700 pb-4">
+                            <h3 class="text-lg font-bold text-white"><i class="fa-solid fa-trophy mr-2 text-amber-400"></i> Manage Tournament Prizes</h3>
+                            <button onclick="openPrizeModal()" class="bg-amber-500 hover:bg-amber-600 text-slate-950 font-bold px-4 py-2 rounded-xl text-xs transition">
+                                <i class="fa-solid fa-plus mr-1"></i> Add New Prize
+                            </button>
+                        </div>
 
-                <div>
-                    <label class="block text-xs text-slate-400 mb-1">Upload New Payment QR Image (Local File)</label>
-                    <input type="file" id="admin-qr-file" accept="image/*" class="w-full bg-slate-900 border border-slate-700 rounded-xl p-2.5 text-white text-xs file:mr-4 file:py-1.5 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-emerald-500 file:text-slate-950">
-                </div>
-
-                <button type="submit" class="bg-emerald-500 hover:bg-emerald-600 text-slate-950 font-bold px-5 py-2.5 rounded-xl text-xs transition">Save Payment Settings</button>
-            </form>
-                </div>
+                        <!-- Prizes Table -->
+                        <div class="overflow-x-auto">
+                            <table class="w-full text-left text-xs text-slate-300">
+                                <thead class="bg-slate-900/80 text-slate-400 uppercase text-[10px]">
+                                    <tr>
+                                        <th class="p-3">Sequence</th>
+                                        <th class="p-3">Prize Title</th>
+                                        <th class="p-3">Amount (₹)</th>
+                                        <th class="p-3">Perks / Description</th>
+                                        <th class="p-3 text-right">Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="admin-prizes-table" class="divide-y divide-slate-700/60">
+                                    <!-- Populated dynamically via JS -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
             </div>
         </div>
+    </div>
+    
         <!-- TAB 3: NOTICES MANAGER -->
         <div id="tab-notices" class="space-y-6 admin-tab hidden">
-            <div class="bg-slate-800 p-6 rounded-xl border border-slate-700 space-y-4 max-w-2xl">
+             <div class="bg-slate-800 rounded-xl p-4 border border-slate-700 overflow-hidden">
+                <div class="overflow-x-auto">
                 <h3 class="text-lg font-bold text-white"><i class="fa-solid fa-bullhorn mr-2 text-amber-400"></i> Publish Notice</h3>
                 <form onsubmit="handleCreateNotice(event)" class="space-y-3">
                     <input type="text" id="notice-title" placeholder="Notice Title (e.g. Match Schedule Update)" required class="w-full bg-slate-900 border border-slate-700 rounded-xl p-3 text-white text-sm focus:outline-none focus:border-amber-400">
                     <textarea id="notice-content" placeholder="Write notice content here..." required class="w-full bg-slate-900 border border-slate-700 rounded-xl p-3 text-white text-sm h-28 focus:outline-none focus:border-amber-400"></textarea>
                     <button type="submit" class="bg-amber-500 hover:bg-amber-600 text-slate-950 font-bold px-5 py-2.5 rounded-xl text-xs transition">Publish Notice</button>
                 </form>
+                </div>
             </div>
-            <div id="notices-list" class="space-y-3 max-w-2xl"></div>
+            <div class="bg-slate-800 rounded-xl p-4 border border-slate-700 overflow-hidden">
+                <div class="overflow-x-auto">
+                    <div id="notices-list" class="space-y-6 max-w-2xl"></div>
+                </div>
+            </div>
+            
         </div>
 
         <!-- TAB 4: COMMITTEE & MATCHES SETUP -->
@@ -288,6 +331,36 @@
         </div>
     </div>
 
+    <!-- PRIZE EDIT/ADD MODAL -->
+    <div id="prize-modal" class="hidden fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+        <div class="bg-slate-900 border border-slate-700 rounded-2xl p-6 w-full max-w-md space-y-4 shadow-2xl">
+            <h3 id="modal-title" class="text-base font-bold text-white">Add Prize Category</h3>
+            <form onsubmit="handleSavePrize(event)" class="space-y-4">
+                <input type="hidden" id="prize-id">
+                <div>
+                    <label class="block text-xs text-slate-400 mb-1">Prize Title *</label>
+                    <input type="text" id="prize-title" required class="w-full bg-slate-950 border border-slate-700 rounded-xl p-3 text-white text-sm">
+                </div>
+                <div>
+                    <label class="block text-xs text-slate-400 mb-1">Amount (₹) *</label>
+                    <input type="number" id="prize-amount" required class="w-full bg-slate-950 border border-slate-700 rounded-xl p-3 text-white text-sm">
+                </div>
+                <div>
+                    <label class="block text-xs text-slate-400 mb-1">Perks / Trophies</label>
+                    <input type="text" id="prize-perks" class="w-full bg-slate-950 border border-slate-700 rounded-xl p-3 text-white text-sm">
+                </div>
+                <div>
+                    <label class="block text-xs text-slate-400 mb-1">Display Order</label>
+                    <input type="number" id="prize-order" class="w-full bg-slate-950 border border-slate-700 rounded-xl p-3 text-white text-sm">
+                </div>
+                <div class="flex space-x-3 pt-2">
+                    <button type="submit" class="flex-1 bg-amber-500 hover:bg-amber-600 text-slate-950 font-bold py-2.5 rounded-xl text-xs transition">Save Prize</button>
+                    <button type="button" onclick="closePrizeModal()" class="flex-1 bg-slate-800 hover:bg-slate-700 text-slate-300 font-bold py-2.5 rounded-xl text-xs transition">Cancel</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
     <!-- JAVASCRIPT LOGIC -->
     <script>
         const token = localStorage.getItem('BGPL_JWT');
@@ -339,20 +412,20 @@
                     renderAuctionTable();
                 }
 
-                // Notices
-                const resPub = await fetch('/api/public/data');
-                if (resPub.ok) {
-                    const pub = await resPub.json();
-                    document.getElementById('notices-list').innerHTML = pub.notices.map(n => `
-                        <div class="bg-slate-800 p-4 rounded-xl border border-slate-700 flex justify-between items-center">
-                            <div>
-                                <h4 class="font-bold text-white text-sm">${n.title}</h4>
-                                <p class="text-xs text-slate-400 mt-1">${n.content}</p>
-                            </div>
-                            <button onclick="deleteNotice('${n._id}')" class="text-rose-400 hover:text-rose-300 p-2"><i class="fa-solid fa-trash text-xs"></i></button>
-                        </div>
-                    `).join('') || '<p class="text-xs text-slate-400">No active notices.</p>';
-                }
+                //Notices
+                // const resPub = await fetch('/api/public/data');
+                // if (resPub.ok) {
+                //     const pub = await resPub.json();
+                //     document.getElementById('notices-list').innerHTML = pub.notices.map(n => `
+                //         <div class="bg-slate-800 p-4 rounded-xl border border-slate-700 flex justify-between items-center">
+                //             <div>
+                //                 <h4 class="font-bold text-white text-sm">${n.title}</h4>
+                //                 <p class="text-xs text-slate-400 mt-1">${n.content}</p>
+                //             </div>
+                //             <button onclick="deleteNotice('${n._id}')" class="text-rose-400 hover:text-rose-300 p-2"><i class="fa-solid fa-trash text-xs"></i></button>
+                //         </div>
+                //     `).join('') || '<p class="text-xs text-slate-400">No active notices.</p>';
+                // }
             } catch (err) {
                 console.error("Failed to load admin data:", err);
             }
@@ -516,6 +589,7 @@
             });
             showAlert("Auction details saved successfully!");
             loadAdminData();
+            loadPublicData();
         }
 
         // --- NOTICES, COMMITTEE & MATCHES CREATION ---
@@ -532,6 +606,7 @@
             showAlert("Notice published successfully!");
             document.getElementById('notice-title').value = "";
             document.getElementById('notice-content').value = "";
+            loadPublicData();
             loadAdminData();
         }
 
@@ -541,6 +616,7 @@
                 headers: { 'Authorization': `Bearer ${token}` }
             });
             showAlert("Notice deleted.");
+            loadPublicData();
             loadAdminData();
         }
 
@@ -578,7 +654,8 @@
         let allRules = [];
 
         // Load About & Rules Data
-        async function loadAboutAndRules() {
+        async function loadPublicData() {
+            const tbody = document.getElementById('admin-prizes-table');
             const res = await fetch('/api/public/data');
             if (res.ok) {
                 const data = await res.json();
@@ -589,6 +666,43 @@
                 }
                 // Load Rules
                 allRules = data.rules || [];
+
+                if (data.notices){
+                    document.getElementById('notices-list').innerHTML = data.notices.map(n => `
+                        <div class="bg-slate-800 p-4 rounded-xl border border-slate-700 flex justify-between items-center ">
+                            <div>
+                                <h4 class="font-bold text-white text-sm">${n.title}</h4>
+                                <p class="text-xs text-slate-400 mt-1">${n.content}</p>
+                            </div>
+                            <button onclick="deleteNotice('${n._id}')" class="text-rose-400 hover:text-rose-300 p-2"><i class="fa-solid fa-trash text-xs"></i></button>
+                        </div>
+                    `).join('') || '<p class="text-xs text-slate-400">No active notices.</p>';
+                }
+                if(data.prizes && data.prizes.length > 0){
+                    //const tbody = document.getElementById('admin-prizes-table');
+                    tbody.innerHTML = data.prizes.map(p => `
+                        <tr class="hover:bg-slate-900/40 transition">
+                        <td class="p-3 font-bold text-amber-400 flex items-center space-x-2">
+                            <span>#${p.order ?? index}</span>
+                            <div class="flex flex-col space-y-0.5">
+                                <button onclick="movePrize('${p._id}', 'up')" class="bg-slate-700 hover:bg-slate-600 text-white w-5 h-4 flex items-center justify-center rounded text-[10px]">▲</button>
+                                <button onclick="movePrize('${p._id}', 'down')" class="bg-slate-700 hover:bg-slate-600 text-white w-5 h-4 flex items-center justify-center rounded text-[10px]">▼</button>
+                            </div>
+                        </td>
+                        <td class="p-3 font-bold text-white">${p.title}</td>
+                        <td class="p-3 font-extrabold text-emerald-400">₹${p.amount.toLocaleString('en-IN')}</td>
+                        <td class="p-3 text-slate-400">${p.perks || 'None'}</td>
+                        <td class="p-3 text-right space-x-2">
+                            <button onclick="editPrize('${p._id}', '${p.title}', ${p.amount}, '${p.perks || ''}', ${p.order ?? 0})" class="bg-indigo-500/20 text-indigo-400 px-3 py-1.5 rounded-lg text-xs font-semibold hover:bg-indigo-500/30">Edit</button>
+                            <button onclick="deletePrize('${p._id}')" class="bg-rose-500/20 text-rose-400 px-3 py-1.5 rounded-lg text-xs font-semibold hover:bg-rose-500/30">Delete</button>
+                        </td>
+                    </tr>
+                    `).join('');
+                } else {
+                   
+                    tbody.innerHTML = `<tr><td colspan="4" class="p-4 text-center text-slate-500">No prizes added yet.</td></tr>`;
+                }
+
                 renderRulesList();
             }
         }
@@ -672,7 +786,7 @@
                 showAlert("New rule added successfully!");
             }
             closeRuleModal();
-            loadAboutAndRules();
+            loadPublicData();
         }
 
         async function deleteRule(id) {
@@ -682,7 +796,7 @@
                 headers: { 'Authorization': `Bearer ${token}` }
             });
             showAlert("Rule deleted.");
-            loadAboutAndRules();
+            loadPublicData();
         }
         // Load config on admin dashboard init
         async function loadConfig() {
@@ -716,9 +830,84 @@
         const data = await res.json();
         showAlert(data.message || data.error);
     }
+    // Fetch and render prizes on load
+    function openPrizeModal(id = '', title = '', amount = '', perks = '', order = '') {
+        document.getElementById('prize-id').value = id;
+        document.getElementById('prize-title').value = title;
+        document.getElementById('prize-amount').value = amount;
+        document.getElementById('prize-perks').value = perks;
+        document.getElementById('prize-order').value = order;
+        document.getElementById('modal-title').innerText = id ? 'Edit Prize Category' : 'Add Prize Category';
+        document.getElementById('prize-modal').classList.remove('hidden');
+    }
+
+    function closePrizeModal() {
+        document.getElementById('prize-modal').classList.add('hidden');
+    }
+
+    function editPrize(id, title, amount, perks, order) { 
+        openPrizeModal(id, title, amount, perks, order); 
+    }
+
+    async function movePrize(id, direction) {
+        //const token = localStorage.getItem('adminToken');
+        await fetch('/api/admin/prizes/move', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+            body: JSON.stringify({ id, direction })
+        });
+        loadPublicData();
+    }
+    async function handleSavePrize(e) {
+        e.preventDefault();
+        const payload = {
+            //id: document.getElementById('prize-id').value,
+            title: document.getElementById('prize-title').value,
+            amount: document.getElementById('prize-amount').value,
+            perks: document.getElementById('prize-perks').value,
+            order: document.getElementById('prize-order').value
+        };
+
+        //const token = localStorage.getItem('adminToken');
+        const res = await fetch('/api/admin/prizes', {
+            method: 'POST',
+            headers: { 
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}` 
+            },
+            body: JSON.stringify(payload)
+        });
+
+        const data = await res.json();
+        if (res.ok) {
+            showAlert(data.message);
+            closePrizeModal();
+            loadPublicData();
+        } else {
+            showAlert(data.error || 'Failed to save prize.');
+        }
+    }
+
+    async function deletePrize(id) {
+        if (!confirm('Are you sure you want to delete this prize category?')) return;
+        //const token = localStorage.getItem('adminToken');
+        const res = await fetch(`/api/admin/prizes/${id}`, {
+            method: 'DELETE',
+            headers: { 'Authorization': `Bearer ${token}` }
+        });
+        const data = await res.json();
+        if (res.ok) {
+            showAlert(data.message);
+            loadPublicData();
+        } else {
+            showAlert(data.error || 'Failed to delete prize.');
+        }
+    }
+
+        // Initialize table on load  
         loadConfig();
-// Ensure loadAboutAndRules() is called when initializing the admin dashboard
-        loadAboutAndRules();
+        // Ensure loadPublicData() is called when initializing the admin dashboard
+        loadPublicData();
         // Initialize Admin Dashboard Data
         loadAdminData();
     </script>

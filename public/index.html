@@ -147,33 +147,11 @@
                     <h3 class="text-xl font-black text-amber-400 flex items-center mb-4">
                         <i class="fa-solid fa-trophy mr-2.5 text-amber-500 animate-pulse text-2xl"></i> Prize Money Pool
                     </h3>
+                    <!-- Dynamic container -->
                     <div id="prize-list" class="space-y-3">
-                        <div class="p-4 bg-gradient-to-r from-amber-500/20 to-slate-900 rounded-2xl border border-amber-500/40 flex justify-between items-center shadow-xl">
-                            <div>
-                                <p class="font-black text-white text-base">🥇 1st Champions</p>
-                                <p class="text-xs text-amber-200/80">Grand Trophy + Gold Medals</p>
-                            </div>
-                            <span class="text-amber-400 font-black text-xl tracking-tight">₹50,000</span>
-                        </div>
-                        <div class="p-4 bg-gradient-to-r from-slate-800 to-slate-900 rounded-2xl border border-slate-700 flex justify-between items-center shadow-lg">
-                            <div>
-                                <p class="font-extrabold text-white text-sm">🥈 2nd Runners-Up</p>
-                                <p class="text-[11px] text-slate-400">Runner Trophy + Silver Medals</p>
-                            </div>
-                            <span class="text-slate-200 font-black text-lg">₹25,000</span>
-                        </div>
-                        <div class="p-3.5 bg-slate-900/90 rounded-2xl border border-slate-800 flex justify-between items-center">
-                            <div>
-                                <p class="font-bold text-slate-300 text-xs">⭐ Man of the Tournament</p>
-                                <p class="text-[10px] text-slate-500">Individual Trophy & Kit</p>
-                            </div>
-                            <span class="text-emerald-400 font-bold text-sm">₹5,000</span>
-                        </div>
+                        <div class="p-4 text-center text-slate-400 text-xs">Loading prize pool...</div>
                     </div>
                 </div>
-                <a href="/register" class="block text-center bg-gradient-to-r from-amber-500 via-amber-400 to-amber-600 hover:from-amber-600 hover:to-amber-700 text-slate-950 font-black py-3.5 rounded-2xl shadow-xl shadow-amber-500/20 transition transform active:scale-95">
-                    <i class="fa-solid fa-user-plus mr-2"></i> Register Now
-                </a>
             </div>
         </div>
 
@@ -333,9 +311,9 @@
             <div class="space-y-3">
                 <h4 class="font-black text-white text-sm uppercase tracking-wider text-amber-400">Tournament Grounds</h4>
                 <p class="text-slate-400 leading-relaxed">
-                    <i class="fa-solid fa-location-dot text-amber-500 mr-2"></i>Bamundi Play Ground, Vill: Bamundi, Dist: Kamrup, Assam, India - 781102
+                    <i class="fa-solid fa-location-dot text-amber-500 mr-2"></i>Komarpur Railway Station Play Ground, Bamundi, Purba Bardhaman, West Bengal, India
                 </p>
-                <p class="text-slate-400"><i class="fa-solid fa-phone text-amber-500 mr-2"></i>Helpline: +91 98765 43210</p>
+                <p class="text-slate-400"><i class="fa-solid fa-phone text-amber-500 mr-2"></i>Helpline: +91 **********</p>
             </div>
 
             <!-- Quick Links -->
@@ -500,6 +478,37 @@
                         `;
                     }).join('');
                 }
+
+                const prizeContainer = document.getElementById('prize-list');
+
+                if (data.prizes && data.prizes.length > 0) {
+                    prizeContainer.innerHTML = data.prizes.map((p, index) => {
+                        // Style the 1st prize differently as a highlight champion card
+                        const isWinner = index === 0;
+                        const bgClass = isWinner
+                            ? "p-4 bg-gradient-to-r from-amber-500/20 to-slate-900 rounded-2xl border border-amber-500/40 shadow-xl"
+                            : (index === 1
+                            ? "p-4 bg-gradient-to-r from-slate-800 to-slate-900 rounded-2xl border border-slate-700 shadow-lg"
+                            : "p-3.5 bg-slate-900/90 rounded-2xl border border-slate-800");
+
+                    const titlePrefix = index === 0 ? "🥇 " : (index === 1 ? "🥈 " : "⭐ ");
+                    const amountColor = isWinner ? "text-amber-400 text-xl font-black tracking-tight" : (index === 1 ? "text-slate-200 text-lg font-black" : "text-emerald-400 text-sm font-bold");
+
+                    return `
+                        <div class="${bgClass} flex justify-between items-center transition hover:border-amber-500/50">
+                            <div>
+                                <p class="font-black text-white ${isWinner ? 'text-base' : 'text-sm'}">${titlePrefix}${p.title}</p>
+                                <p class="text-xs text-amber-200/80">${p.perks || 'Trophy & Recognition'}</p>
+                            </div>
+                            <span class="${amountColor}">₹${p.amount.toLocaleString('en-IN')}</span>
+                        </div>
+                    `;
+                    }).join('');
+                } else {
+                    prizeContainer.innerHTML = `<div class="p-4 text-center text-slate-500 text-xs">Prize pool announcements coming soon.</div>`;
+                }
+
+               //
 
 
             })

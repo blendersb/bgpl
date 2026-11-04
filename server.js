@@ -108,6 +108,7 @@ mongoose.connect(process.env.MONGO_URI || 'mongodb://127.0.0.1:27017/bgpl_tourna
   .then(async () => {
     console.log('Secure MongoDB Connected');
     await seedDefaultContent();
+    await seedDefaultPrizes();
   })
   .catch(err => console.error('MongoDB Connection Error:', err));
 
@@ -159,11 +160,25 @@ const matchSchema = new mongoose.Schema({
     result: { type: String, default: 'TBD' }
 });
 
+// --- Schemas & Models ---
 const prizeSchema = new mongoose.Schema({
     title: { type: String, required: true },
     amount: { type: Number, required: true },
-    perks: { type: String, default: '' }
+    perks: { type: String, default: '' },
+    order: { type: Number, default: 0 }
 });
+
+// Seed default prizes on startup if none exist
+async function seedDefaultPrizes() {
+    const count = await Prize.countDocuments();
+    if (count === 0) {
+        await Prize.insertMany([
+            { title: '1st Champions', amount: 50000, perks: 'Grand Trophy + Gold Medals', order: 1 },
+            { title: '2nd Runners-Up', amount: 25000, perks: 'Runner Trophy + Silver Medals', order: 2 },
+            { title: 'Man of the Tournament', amount: 5000, perks: 'Individual Trophy & Kit', order: 3 }
+        ]);
+    }
+}
 
 const committeeSchema = new mongoose.Schema({
     name: { type: String, required: true },
@@ -244,7 +259,7 @@ app.get('/api/public/data', async (req, res) => {
         const { filter } = req.query;
         const notices = await Notice.find().sort({ createdAt: -1 });
         const matches = await Match.find({ status: 'Scheduled' }).sort({ matchDate: 1 });
-        const prizes = await Prize.find();
+        const prizes = await Prize.find({}).sort({ order: 1, amount: -1 });
         const committee = await Committee.find();
         const slides = await Slide.find().sort({ order: 1 });
         //const approvedPlayers = await Registrant.find({ status: 'Approved' }).select('-__v');
@@ -469,16 +484,83 @@ app.delete('/api/admin/matches/:id', verifyAdminJwt, async (req, res) => {
 });
 
 // Manage Prizes CRUD
+// app.post('/api/admin/prizes', verifyAdminJwt, async (req, res) => {
+//     const prize = new Prize(req.body);
+//     await prize.save();
+//     res.status(201).json({ success: true, prize });
+// });
+// Admin API to create or update a prize (Protected)
 app.post('/api/admin/prizes', verifyAdminJwt, async (req, res) => {
-    const prize = new Prize(req.body);
-    await prize.save();
-    res.status(201).json({ success: true, prize });
+    try {
+        const { id, title, amount, perks, order } = req.body;
+        if (id) {
+            await Prize.findByIdAndUpdate(id, { 
+                title, 
+                amount: Number(amount), 
+                perks, 
+                order: Number(order) || 0 
+            });
+            res.json({ message: 'Prize updated successfully!' });
+        } else {
+            const count = await Prize.countDocuments();
+            await Prize.create({ 
+                title, 
+                amount: Number(amount), 
+                perks, 
+                order: Number(order) !== undefined ? Number(order) : count + 1 
+            });
+            res.json({ message: 'Prize added successfully!' });
+        }
+    } catch (err) {
+        res.status(500).json({ error: 'Failed to save prize.' });
+    }
+});
+app.post('/api/admin/prizes/move', verifyAdminJwt, async (req, res) => {
+    try {
+        const { id, direction } = req.body;
+        const currentPrize = await Prize.findById(id);
+        if (!currentPrize) return res.status(404).json({ error: 'Prize not found.' });
+
+        const currentOrder = currentPrize.order || 0;
+        let targetPrize;
+
+        if (direction === 'up') {
+            targetPrize = await Prize.findOne({ order: { $lt: currentOrder } }).sort({ order: -1 });
+        } else {
+            targetPrize = await Prize.findOne({ order: { $gt: currentOrder } }).sort({ order: 1 });
+        }
+
+        if (targetPrize) {
+            const tempOrder = targetPrize.order;
+            targetPrize.order = currentOrder;
+            currentPrize.order = tempOrder;
+            await targetPrize.save();
+            await currentPrize.save();
+        } else {
+            currentPrize.order = direction === 'up' ? Math.max(0, currentOrder - 1) : currentOrder + 1;
+            await currentPrize.save();
+        }
+
+        res.json({ message: 'Sequence updated successfully!' });
+    } catch (err) {
+        res.status(500).json({ error: 'Failed to update sequence.' });
+    }
 });
 
+// Admin API to delete a prize (Protected)
 app.delete('/api/admin/prizes/:id', verifyAdminJwt, async (req, res) => {
-    await Prize.findByIdAndDelete(req.params.id);
-    res.json({ success: true, message: 'Prize deleted.' });
+    try {
+        await Prize.findByIdAndDelete(req.params.id);
+        res.json({ message: 'Prize deleted successfully!' });
+    } catch (err) {
+        res.status(500).json({ error: 'Failed to delete prize.' });
+    }
 });
+
+// app.delete('/api/admin/prizes/:id', verifyAdminJwt, async (req, res) => {
+//     await Prize.findByIdAndDelete(req.params.id);
+//     res.json({ success: true, message: 'Prize deleted.' });
+// });
 
 // Manage Committee CRUD
 app.post('/api/admin/committee', verifyAdminJwt, async (req, res) => {
