@@ -26,8 +26,12 @@
     <main class="max-w-7xl w-full mx-auto p-4 space-y-6 flex-grow">
         
         <!-- ALERT BANNER -->
-        <div id="admin-alert" class="hidden p-3 rounded-xl text-xs font-bold border"></div>
-
+        <!-- FLOATING TOP-RIGHT NOTIFICATION TOAST -->
+        <div id="alert-box" class="fixed top-5 right-5 z-50 hidden transition-all duration-300 transform translate-y-[-10%] opacity-0 max-w-sm p-4 rounded-xl shadow-2xl text-xs font-bold border backdrop-blur-md flex items-center space-x-3">
+            <!-- Icon or message placeholder -->
+            <span id="alert-icon"></span>
+            <span id="alert-text"></span>
+        </div>
         <!-- ANALYTICS CARDS -->
         <div class="grid grid-cols-2 sm:grid-cols-4 gap-4">
             <div class="bg-slate-800 p-4 rounded-xl border border-slate-700"><p class="text-xs text-slate-400">Total Players</p><p id="stat-players" class="text-2xl font-black text-white mt-1">0</p></div>
@@ -403,12 +407,35 @@
             window.location.href = '/admin';
         }
 
-        function showAlert(msg, isSuccess = true) {
-            const alertBox = document.getElementById('admin-alert');
-            alertBox.className = `p-3 rounded-xl text-xs font-bold border ${isSuccess ? 'bg-emerald-500/10 border-emerald-500/30 text-emerald-400' : 'bg-rose-500/10 border-rose-500/30 text-rose-400'}`;
-            alertBox.innerText = msg;
-            alertBox.classList.remove('hidden');
-            setTimeout(() => alertBox.classList.add('hidden'), 5000);
+        let alertTimeout = null;
+
+        function showAlert(msg, isError = false) {
+            const box = document.getElementById('alert-box');
+            const textEl = document.getElementById('alert-text');
+            const iconEl = document.getElementById('alert-icon');
+
+            // Clear any existing timeout so quick successive alerts don't clip early
+            if (alertTimeout) clearTimeout(alertTimeout);
+
+            // Set styling and icons based on state
+            if (isError) {
+                box.className = "fixed top-5 right-5 z-50 transition-all duration-300 transform translate-y-0 opacity-100 max-w-sm p-4 rounded-xl shadow-2xl text-xs font-bold border bg-rose-950/90 border-rose-500/40 text-rose-300 flex items-center space-x-3 shadow-rose-950/50";
+                iconEl.innerHTML = `<i class="fa-solid fa-circle-exclamation text-rose-400 text-sm"></i>`;
+            } else {
+                box.className = "fixed top-5 right-5 z-50 transition-all duration-300 transform translate-y-0 opacity-100 max-w-sm p-4 rounded-xl shadow-2xl text-xs font-bold border bg-emerald-950/90 border-emerald-500/40 text-emerald-300 flex items-center space-x-3 shadow-emerald-950/50";
+                iconEl.innerHTML = `<i class="fa-solid fa-circle-check text-emerald-400 text-sm"></i>`;
+            }
+
+            textEl.innerText = msg;
+            box.classList.remove('hidden');
+
+            // Automatically hide after 4 seconds with a smooth fade-out
+            alertTimeout = setTimeout(() => {
+                box.classList.add('opacity-0', 'translate-y-[-10%]');
+                setTimeout(() => {
+                    box.classList.add('hidden');
+                }, 300); // Matches transition duration
+            }, 4000);
         }
 
         function switchTab(tabId) {
@@ -492,7 +519,7 @@
         }
 
         function renderAuctionTable() {
-            const approvedPlayers = allRegistrants.filter(r => r.status === 'Approved');
+            const approvedPlayers = allRegistrants.filter(r => r.status === 'Approved' && (r.role === 'Player' || r.role === 'Both'));
             // Group by Teams
             const owners = allRegistrants.filter(p => (p.status === 'Approved') && (p.role === 'Team Owner' || p.role === 'Both'));
             

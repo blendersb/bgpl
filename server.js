@@ -120,6 +120,11 @@ mongoose.connect(process.env.MONGO_URI || 'mongodb://127.0.0.1:27017/bgpl_tourna
 
 // Player & Team Owner Schema (With Masked Identity Protection & Edit Queue)
 const registrantSchema = new mongoose.Schema({
+    playerId: { 
+        type: String, 
+        unique: true, 
+        index: true 
+    },
     fullName: { type: String, required: true, trim: true },
     role: { type: String, enum: ['Player', 'Team Owner', 'Both'], required: true },
     phone: { type: String, required: true, unique: true },
@@ -158,7 +163,14 @@ const registrantSchema = new mongoose.Schema({
     // },
     createdAt: { type: Date, default: Date.now }
 });
-
+// Middleware to auto-generate playerId ONLY on document creation
+registrantSchema.pre('validate', function(next) {
+    if (this.isNew && !this.playerId) {
+        const randomFourDigits = Math.floor(1000 + Math.random() * 9000);
+        this.playerId = `BGPL-${randomFourDigits}`;
+    }
+    next();
+});
 const noticeSchema = new mongoose.Schema({
     title: { type: String, required: true },
     content: { type: String, required: true },
