@@ -161,7 +161,7 @@
     <!-- Team Name -->
     <div id="owner-spec-fields" class="">
         <label class="block text-xs font-bold text-slate-300 mb-1">Team Name *</label>
-        <input type="text" id="reg-team-name" required placeholder="Enter your team name" class="w-full bg-slate-900 border border-slate-700 rounded-xl p-3 text-white text-sm focus:outline-none focus:border-amber-400">
+        <input type="text" id="reg-team-name"  placeholder="Enter your team name" class="w-full bg-slate-900 border border-slate-700 rounded-xl p-3 text-white text-sm focus:outline-none focus:border-amber-400">
     </div>
     <!-- Address & Description -->
     <div>
@@ -340,7 +340,7 @@
         formData.append('teamName', document.getElementById('reg-team-name').value);
         formData.append('address', document.getElementById('reg-address').value);
         formData.append('description', document.getElementById('reg-description').value);
-        
+
         // Optional files (Checked before appending)
         const photoInput = document.getElementById('reg-photo-file');
         const logoInput = document.getElementById('reg-logo-file');
