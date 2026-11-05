@@ -103,7 +103,10 @@
         <label class="block text-xs font-bold text-slate-300 mb-1">Full Name *</label>
         <input type="text" id="reg-name" required placeholder="Enter full name" class="w-full bg-slate-900 border border-slate-700 rounded-xl p-3 text-white text-sm focus:outline-none focus:border-amber-400">
     </div>
-
+    <div>
+        <label class="block text-xs font-bold text-slate-300 mb-1">Create Password *</label>
+        <input type="password" id="reg-password" required placeholder="Choose a secure password for future edits" class="w-full bg-slate-900 border border-slate-700 rounded-xl p-3 text-white text-sm focus:outline-none focus:border-amber-400">
+    </div>
     <!-- Role Selection (Triggers Conditional Upload Inputs) -->
     <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <div>
@@ -130,6 +133,10 @@
             <label class="block text-xs font-bold text-slate-300 mb-1">Aadhaar Number *</label>
             <input type="text" id="reg-aadhaar" required placeholder="XXXX XXXX XXXX" class="w-full bg-slate-900 border border-slate-700 rounded-xl p-3 text-white text-sm focus:outline-none focus:border-amber-400">
         </div>
+    </div>
+    <div>
+        <label class="block text-xs font-bold text-slate-300 mb-1">Email Address *</label>
+        <input type="email" id="reg-email" required placeholder="Enter email address" class="w-full bg-slate-900 border border-slate-700 rounded-xl p-3 text-white text-sm focus:outline-none focus:border-amber-400">
     </div>
 
     <!-- PLAYER SPECIFIC FIELDS -->
@@ -207,7 +214,7 @@
         <!-- Payment Screenshot Upload -->
         <div>
             <label class="block text-xs font-bold text-slate-300 mb-1">Upload Payment Screenshot (Local File) *</label>
-            <input type="file" id="reg-payment-file" accept="image/*" required class="w-full bg-slate-900 border border-slate-700 rounded-xl p-2.5 text-white text-xs file:mr-4 file:py-1.5 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-emerald-500 file:text-slate-950 hover:file:bg-emerald-400">
+            <input type="file" id="reg-payment-file" accept="image/*"  class="w-full bg-slate-900 border border-slate-700 rounded-xl p-2.5 text-white text-xs file:mr-4 file:py-1.5 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-emerald-500 file:text-slate-950 hover:file:bg-emerald-400">
         </div>
     </div>
 
@@ -269,41 +276,98 @@
         // Generate UPI deep link (upi://pay?pa=...&am=...)
         upiDeeplink.href = `upi://pay?pa=${encodeURIComponent(tournamentConfig.upiId)}&pn=BGPL%202027&am=${currentFee}&cu=INR`;
     }
+    // async function handleRegistration(e) {
+    //     e.preventDefault();
+
+    //     // Use FormData for multi-part file binary upload
+    //     const formData = new FormData();
+    //     formData.append('fullName', document.getElementById('reg-name').value);
+    //     formData.append('role', document.getElementById('reg-role').value);
+    //     formData.append('age', document.getElementById('reg-age').value);
+    //     formData.append('phone', document.getElementById('reg-phone').value);
+    //     formData.append('aadhaar', document.getElementById('reg-aadhaar').value);
+    //     formData.append('category', document.getElementById('reg-category').value);
+    //     formData.append('battingStyle', document.getElementById('reg-style').value);
+    //     formData.append('address', document.getElementById('reg-address').value);
+    //     formData.append('description', document.getElementById('reg-description').value);
+
+    //     // Files
+    //     const photoInput = document.getElementById('reg-photo-file');
+    //     const logoInput = document.getElementById('reg-logo-file');
+    //     const paymentInput = document.getElementById('reg-payment-file');
+
+    //     if (photoInput.files[0]) formData.append('photo', photoInput.files[0]);
+    //     if (logoInput.files[0]) formData.append('teamLogo', logoInput.files[0]);
+    //     if (paymentInput.files[0]) formData.append('paymentScreenshot', paymentInput.files[0]);
+
+    //     const res = await fetch('/api/register', {
+    //         method: 'POST',
+    //         body: formData // No Content-Type header needed; browser automatically sets multipart/form-data
+    //     });
+
+    //     const data = await res.json();
+    //     const box = document.getElementById('alert-box');
+    //     box.className = res.ok ? 'mb-4 p-3 rounded text-sm font-medium border bg-emerald-500/10 border-emerald-500/30 text-emerald-400' : 'mb-4 p-3 rounded text-sm font-medium border bg-rose-500/10 border-rose-500/30 text-rose-400';
+    //     box.innerText = data.message || data.error;
+    //     box.classList.remove('hidden');
+    //     if (res.ok) document.getElementById('registration-form').reset();
+    // }
+    
     async function handleRegistration(e) {
         e.preventDefault();
 
-        // Use FormData for multi-part file binary upload
+        const editId = document.getElementById('reg-id') ? document.getElementById('reg-id').value : null;
         const formData = new FormData();
+
+        // Text fields
         formData.append('fullName', document.getElementById('reg-name').value);
         formData.append('role', document.getElementById('reg-role').value);
         formData.append('age', document.getElementById('reg-age').value);
         formData.append('phone', document.getElementById('reg-phone').value);
-        formData.append('aadhaar', document.getElementById('reg-aadhaar').value);
+        formData.append('email', document.getElementById('reg-email').value);
+        formData.append('password', document.getElementById('reg-password').value);
+        const aadhaarVal = document.getElementById('reg-aadhaar').value;
+        if (aadhaarVal) formData.append('aadhaar', aadhaarVal);
+        
         formData.append('category', document.getElementById('reg-category').value);
         formData.append('battingStyle', document.getElementById('reg-style').value);
         formData.append('address', document.getElementById('reg-address').value);
         formData.append('description', document.getElementById('reg-description').value);
 
-        // Files
+        // Optional files (Checked before appending)
         const photoInput = document.getElementById('reg-photo-file');
         const logoInput = document.getElementById('reg-logo-file');
         const paymentInput = document.getElementById('reg-payment-file');
 
-        if (photoInput.files[0]) formData.append('photo', photoInput.files[0]);
-        if (logoInput.files[0]) formData.append('teamLogo', logoInput.files[0]);
-        if (paymentInput.files[0]) formData.append('paymentScreenshot', paymentInput.files[0]);
+        if (photoInput && photoInput.files[0]) formData.append('photo', photoInput.files[0]);
+        if (logoInput && logoInput.files[0]) formData.append('teamLogo', logoInput.files[0]);
+        if (paymentInput && paymentInput.files[0]) formData.append('paymentScreenshot', paymentInput.files[0]);
 
-        const res = await fetch('/api/register', {
-            method: 'POST',
-            body: formData // No Content-Type header needed; browser automatically sets multipart/form-data
-        });
+        const url = editId ? `/api/register/${editId}` : '/api/register';
+        const method = editId ? 'PUT' : 'POST';
 
-        const data = await res.json();
-        const box = document.getElementById('alert-box');
-        box.className = res.ok ? 'mb-4 p-3 rounded text-sm font-medium border bg-emerald-500/10 border-emerald-500/30 text-emerald-400' : 'mb-4 p-3 rounded text-sm font-medium border bg-rose-500/10 border-rose-500/30 text-rose-400';
-        box.innerText = data.message || data.error;
-        box.classList.remove('hidden');
-        if (res.ok) document.getElementById('registration-form').reset();
+        try {
+            const res = await fetch(url, {
+                method: method,
+                body: formData // Browser sets multipart/form-data boundary automatically
+            });
+
+            const data = await res.json();
+            const box = document.getElementById('alert-box');
+
+            box.className = res.ok 
+                ? 'mb-4 p-3 rounded text-sm font-medium border bg-emerald-500/10 border-emerald-500/30 text-emerald-400' 
+                : 'mb-4 p-3 rounded text-sm font-medium border bg-rose-500/10 border-rose-500/30 text-rose-400';
+                
+            box.innerText = data.message || data.error;
+            box.classList.remove('hidden');
+
+            if (res.ok && !editId) {
+                document.getElementById('registration-form').reset();
+            }
+        } catch (err) {
+            console.error("Submission error:", err);
+        }
     }
     let tournamentConfig = { playerFee: 500, ownerFee: 2000, bothFee: 2500, upiId: 'bgpl2027@upi', qrCodeUrl: '' };
 

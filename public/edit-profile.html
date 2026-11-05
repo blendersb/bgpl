@@ -8,6 +8,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body class="bg-slate-900 text-slate-100 font-sans min-h-screen flex flex-col">
+    <!-- NAVIGATION HEADER -->
     <header class="glass-nav sticky top-0 z-50 shadow-2xl bg-slate-950/80 backdrop-blur-md border-b border-slate-800">
         <div class="max-w-7xl mx-auto px-4 py-3 flex justify-between items-center">
             
@@ -22,7 +23,7 @@
 
             <!-- DESKTOP NAVIGATION LINKS -->
             <nav class="hidden md:flex items-center space-x-5 text-sm font-semibold">
-                <a href="/" class="text-amber-400 transition hover:text-amber-300 flex items-center space-x-1.5 px-3 py-1.5 rounded-xl ">
+                <a href="/" class="text-slate-300 transition hover:text-amber-400 flex items-center space-x-1.5 px-3 py-1.5 rounded-xl hover:bg-slate-900">
                     <i class="fa-solid fa-house text-xs"></i>
                     <span>Home</span>
                 </a>
@@ -42,7 +43,7 @@
                     <i class="fa-solid fa-user-plus text-xs text-rose-400"></i>
                     <span>Registration</span>
                 </a>
-                <a href="/edit-profile" class="text-emerald-400 transition hover:text-emerald-300 flex items-center space-x-1 px-2.5 py-1.5 rounded-xl bg-amber-500/10 border border-amber-500/20">
+                <a href="/edit-profile" class="text-amber-400 transition hover:text-amber-300 flex items-center space-x-1 px-2.5 py-1.5 rounded-xl bg-amber-500/10 border border-amber-500/20">
                     <i class="fa-solid fa-user-pen text-xs"></i>
                     <span>Edit Profile</span>
                 </a>
@@ -65,7 +66,7 @@
 
         <!-- COLLAPSIBLE MOBILE MENU DROPDOWN -->
         <div id="mobile-menu" class="hidden md:hidden bg-slate-950/95 backdrop-blur-xl border-t border-slate-800 px-4 pt-3 pb-5 space-y-2 shadow-2xl">
-            <a href="/" class="flex items-center space-x-3 text-amber-400 font-semibold py-2.5 px-3 rounded-xl bg-amber-500/10 border border-amber-500/20">
+            <a href="/" class="flex items-center space-x-3 text-slate-300 font-semibold py-2.5 px-3 rounded-xl hover:bg-slate-900 transition">
                 <i class="fa-solid fa-house w-5 text-center text-amber-500"></i>
                 <span>Home</span>
             </a>
@@ -85,63 +86,314 @@
                 <i class="fa-solid fa-user-plus w-5 text-center text-rose-400"></i>
                 <span>Registration</span>
             </a>
-            <a href="/edit-profile" class="flex items-center space-x-3 text-emerald-400 font-semibold py-2.5 px-3 rounded-xl hover:bg-slate-900 transition">
+            <a href="/edit-profile" class="flex items-center space-x-3 text-amber-400 font-semibold py-2.5 px-3 rounded-xl bg-amber-500/10 border border-amber-500/20">
                 <i class="fa-solid fa-user-pen w-5 text-center"></i>
                 <span>Edit Profile</span>
             </a>
         </div>
     </header>
+
     <main class="max-w-2xl w-full mx-auto p-4 flex-grow">
         <div id="alert-box" class="hidden mb-4 p-3 rounded text-sm font-medium border"></div>
-        <div class="bg-slate-800 rounded-xl p-6 border border-slate-700 shadow-2xl space-y-6">
-            <h2 class="text-2xl font-bold text-emerald-400">Edit Profile Details</h2>
-            <p class="text-xs text-slate-400">Request updates (spelling, photo, screenshot). Requires admin approval.</p>
-            <form id="edit-form" onsubmit="handleEdit(event)" class="space-y-4">
+
+        <!-- STEP 1: AUTHENTICATION LOGIN CARD -->
+        <div id="auth-card" class="bg-slate-800 rounded-xl p-6 border border-slate-700 shadow-2xl space-y-6">
+            <div class="text-center space-y-1">
+                <h2 class="text-2xl font-bold text-amber-400">Manage Your Registration</h2>
+                <p class="text-xs text-slate-400">Enter your registered Phone/Email and Password to access your profile.</p>
+            </div>
+            <form id="auth-form" onsubmit="handleAuth(event)" class="space-y-4">
                 <div>
-                    <label class="block text-xs text-slate-400 mb-1">Registered Phone Number</label>
-                    <input type="tel" id="edit-phone" required class="w-full bg-slate-900 border border-slate-700 rounded-lg p-3 text-white">
+                    <label class="block text-xs font-bold text-slate-300 mb-1">Phone Number or Email *</label>
+                    <input type="text" id="auth-identifier" required placeholder="Enter registered phone or email" class="w-full bg-slate-900 border border-slate-700 rounded-xl p-3 text-white text-sm focus:outline-none focus:border-amber-400">
                 </div>
                 <div>
-                    <label class="block text-xs text-slate-400 mb-1">New Full Name</label>
-                    <input type="text" id="edit-name" class="w-full bg-slate-900 border border-slate-700 rounded-lg p-3 text-white">
+                    <label class="block text-xs font-bold text-slate-300 mb-1">Password *</label>
+                    <input type="password" id="auth-password" required placeholder="Enter your password" class="w-full bg-slate-900 border border-slate-700 rounded-xl p-3 text-white text-sm focus:outline-none focus:border-amber-400">
+                </div>
+                <button type="submit" class="w-full bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 text-slate-950 font-black py-3 rounded-xl shadow-lg transition">
+                    Access Profile
+                </button>
+            </form>
+        </div>
+
+        <!-- STEP 2: EDIT PROFILE FORM (Hidden until authenticated) -->
+        <div id="edit-card" class="bg-slate-800 rounded-xl p-6 border border-slate-700 shadow-2xl space-y-6 hidden">
+            <div class="flex justify-between items-center border-b border-slate-700 pb-3">
+                <h2 class="text-xl font-bold text-amber-400">Edit Profile Details</h2>
+                <button onclick="location.reload()" class="text-xs text-slate-400 hover:text-rose-400 font-semibold"><i class="fa-solid fa-arrow-rotate-left mr-1"></i> Switch Account</button>
+            </div>
+
+            <form id="edit-form" onsubmit="handleUpdate(event)" class="space-y-4" enctype="multipart/form-data">
+                <input type="hidden" id="edit-id">
+
+                <!-- Full Name -->
+                <div>
+                    <label class="block text-xs font-bold text-slate-300 mb-1">Full Name *</label>
+                    <input type="text" id="edit-name" required class="w-full bg-slate-900 border border-slate-700 rounded-xl p-3 text-white text-sm focus:outline-none focus:border-amber-400">
+                </div>
+
+                <!-- Role (Locked / Read-Only Display with hidden input) & Age -->
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-xs font-bold text-slate-300 mb-1">Role (Locked)</label>
+                        <input type="text" id="edit-role-display" disabled class="w-full bg-slate-950 border border-slate-800 rounded-xl p-3 text-slate-400 text-sm cursor-not-allowed">
+                        <input type="hidden" id="edit-role">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-slate-300 mb-1">Age *</label>
+                        <input type="number" id="edit-age" required min="10" max="70" class="w-full bg-slate-900 border border-slate-700 rounded-xl p-3 text-white text-sm focus:outline-none focus:border-amber-400">
+                    </div>
+                </div>
+
+                <!-- Phone & Email -->
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-xs font-bold text-slate-300 mb-1">Phone Number *</label>
+                        <input type="tel" id="edit-phone" required class="w-full bg-slate-900 border border-slate-700 rounded-xl p-3 text-white text-sm focus:outline-none focus:border-amber-400">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-slate-300 mb-1">Aadhar Number</label>
+                        <input type="text" id="edit-aadhaar" required class="w-full bg-slate-900 border border-slate-700 rounded-xl p-3 text-white text-sm focus:outline-none focus:border-amber-400">
+                    </div>
+                </div>
+                <!-- Address & Description -->
+                <div>
+                    <label class="block text-xs font-bold text-slate-300 mb-1">Email Address *</label>
+                    <input type="email" id="edit-email" required class="w-full bg-slate-900 border border-slate-700 rounded-xl p-3 text-white text-sm focus:outline-none focus:border-amber-400">
+                </div>
+
+                <!-- PLAYER SPECIFIC FIELDS -->
+                <div id="edit-player-spec-fields" class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-xs font-bold text-slate-300 mb-1">Player Category *</label>
+                        <select id="edit-category" class="w-full bg-slate-900 border border-slate-700 rounded-xl p-3 text-white text-sm focus:outline-none focus:border-amber-400">
+                            <option value="Batsman">Batsman</option>
+                            <option value="Bowler">Bowler</option>
+                            <option value="All-Rounder">All-Rounder</option>
+                            <option value="Wicket-Keeper">Wicket-Keeper Batsman</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-slate-300 mb-1">Batting / Bowling Style *</label>
+                        <select id="edit-style" class="w-full bg-slate-900 border border-slate-700 rounded-xl p-3 text-white text-sm focus:outline-none focus:border-amber-400">
+                            <option value="Right-Handed">Right-Handed</option>
+                            <option value="Left-Handed">Left-Handed</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Address & Description -->
+                <div>
+                    <label class="block text-xs font-bold text-slate-300 mb-1">Address / Village *</label>
+                    <input type="text" id="edit-address" required class="w-full bg-slate-900 border border-slate-700 rounded-xl p-3 text-white text-sm focus:outline-none focus:border-amber-400">
                 </div>
                 <div>
-                    <label class="block text-xs text-slate-400 mb-1">New Aadhaar Number</label>
-                    <input type="text" id="edit-aadhaar" class="w-full bg-slate-900 border border-slate-700 rounded-lg p-3 text-white">
+                    <label class="block text-xs font-bold text-slate-300 mb-1">Player Bio / Description</label>
+                    <textarea id="edit-description" class="w-full bg-slate-900 border border-slate-700 rounded-xl p-3 text-white text-sm h-20 focus:outline-none focus:border-amber-400"></textarea>
                 </div>
-                <div>
-                    <label class="block text-xs text-slate-400 mb-1">New Photo URL</label>
-                    <input type="text" id="edit-photo" class="w-full bg-slate-900 border border-slate-700 rounded-lg p-3 text-white">
+
+                <!-- LOCAL FILE UPLOADS (Role-based & Payment Verification conditioned) -->
+                <div class="space-y-4 pt-2 border-t border-slate-800">
+                    <!-- Photo Upload (Player / Both) -->
+                    <div id="edit-photo-upload-group">
+                        <label class="block text-xs font-bold text-slate-300 mb-1">Update Member Photo (Local File)</label>
+                        <input type="file" id="edit-photo-file" accept="image/*" class="w-full bg-slate-900 border border-slate-700 rounded-xl p-2.5 text-white text-xs file:mr-4 file:py-1.5 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-amber-500 file:text-slate-950 hover:file:bg-amber-400">
+                        <p id="current-photo-status" class="text-[10px] text-slate-400 mt-1"></p>
+                    </div>
+
+                    <!-- Team Logo Upload (Team Owner / Both) -->
+                    <div id="edit-team-logo-upload-group" class="hidden">
+                        <label class="block text-xs font-bold text-slate-300 mb-1">Update Team Logo (Local File)</label>
+                        <input type="file" id="edit-logo-file" accept="image/*" class="w-full bg-slate-900 border border-slate-700 rounded-xl p-2.5 text-white text-xs file:mr-4 file:py-1.5 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-indigo-500 file:text-white hover:file:bg-indigo-400">
+                        <p id="current-logo-status" class="text-[10px] text-slate-400 mt-1"></p>
+                    </div>
+
+                    <!-- Payment Screenshot Upload (Hidden if paymentVerified is true) -->
+                    <div id="edit-payment-upload-wrapper">
+                        <label class="block text-xs font-bold text-slate-300 mb-1">Update Payment Screenshot (Local File)</label>
+                        <input type="file" id="edit-payment-file" accept="image/*" class="w-full bg-slate-900 border border-slate-700 rounded-xl p-2.5 text-white text-xs file:mr-4 file:py-1.5 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-emerald-500 file:text-slate-950 hover:file:bg-emerald-400">
+                        <p id="current-payment-status" class="text-[10px] text-slate-400 mt-1"></p>
+                    </div>
                 </div>
-                <div>
-                    <label class="block text-xs text-slate-400 mb-1">New Payment Screenshot URL</label>
-                    <input type="text" id="edit-payment" class="w-full bg-slate-900 border border-slate-700 rounded-lg p-3 text-white">
+
+                <!-- SECURITY & PASSWORD VERIFICATION -->
+                <div class="pt-2 border-t border-slate-800 space-y-4">
+                    <div>
+                        <label class="block text-xs font-bold text-amber-400 mb-1">Confirm Current Password (Required to Save) *</label>
+                        <input type="password" id="edit-current-password" required placeholder="Enter current password" class="w-full bg-slate-900 border border-slate-700 rounded-xl p-3 text-white text-sm focus:outline-none focus:border-amber-400">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-slate-300 mb-1">New Password (Optional)</label>
+                        <input type="password" id="edit-new-password" placeholder="Leave blank to keep existing password" class="w-full bg-slate-900 border border-slate-700 rounded-xl p-3 text-white text-sm focus:outline-none focus:border-amber-400">
+                    </div>
                 </div>
-                <button type="submit" class="w-full bg-emerald-500 hover:bg-emerald-600 text-slate-950 font-bold py-3 rounded-lg shadow-lg">Submit Edits for Approval</button>
+
+                <div class="flex space-x-3 pt-2">
+                    <button type="submit" class="flex-1 bg-gradient-to-r from-emerald-500 to-emerald-600 hover:from-emerald-600 hover:to-emerald-700 text-slate-950 font-black py-3.5 rounded-xl shadow-lg transition">
+                        Save Changes
+                    </button>
+                    <button type="button" onclick="location.reload()" class="bg-slate-700 hover:bg-slate-600 text-slate-200 font-bold px-5 py-3.5 rounded-xl transition">
+                        Cancel
+                    </button>
+                </div>
             </form>
         </div>
     </main>
+
     <script>
-        async function handleEdit(e) {
-            e.preventDefault();
-            const payload = {
-                phone: document.getElementById('edit-phone').value,
-                fullName: document.getElementById('edit-name').value || undefined,
-                aadhaar: document.getElementById('edit-aadhaar').value || undefined,
-                photoUrl: document.getElementById('edit-photo').value || undefined,
-                paymentScreenshotUrl: document.getElementById('edit-payment').value || undefined
-            };
-            const res = await fetch('/api/profile/request-edit', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(payload)
-            });
-            const data = await res.json();
+        function showAlert(msg, isError = false) {
             const box = document.getElementById('alert-box');
-            box.className = res.ok ? 'mb-4 p-3 rounded text-sm font-medium border bg-emerald-500/10 border-emerald-500/30 text-emerald-400' : 'mb-4 p-3 rounded text-sm font-medium border bg-rose-500/10 border-rose-500/30 text-rose-400';
-            box.innerText = data.message || data.error;
+            box.className = isError 
+                ? 'mb-4 p-3 rounded text-sm font-medium border bg-rose-500/10 border-rose-500/30 text-rose-400' 
+                : 'mb-4 p-3 rounded text-sm font-medium border bg-emerald-500/10 border-emerald-500/30 text-emerald-400';
+            box.innerText = msg;
             box.classList.remove('hidden');
-            if (res.ok) document.getElementById('edit-form').reset();
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function toggleEditRoleFields(role, paymentVerified) {
+            const playerSpec = document.getElementById('edit-player-spec-fields');
+            const photoGroup = document.getElementById('edit-photo-upload-group');
+            const logoGroup = document.getElementById('edit-team-logo-upload-group');
+            const paymentWrapper = document.getElementById('edit-payment-upload-wrapper');
+
+            if (role === 'Player') {
+                playerSpec.classList.remove('hidden');
+                photoGroup.classList.remove('hidden');
+                logoGroup.classList.add('hidden');
+            } else if (role === 'Team Owner') {
+                playerSpec.classList.add('hidden');
+                photoGroup.classList.add('hidden');
+                logoGroup.classList.remove('hidden');
+            } else {
+                // Both
+                playerSpec.classList.remove('hidden');
+                photoGroup.classList.remove('hidden');
+                logoGroup.classList.remove('hidden');
+            }
+
+            // If payment is already verified by admin, hide the payment screenshot upload option
+            if (paymentVerified) {
+                paymentWrapper.classList.add('hidden');
+            } else {
+                paymentWrapper.classList.remove('hidden');
+            }
+        }
+
+        async function handleAuth(e) {
+            e.preventDefault();
+            const identifier = document.getElementById('auth-identifier').value;
+            const password = document.getElementById('auth-password').value;
+
+            try {
+                const res = await fetch('/api/register/auth', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ identifier, password })
+                });
+                const data = await res.json();
+
+                if (res.ok) {
+                    const user = data.registrant;
+                    document.getElementById('edit-id').value = user._id;
+                    document.getElementById('edit-name').value = user.fullName || '';
+                    document.getElementById('edit-role').value = user.role || 'Player';
+                    document.getElementById('edit-role-display').value = user.role || 'Player';
+                    document.getElementById('edit-age').value = user.age || '';
+                    document.getElementById('edit-phone').value = user.phone || '';
+                    document.getElementById('edit-email').value = user.email || '';
+                    document.getElementById('edit-aadhaar').value = user.aadhaar || '';
+                    document.getElementById('edit-address').value = user.address || '';
+                    document.getElementById('edit-description').value = user.description || '';
+                    
+                    if (user.category) document.getElementById('edit-category').value = user.category;
+                    if (user.battingStyle) document.getElementById('edit-style').value = user.battingStyle;
+
+                    // Photo Status Preview
+                    if (user.photoUrl) {
+                        document.getElementById('current-photo-status').innerHTML = `✓ Photo uploaded. <a href="${user.photoUrl}" target="_blank" class="text-amber-400 underline ml-1">View Current Photo</a>`;
+                    } else {
+                        document.getElementById('current-photo-status').innerText = `⚠ No member photo uploaded yet.`;
+                    }
+
+                    // Team Logo Status Preview
+                    if (user.teamLogoUrl) {
+                        document.getElementById('current-logo-status').innerHTML = `✓ Team logo uploaded. <a href="${user.teamLogoUrl}" target="_blank" class="text-indigo-400 underline ml-1">View Current Logo</a>`;
+                    } else {
+                        document.getElementById('current-logo-status').innerText = `⚠ No team logo uploaded yet.`;
+                    }
+
+                    // Payment Status Preview
+                    if (user.paymentVerified) {
+                        document.getElementById('current-payment-status').innerHTML = `<span class="text-emerald-400 font-bold">✓ Payment Verified by Admin</span>`;
+                    } else if (user.paymentScreenshotUrl) {
+                        document.getElementById('current-payment-status').innerHTML = `✓ Payment screenshot uploaded. <a href="${user.paymentScreenshotUrl}" target="_blank" class="text-emerald-400 underline ml-1">View Screenshot</a>`;
+                    } else {
+                        document.getElementById('current-payment-status').innerText = `⚠ No payment screenshot uploaded yet.`;
+                    }
+
+                    // Apply role-based visibility rules
+                    toggleEditRoleFields(user.role, user.paymentVerified);
+
+                    // Switch view from Auth Card to Edit Card
+                    document.getElementById('auth-card').classList.add('hidden');
+                    document.getElementById('edit-card').classList.remove('hidden');
+                    document.getElementById('alert-box').classList.add('hidden');
+                } else {
+                    showAlert(data.error || 'Authentication failed.', true);
+                }
+            } catch (err) {
+                showAlert('Server connection error.', true);
+            }
+        }
+
+        async function handleUpdate(e) {
+            e.preventDefault();
+            const id = document.getElementById('edit-id').value;
+            const formData = new FormData();
+
+            formData.append('fullName', document.getElementById('edit-name').value);
+            formData.append('role', document.getElementById('edit-role').value);
+            formData.append('age', document.getElementById('edit-age').value);
+            formData.append('phone', document.getElementById('edit-phone').value);
+            formData.append('email', document.getElementById('edit-email').value);
+            formData.append('aadhaar', document.getElementById('edit-aadhaar').value);
+            formData.append('address', document.getElementById('edit-address').value);
+            formData.append('description', document.getElementById('edit-description').value);
+            formData.append('category', document.getElementById('edit-category').value);
+            formData.append('battingStyle', document.getElementById('edit-style').value);
+            formData.append('password', document.getElementById('edit-current-password').value);
+
+            const newPass = document.getElementById('edit-new-password').value;
+            if (newPass) formData.append('newPassword', newPass);
+
+            // Files
+            const photoFile = document.getElementById('edit-photo-file').files[0];
+            if (photoFile) formData.append('photo', photoFile);
+
+            const logoFile = document.getElementById('edit-logo-file').files[0];
+            if (logoFile) formData.append('teamLogo', logoFile);
+
+            const paymentFile = document.getElementById('edit-payment-file').files[0];
+            if (paymentFile) formData.append('paymentScreenshot', paymentFile);
+
+            try {
+                const res = await fetch(`/api/register/${id}`, {
+                    method: 'PUT',
+                    body: formData
+                });
+                const data = await res.json();
+
+                if (res.ok) {
+                    showAlert(data.message || 'Profile updated successfully!');
+                    setTimeout(() => location.reload(), 2000);
+                } else {
+                    showAlert(data.error || 'Update failed.', true);
+                }
+            } catch (err) {
+                showAlert('Failed to update profile.', true);
+            }
         }
     </script>
     <script src="./static/js/common.js"></script>

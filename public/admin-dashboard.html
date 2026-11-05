@@ -193,19 +193,28 @@
         <!-- TAB 4: COMMITTEE & MATCHES SETUP -->
         <div id="tab-committee" class="space-y-6 admin-tab hidden">
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <!-- Add Committee Member -->
+                <!-- Add / Edit Committee Member Form -->
                 <div class="bg-slate-800 p-6 rounded-xl border border-slate-700 space-y-4">
-                    <h3 class="text-lg font-bold text-white"><i class="fa-solid fa-user-tie mr-2 text-blue-400"></i> Add Committee Member</h3>
-                    <form onsubmit="handleCreateCommittee(event)" class="space-y-3">
+                    <h3 id="comm-form-title" class="text-lg font-bold text-white"><i class="fa-solid fa-user-tie mr-2 text-blue-400"></i> Add Committee Member</h3>
+                    <form onsubmit="handleSaveCommittee(event)" class="space-y-3" enctype="multipart/form-data">
+                        <input type="hidden" id="comm-id">
                         <input type="text" id="comm-name" placeholder="Full Name" required class="w-full bg-slate-900 border border-slate-700 rounded-xl p-3 text-white text-sm">
                         <input type="text" id="comm-designation" placeholder="Designation (e.g. Chief Organizer)" required class="w-full bg-slate-900 border border-slate-700 rounded-xl p-3 text-white text-sm">
                         <input type="tel" id="comm-phone" placeholder="Phone Number" required class="w-full bg-slate-900 border border-slate-700 rounded-xl p-3 text-white text-sm">
-                        <input type="text" id="comm-photo" placeholder="Photo URL (Optional)" class="w-full bg-slate-900 border border-slate-700 rounded-xl p-3 text-white text-sm">
-                        <button type="submit" class="bg-blue-500 hover:bg-blue-600 text-white font-bold px-5 py-2.5 rounded-xl text-xs transition">Add Member</button>
+                        
+                        <div>
+                            <label class="block text-xs text-slate-400 mb-1">Member Photo (Local File)</label>
+                            <input type="file" id="comm-photo-file" accept="image/*" class="w-full bg-slate-900 border border-slate-700 rounded-xl p-2.5 text-white text-xs file:mr-4 file:py-1.5 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-blue-600 file:text-white hover:file:bg-blue-700">
+                        </div>
+
+                        <div class="flex space-x-2 pt-2">
+                            <button type="submit" id="comm-submit-btn" class="flex-1 bg-blue-500 hover:bg-blue-600 text-white font-bold px-5 py-2.5 rounded-xl text-xs transition">Add Member</button>
+                            <button type="button" id="comm-cancel-btn" onclick="resetCommitteeForm()" class="hidden bg-slate-700 hover:bg-slate-600 text-white font-bold px-4 py-2.5 rounded-xl text-xs transition">Cancel</button>
+                        </div>
                     </form>
                 </div>
 
-                <!-- Schedule Match -->
+                <!-- Schedule Match Fixture (Retained as is) -->
                 <div class="bg-slate-800 p-6 rounded-xl border border-slate-700 space-y-4">
                     <h3 class="text-lg font-bold text-white"><i class="fa-solid fa-calendar-days mr-2 text-indigo-400"></i> Schedule Match Fixture</h3>
                     <form onsubmit="handleCreateMatch(event)" class="space-y-3">
@@ -217,6 +226,26 @@
                         <input type="datetime-local" id="match-date" required class="w-full bg-slate-900 border border-slate-700 rounded-xl p-3 text-white text-sm">
                         <button type="submit" class="bg-indigo-500 hover:bg-indigo-600 text-white font-bold px-5 py-2.5 rounded-xl text-xs transition">Schedule Match</button>
                     </form>
+                </div>
+            </div>
+
+            <!-- Committee Members Table List -->
+            <div class="bg-slate-800 p-6 rounded-xl border border-slate-700 space-y-4">
+                <h3 class="text-base font-bold text-white"><i class="fa-solid fa-users mr-2 text-amber-400"></i> Existing Committee Members</h3>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left text-xs text-slate-300">
+                        <thead class="bg-slate-900 text-slate-400 uppercase text-[10px]">
+                            <tr>
+                                <th class="p-3">Name</th>
+                                <th class="p-3">Designation</th>
+                                <th class="p-3">Phone</th>
+                                <th class="p-3 text-right">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="admin-committee-table" class="divide-y divide-slate-700">
+                            <!-- Populated via JS -->
+                        </tbody>
+                    </table>
                 </div>
             </div>
         </div>
@@ -620,20 +649,101 @@
             loadAdminData();
         }
 
-        async function handleCreateCommittee(e) {
+        // async function handleCreateCommittee(e) {
+        //     e.preventDefault();
+        //     await fetch('/api/admin/committee', {
+        //         method: 'POST',
+        //         headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+        //         body: JSON.stringify({
+        //             name: document.getElementById('comm-name').value,
+        //             designation: document.getElementById('comm-designation').value,
+        //             phone: document.getElementById('comm-phone').value,
+        //             photoUrl: document.getElementById('comm-photo').value
+        //         })
+        //     });
+        //     showAlert("Committee member added successfully!");
+        //     e.target.reset();
+        // }
+
+        async function handleSaveCommittee(e) {
             e.preventDefault();
-            await fetch('/api/admin/committee', {
+            const id = document.getElementById('comm-id').value;
+            const formData = new FormData();
+            
+            if (id) formData.append('id', id);
+            formData.append('name', document.getElementById('comm-name').value);
+            formData.append('designation', document.getElementById('comm-designation').value);
+            formData.append('phone', document.getElementById('comm-phone').value);
+
+            const fileInput = document.getElementById('comm-photo-file');
+            if (fileInput.files[0]) {
+                formData.append('photo', fileInput.files[0]);
+            }
+
+            //const token = localStorage.getItem('adminToken');
+            const res = await fetch('/api/admin/committee', {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
-                body: JSON.stringify({
-                    name: document.getElementById('comm-name').value,
-                    designation: document.getElementById('comm-designation').value,
-                    phone: document.getElementById('comm-phone').value,
-                    photoUrl: document.getElementById('comm-photo').value
-                })
+                headers: { 
+                    // Note: Do NOT set 'Content-Type': 'application/json' when sending FormData.
+                    'Authorization': `Bearer ${token}` 
+                },
+                body: formData
             });
-            showAlert("Committee member added successfully!");
-            e.target.reset();
+
+            const data = await res.json();
+            if (res.ok) {
+                showAlert(data.message || 'Saved successfully!');
+                resetCommitteeForm();
+                loadPublicData();
+            } else {
+                showAlert(data.error || 'Failed to save member.');
+            }
+        }
+
+        function resetCommitteeForm() {
+            document.getElementById('comm-id').value = '';
+            document.getElementById('comm-name').value = '';
+            document.getElementById('comm-designation').value = '';
+            document.getElementById('comm-phone').value = '';
+            
+            const fileInput = document.getElementById('comm-photo-file');
+            if (fileInput) fileInput.value = '';
+
+            document.getElementById('comm-form-title').innerHTML = '<i class="fa-solid fa-user-tie mr-2 text-blue-400"></i> Add Committee Member';
+            document.getElementById('comm-submit-btn').innerText = 'Add Member';
+            document.getElementById('comm-cancel-btn').classList.add('hidden');
+        }
+        function editCommittee(id, name, designation, phone, photoUrl) {
+            document.getElementById('comm-id').value = id;
+            document.getElementById('comm-name').value = name;
+            document.getElementById('comm-designation').value = designation;
+            document.getElementById('comm-phone').value = phone;
+            
+            // Clear file input since browsers block programmatic file setting
+            const fileInput = document.getElementById('comm-photo-file');
+            if (fileInput) fileInput.value = '';
+
+            // Update form state UI
+            document.getElementById('comm-form-title').innerHTML = '<i class="fa-solid fa-user-pen mr-2 text-blue-400"></i> Edit Committee Member';
+            document.getElementById('comm-submit-btn').innerText = 'Update Member';
+            document.getElementById('comm-cancel-btn').classList.remove('hidden');
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+        
+        async function deleteCommittee(id) {
+            if (!confirm('Are you sure you want to delete this committee member?')) return;
+            //const token = localStorage.getItem('adminToken');
+            const res = await fetch(`/api/admin/committee/${id}`, {
+                method: 'DELETE',
+                headers: { 'Authorization': `Bearer ${token}` }
+            });
+            const data = await res.json();
+            if (res.ok) {
+                showAlert(data.message || 'Deleted successfully!');
+                loadPublicData();
+            } else {
+                showAlert(data.error || 'Failed to delete member.');
+            }
         }
 
         async function handleCreateMatch(e) {
@@ -656,6 +766,7 @@
         // Load About & Rules Data
         async function loadPublicData() {
             const tbody = document.getElementById('admin-prizes-table');
+            const committeeTbody = document.getElementById('admin-committee-table');
             const res = await fetch('/api/public/data');
             if (res.ok) {
                 const data = await res.json();
@@ -699,9 +810,33 @@
                     </tr>
                     `).join('');
                 } else {
-                   
-                    tbody.innerHTML = `<tr><td colspan="4" class="p-4 text-center text-slate-500">No prizes added yet.</td></tr>`;
+                   tbody.innerHTML = `<tr><td colspan="4" class="p-4 text-center text-slate-500">No prizes added yet.</td></tr>`;
                 }
+                if(data.committee && data.committee.length > 0){
+                    committeeTbody.innerHTML = data.committee.map(m => {
+                        const safePhoto = (m.photoUrl || '').replace(/'/g, "\\'");
+                        const safeName = (m.name || '').replace(/'/g, "\\'");
+                        const safeDesig = (m.designation || '').replace(/'/g, "\\'");
+                        const safePhone = (m.phone || '').replace(/'/g, "\\'");
+
+                        return `
+                            <tr class="hover:bg-slate-900/40 transition">
+                                <td class="p-3 font-bold text-white flex items-center space-x-2">
+                                    ${m.photoUrl ? `<img src="${m.photoUrl}" class="w-7 h-7 rounded-full object-cover">` : `<div class="w-7 h-7 rounded-full bg-slate-700 flex items-center justify-center text-[10px] text-white">👤</div>`}
+                                    <span>${m.name}</span>
+                                </td>
+                                <td class="p-3 text-blue-400">${m.designation}</td>
+                                <td class="p-3 text-slate-400">${m.phone}</td>
+                                <td class="p-3 text-right space-x-2">
+                                    <button onclick="editCommittee('${m._id}', '${safeName}', '${safeDesig}', '${safePhone}', '${safePhoto}')" class="bg-indigo-500/20 text-indigo-400 px-3 py-1 rounded-lg text-xs font-semibold hover:bg-indigo-500/30">Edit</button>
+                                    <button onclick="deleteCommittee('${m._id}')" class="bg-rose-500/20 text-rose-400 px-3 py-1 rounded-lg text-xs font-semibold hover:bg-rose-500/30">Delete</button>
+                                </td>
+                            </tr>
+                        `;
+                    }).join('');
+                 }else{
+                    committeeTbody.innerHTML = `<tr><td colspan="4" class="p-4 text-center text-slate-500">No committee members added yet.</td></tr>`;
+                 }
 
                 renderRulesList();
             }

@@ -4,6 +4,20 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Bamundi Gram Premier League (BGPL) 2027</title>
+    <style>
+  @keyframes marquee {
+    0% { transform: translateX(0%); }
+    100% { transform: translateX(-50%); }
+  }
+  .animate-marquee-slow {
+    display: flex;
+    width: max-content;
+    animation: marquee 35s linear infinite;
+  }
+  .animate-marquee-slow:hover {
+    animation-play-state: paused;
+  }
+</style>
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
@@ -292,13 +306,22 @@
         </div>
 
         <!-- ORGANIZING COMMITTEE MEMBERS SECTION (AT THE BOTTOM) -->
-        <section class="space-y-6 pt-6 border-t border-slate-800">
+        <section class="space-y-6 pt-6 border-t border-slate-800 overflow-hidden">
             <div class="text-center space-y-1">
                 <h3 class="text-2xl font-black text-white">Organizing Committee</h3>
                 <p class="text-xs text-slate-400">The dedicated team behind Bamundi Gram Premier League</p>
             </div>
-            <div id="committee-grid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4">
-                <!-- Committee cards rendered dynamically -->
+            
+            <!-- Outer Viewport Wrapper -->
+            <div class="relative w-full overflow-hidden py-3">
+                <!-- Gradient Edge Fades for a modern look -->
+                <div class="absolute left-0 top-0 bottom-0 w-8 bg-gradient-to-r from-slate-950 to-transparent z-10 pointer-events-none"></div>
+                <div class="absolute right-0 top-0 bottom-0 w-8 bg-gradient-to-l from-slate-950 to-transparent z-10 pointer-events-none"></div>
+
+                <!-- Marquee Track -->
+                <div id="committee-grid" class="animate-marquee-slow flex space-x-4">
+                    <!-- Dynamically populated via JS -->
+                </div>
             </div>
         </section>
 
@@ -421,16 +444,23 @@
 
                 // Committee Members Grid
                 const committeeGrid = document.getElementById('committee-grid');
+                
                 if (data.committee && data.committee.length > 0) {
-                    committeeGrid.innerHTML = data.committee.map(c => `
-                        <div class="glass-card rounded-2xl p-4 text-center space-y-2 shadow-lg hover:border-amber-500/40 transition">
-                            <img src="${c.photoUrl || 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=200&q=80'}" class="w-16 h-16 rounded-full mx-auto object-cover border-2 border-amber-500/50 shadow-md">
-                            <div>
-                                <h4 class="font-bold text-sm text-white truncate">${c.name}</h4>
-                                <p class="text-[11px] text-amber-400 font-semibold truncate">${c.designation}</p>
-                            </div>
+                    const generateCard = (m) => `
+                            <div class="bg-slate-900/90 border border-slate-800 p-4 rounded-2xl flex flex-col items-center text-center space-y-2.5 w-44 flex-shrink-0 shadow-lg hover:border-amber-500/50 transition duration-300">
+                        ${m.photoUrl 
+                            ? `<img src="${m.photoUrl}" class="w-16 h-16 rounded-full object-cover border-2 border-amber-500/40 shadow-md">` 
+                            : `<div class="w-16 h-16 rounded-full bg-slate-800 border border-slate-700 flex items-center justify-center text-xl text-slate-400 shadow-inner">👤</div>`
+                        }
+                        <div class="w-full">
+                            <p class="font-bold text-white text-xs truncate w-full">${m.name}</p>
+                            <p class="text-[10px] text-blue-400 font-medium truncate w-full mt-0.5">${m.designation}</p>
+                            <p class="text-[9px] text-slate-500 mt-1">${m.phone}</p>
                         </div>
-                    `).join('');
+                    </div>
+                `;
+                    const repeatedMembers = [...data.committee, ...data.committee];
+                    committeeGrid.innerHTML = repeatedMembers.map(generateCard).join('');
                 } else {
                     committeeGrid.innerHTML = `<div class="col-span-full text-slate-500 text-xs text-center py-4">Committee member directory updating.</div>`;
                 }

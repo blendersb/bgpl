@@ -12,7 +12,7 @@ const e = require('express');
 const multer = require('multer');
 const fs = require('fs');
 const app = express();
-
+const bcrypt = require('bcrypt');
 // ==========================================
 // 1. SECURITY & MIDDLEWARE CONFIGURATION
 // ==========================================
@@ -116,31 +116,44 @@ mongoose.connect(process.env.MONGO_URI || 'mongodb://127.0.0.1:27017/bgpl_tourna
 // ==========================================
 // 3. DATABASE SCHEMAS & MODELS
 // ==========================================
+// Hash password before saving new registration
 
 // Player & Team Owner Schema (With Masked Identity Protection & Edit Queue)
 const registrantSchema = new mongoose.Schema({
     fullName: { type: String, required: true, trim: true },
     role: { type: String, enum: ['Player', 'Team Owner', 'Both'], required: true },
     phone: { type: String, required: true, unique: true },
-    email: { type: String, unique: true , default: ''},
-    maskedAadhaar: { type: String, required: true },
+    email: { 
+        type: String, 
+        unique: true, 
+        sparse: true, // Allows multiple documents to have no email (null/undefined)
+        lowercase: true,
+        trim: true,
+        set: v => v === '' ? undefined : v // Converts empty strings to undefined automatically
+    },
+    password: { type: String, required: true },
+    aadhaar: { type: String, required: true },
+    age: { type: Number, default: 0 },
+    address: { type: String, default: '' },
+    description: { type: String, default: '' },
     status: { type: String, enum: ['Pending', 'Approved', 'Rejected'], default: 'Pending' },
     auctionStatus: { type: String, enum: ['Unsold', 'Bidding', 'Sold'], default: 'Unsold' },
     basePrice: { type: Number, default: 500 },
     soldPrice: { type: Number, default: 0 },
     assignedTeam: { type: String, default: 'None' },
     photoUrl: { type: String, default: '' },
+    teamLogoUrl: { type: String, default: '' },
     paymentScreenshotUrl: { type: String, default: '' },
     paymentVerified: { type: Boolean, default: false },
-    pendingEdit: {
-        fullName: { type: String },
-        photoUrl: { type: String },
-        phone: { type: String },
-        email: { type: String },
-        paymentScreenshotUrl: { type: String },
-        maskedAadhaar: { type: String },
-        hasPendingChanges: { type: Boolean, default: false }
-    },
+    // pendingEdit: {
+    //     fullName: { type: String },
+    //     photoUrl: { type: String },
+    //     phone: { type: String },
+    //     email: { type: String },
+    //     paymentScreenshotUrl: { type: String },
+    //     maskedAadhaar: { type: String },
+    //     hasPendingChanges: { type: Boolean, default: false }
+    // },
     createdAt: { type: Date, default: Date.now }
 });
 
@@ -184,7 +197,8 @@ const committeeSchema = new mongoose.Schema({
     name: { type: String, required: true },
     designation: { type: String, required: true },
     phone: { type: String, required: true },
-    photoUrl: { type: String, default: '' }
+    photoUrl: { type: String, default: '' },
+    order: { type: Number, default: 0 }
 });
 
 const slideSchema = new mongoose.Schema({
@@ -210,7 +224,11 @@ const feesSchema = new mongoose.Schema({
     upiId: { type: String, default: 'bgpl2027@upi' },
     qrCodeUrl: { type: String, default: '/uploads/qr-default.png' }
 });
-
+registrantSchema.pre('save', async function(next) {
+    if (!this.isModified('password')) return next();
+    this.password = await bcrypt.hash(this.password, 10);
+    next();
+});
 const Rule = mongoose.model('Rule', ruleSchema);
 const About = mongoose.model('About', aboutSchema);
 const Registrant = mongoose.model('Registrant', registrantSchema);
@@ -260,7 +278,7 @@ app.get('/api/public/data', async (req, res) => {
         const notices = await Notice.find().sort({ createdAt: -1 });
         const matches = await Match.find({ status: 'Scheduled' }).sort({ matchDate: 1 });
         const prizes = await Prize.find({}).sort({ order: 1, amount: -1 });
-        const committee = await Committee.find();
+        const committee = await Committee.find({}).sort({ order: 1 });
         const slides = await Slide.find().sort({ order: 1 });
         //const approvedPlayers = await Registrant.find({ status: 'Approved' }).select('-__v');
         const rules = await Rule.find().sort({ ruleNumber: 1 });
@@ -279,36 +297,143 @@ app.get('/api/public/data', async (req, res) => {
     }
 });
 // Submit New Player / Owner Registration
-app.post('/api/register', async (req, res) => {
+// Multi-field upload middleware
+const registrationUploads = upload.fields([
+    { name: 'photo', maxCount: 1 },
+    { name: 'teamLogo', maxCount: 1 },
+    { name: 'paymentScreenshot', maxCount: 1 }
+]);
+
+// --- 1. INITIAL REGISTRATION ROUTE ---
+app.post('/api/register', registrationUploads, async (req, res) => {
     try {
-        const { fullName, role, phone,email, aadhaar, photoUrl, paymentScreenshotUrl } = req.body;
-        if (!fullName || !phone || !aadhaar) {
-            return res.status(400).json({ error: 'Required identity fields missing.' });
+        const { fullName, role, age, phone, email, password, aadhaar, category, battingStyle, address, description } = req.body;
+
+        if (!fullName || !phone || !aadhaar || !password) {
+            return res.status(400).json({ error: 'Required identity or password fields missing.' });
         }
-        
+
         const existing = await Registrant.findOne({ phone });
         if (existing) {
             return res.status(400).json({ error: 'A registration with this phone number already exists.' });
         }
 
-        // Redact & mask raw identity input before writing to database
         const lastFour = aadhaar.slice(-4);
         const maskedAadhaar = `XXXX-XXXX-${lastFour}`;
+
+        const photoUrl = req.files && req.files['photo'] ? `/uploads/${req.files['photo'][0].filename}` : '';
+        const teamLogoUrl = req.files && req.files['teamLogo'] ? `/uploads/${req.files['teamLogo'][0].filename}` : '';
+        const paymentScreenshotUrl = req.files && req.files['paymentScreenshot'] ? `/uploads/${req.files['paymentScreenshot'][0].filename}` : '';
 
         const registrant = new Registrant({
             fullName,
             role,
+            age: Number(age) || 0,
             phone,
-            email,
-            maskedAadhaar,
-            photoUrl: photoUrl || '',
-            paymentScreenshotUrl: paymentScreenshotUrl || ''
+            email: email && email.trim() !== '' ? email.trim() : undefined,
+            password, // Will be hashed automatically by pre-save hook
+            aadhaar,
+            category,
+            battingStyle,
+            address,
+            description,
+            photoUrl,
+            teamLogoUrl,
+            paymentScreenshotUrl
         });
 
         await registrant.save();
-        res.status(201).json({ success: true, message: 'Registration submitted successfully for verification.' });
+        res.status(201).json({ success: true, message: 'Registration submitted successfully!' });
     } catch (err) {
+        console.error("Registration error:", err);
+        if (err.code === 11000) {
+            return res.status(400).json({ error: 'A record with this phone or email already exists.' });
+        }
         res.status(500).json({ error: 'Registration submission failed.' });
+    }
+});
+
+// --- 2. AUTHENTICATE & FETCH PROFILE FOR EDITING ---
+app.post('/api/register/auth', async (req, res) => {
+    try {
+        const { identifier, password } = req.body; // identifier can be phone or email
+        if (!identifier || !password) {
+            return res.status(400).json({ error: 'Please provide phone/email and password.' });
+        }
+
+        const registrant = await Registrant.findOne({
+            $or: [{ phone: identifier }, { email: identifier }]
+        });
+
+        if (!registrant) {
+            return res.status(404).json({ error: 'Registrant not found.' });
+        }
+
+        const isMatch = await bcrypt.compare(password, registrant.password);
+        if (!isMatch) {
+            return res.status(401).json({ error: 'Incorrect password.' });
+        }
+
+        // Return user data (excluding password) for pre-filling the edit form
+        const userData = registrant.toObject();
+        delete userData.password;
+        res.json({ success: true, registrant: userData });
+    } catch (err) {
+        res.status(500).json({ error: 'Authentication failed.' });
+    }
+});
+
+// --- 3. SECURE PROFILE UPDATE ROUTE ---
+app.put('/api/register/:id', registrationUploads, async (req, res) => {
+    try {
+        const { id } = req.params;
+        const { fullName, role, age, phone, email, password, newPassword, address, aadhaar, description, category, battingStyle } = req.body;
+
+        const registrant = await Registrant.findById(id);
+        if (!registrant) {
+            return res.status(404).json({ error: 'Registrant not found.' });
+        }
+
+        if (!password) {
+            return res.status(400).json({ error: 'Current password is required to save changes.' });
+        }
+
+        const isMatch = await bcrypt.compare(password, registrant.password);
+        if (!isMatch) {
+            return res.status(401).json({ error: 'Incorrect password. Update denied.' });
+        }
+
+        // Update fields if provided
+        if (fullName) registrant.fullName = fullName;
+        if (role) registrant.role = role;
+        if (age) registrant.age = Number(age);
+        if (phone) registrant.phone = phone;
+        if (aadhaar && aadhaar.length >= 4) registrant.aadhaar = aadhaar;
+        if (email !== undefined) registrant.email = email.trim() !== '' ? email.trim() : undefined;
+        if (address) registrant.address = address;
+        if (description) registrant.description = description;
+        if (category) registrant.category = category;
+        if (battingStyle) registrant.battingStyle = battingStyle;
+
+        if (newPassword && newPassword.trim() !== '') {
+            registrant.password = await bcrypt.hash(newPassword, 10);
+        }
+
+        if (req.files && req.files['photo']) {
+            registrant.photoUrl = `/uploads/${req.files['photo'][0].filename}`;
+        }
+        if (req.files && req.files['teamLogo']) {
+            registrant.teamLogoUrl = `/uploads/${req.files['teamLogo'][0].filename}`;
+        }
+        if (req.files && req.files['paymentScreenshot']) {
+            registrant.paymentScreenshotUrl = `/uploads/${req.files['paymentScreenshot'][0].filename}`;
+        }
+
+        await registrant.save();
+        res.json({ success: true, message: 'Profile updated successfully!' });
+    } catch (err) {
+        console.error("Update error:", err);
+        res.status(500).json({ error: 'Failed to update profile.' });
     }
 });
 
@@ -563,15 +688,50 @@ app.delete('/api/admin/prizes/:id', verifyAdminJwt, async (req, res) => {
 // });
 
 // Manage Committee CRUD
-app.post('/api/admin/committee', verifyAdminJwt, async (req, res) => {
-    const member = new Committee(req.body);
-    await member.save();
-    res.status(201).json({ success: true, member });
+// app.post('/api/admin/committee', verifyAdminJwt, async (req, res) => {
+//     const member = new Committee(req.body);
+//     await member.save();
+//     res.status(201).json({ success: true, member });
+// });
+app.post('/api/admin/committee', verifyAdminJwt, upload.single('photo'), async (req, res) => {
+    try {
+        const { id, name, designation, phone } = req.body;
+        let updateData = { name, designation, phone };
+
+        if (req.file) {
+            updateData.photoUrl = `/uploads/${req.file.filename}`;
+        }
+
+        // Check if a valid MongoDB ID is provided and not empty
+        if (id && mongoose.Types.ObjectId.isValid(id)) {
+            await Committee.findByIdAndUpdate(id, updateData);
+            res.json({ message: 'Committee member updated successfully!' });
+        } else {
+            const count = await Committee.countDocuments();
+            await Committee.create({ 
+                ...updateData, 
+                photoUrl: updateData.photoUrl || '', 
+                order: count + 1 
+            });
+            res.json({ message: 'Committee member added successfully!' });
+        }
+    } catch (err) {
+        console.error("Committee save error:", err);
+        res.status(500).json({ error: 'Failed to save committee member.' });
+    }
 });
 
+// app.delete('/api/admin/committee/:id', verifyAdminJwt, async (req, res) => {
+//     await Committee.findByIdAndDelete(req.params.id);
+//     res.json({ success: true, message: 'Committee member deleted.' });
+// });
 app.delete('/api/admin/committee/:id', verifyAdminJwt, async (req, res) => {
-    await Committee.findByIdAndDelete(req.params.id);
-    res.json({ success: true, message: 'Committee member deleted.' });
+    try {
+        await Committee.findByIdAndDelete(req.params.id);
+        res.json({ message: 'Committee member deleted successfully!' });
+    } catch (err) {
+        res.status(500).json({ error: 'Failed to delete committee member.' });
+    }
 });
 
 // Manage Photo Slides CRUD
