@@ -126,7 +126,19 @@
 
             <form id="edit-form" onsubmit="handleUpdate(event)" class="space-y-4" enctype="multipart/form-data">
                 <input type="hidden" id="edit-id">
-
+                <!-- Satatus -->
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-xs font-bold text-slate-300 mb-1">Registration Status</label>
+                        <input type="text" id="edit-registration-status" disabled class="w-full bg-slate-950 border border-slate-800 rounded-xl p-3 text-slate-400 text-sm cursor-not-allowed">
+                        
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-slate-300 mb-1">Auction Status</label>
+                        <input type="text" id="edit-auction-status" disabled class="w-full bg-slate-950 border border-slate-800 rounded-xl p-3 text-slate-400 text-sm cursor-not-allowed">
+                        
+                    </div>
+                </div>
                 <!-- Full Name -->
                 <div>
                     <label class="block text-xs font-bold text-slate-300 mb-1">Full Name *</label>
@@ -182,7 +194,10 @@
                         </select>
                     </div>
                 </div>
-
+                <div id="edit-owner-spec-fields">
+                    <label class="block text-xs font-bold text-slate-300 mb-1">Team Name *</label>
+                    <input type="text" id="edit-teamName" required class="w-full bg-slate-900 border border-slate-700 rounded-xl p-3 text-white text-sm focus:outline-none focus:border-amber-400">
+                </div>
                 <!-- Address & Description -->
                 <div>
                     <label class="block text-xs font-bold text-slate-300 mb-1">Address / Village *</label>
@@ -197,7 +212,7 @@
                 <div class="space-y-4 pt-2 border-t border-slate-800">
                     <!-- Photo Upload (Player / Both) -->
                     <div id="edit-photo-upload-group">
-                        <label class="block text-xs font-bold text-slate-300 mb-1">Update Member Photo (Local File)</label>
+                        <label class="block text-xs font-bold text-slate-300 mb-1">Update Photo (Local File)</label>
                         <input type="file" id="edit-photo-file" accept="image/*" class="w-full bg-slate-900 border border-slate-700 rounded-xl p-2.5 text-white text-xs file:mr-4 file:py-1.5 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-amber-500 file:text-slate-950 hover:file:bg-amber-400">
                         <p id="current-photo-status" class="text-[10px] text-slate-400 mt-1"></p>
                     </div>
@@ -254,21 +269,26 @@
 
         function toggleEditRoleFields(role, paymentVerified) {
             const playerSpec = document.getElementById('edit-player-spec-fields');
+            const ownerSpec = document.getElementById('edit-owner-spec-fields');    
             const photoGroup = document.getElementById('edit-photo-upload-group');
             const logoGroup = document.getElementById('edit-team-logo-upload-group');
             const paymentWrapper = document.getElementById('edit-payment-upload-wrapper');
 
             if (role === 'Player') {
                 playerSpec.classList.remove('hidden');
+                ownerSpec.classList.add('hidden');
                 photoGroup.classList.remove('hidden');
                 logoGroup.classList.add('hidden');
             } else if (role === 'Team Owner') {
                 playerSpec.classList.add('hidden');
-                photoGroup.classList.add('hidden');
+                ownerSpec.classList.remove('hidden');
+                photoGroup.classList.remove('hidden');
                 logoGroup.classList.remove('hidden');
             } else {
                 // Both
+                
                 playerSpec.classList.remove('hidden');
+                ownerSpec.classList.remove('hidden');
                 photoGroup.classList.remove('hidden');
                 logoGroup.classList.remove('hidden');
             }
@@ -305,8 +325,10 @@
                     document.getElementById('edit-email').value = user.email || '';
                     document.getElementById('edit-aadhaar').value = user.aadhaar || '';
                     document.getElementById('edit-address').value = user.address || '';
+                    document.getElementById('edit-teamName').value = user.teamName || '';
                     document.getElementById('edit-description').value = user.description || '';
-                    
+                    document.getElementById('edit-auction-status').value = user.auctionStatus || 'Unsold';
+                    document.getElementById('edit-registration-status').value = user.status || 'Pending';
                     if (user.category) document.getElementById('edit-category').value = user.category;
                     if (user.battingStyle) document.getElementById('edit-style').value = user.battingStyle;
 
@@ -364,7 +386,7 @@
             formData.append('category', document.getElementById('edit-category').value);
             formData.append('battingStyle', document.getElementById('edit-style').value);
             formData.append('password', document.getElementById('edit-current-password').value);
-
+            formData.append('teamName', document.getElementById('edit-teamName').value);
             const newPass = document.getElementById('edit-new-password').value;
             if (newPass) formData.append('newPassword', newPass);
 

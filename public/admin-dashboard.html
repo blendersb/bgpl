@@ -90,6 +90,7 @@
                                 <th class="p-3">Auction Status</th>
                                 <th class="p-3">Sold Price (₹)</th>
                                 <th class="p-3">Assigned Team</th>
+                                <th class="p-3">Team Designation</th>
                                 <th class="p-3 text-right">Update Auction</th>
                             </tr>
                         </thead>
@@ -492,24 +493,64 @@
 
         function renderAuctionTable() {
             const approvedPlayers = allRegistrants.filter(r => r.status === 'Approved');
-            document.getElementById('auction-table').innerHTML = approvedPlayers.map(p => `
-                <tr>
-                    <td class="p-3 font-bold text-white">${p.fullName} <span class="text-xs text-slate-400 font-normal">(${p.role})</span></td>
-                    <td class="p-3"><input type="number" id="base-${p._id}" value="${p.basePrice || 500}" class="w-24 bg-slate-900 border border-slate-700 rounded-lg p-1.5 text-xs text-white"></td>
-                    <td class="p-3">
-                        <select id="auction-status-${p._id}" class="bg-slate-900 border border-slate-700 rounded-lg p-1.5 text-xs text-white">
-                            <option value="Unsold" ${p.auctionStatus === 'Unsold' ? 'selected' : ''}>Unsold</option>
-                            <option value="Bidding" ${p.auctionStatus === 'Bidding' ? 'selected' : ''}>Bidding</option>
-                            <option value="Sold" ${p.auctionStatus === 'Sold' ? 'selected' : ''}>Sold</option>
-                        </select>
-                    </td>
-                    <td class="p-3"><input type="number" id="sold-${p._id}" value="${p.soldPrice || 0}" class="w-28 bg-slate-900 border border-slate-700 rounded-lg p-1.5 text-xs text-white"></td>
-                    <td class="p-3"><input type="text" id="team-${p._id}" value="${p.assignedTeam || 'None'}" class="w-28 bg-slate-900 border border-slate-700 rounded-lg p-1.5 text-xs text-white"></td>
-                    <td class="p-3 text-right">
-                        <button onclick="saveAuction('${p._id}')" class="bg-amber-500 hover:bg-amber-600 text-slate-950 font-bold px-3 py-1.5 rounded-lg text-xs">Save</button>
-                    </td>
-                </tr>
-            `).join('') || `<tr><td colspan="6" class="p-4 text-center text-slate-500 text-xs">No approved players available for auction.</td></tr>`;
+            // Group by Teams
+            const owners = allRegistrants.filter(p => (p.status === 'Approved') && (p.role === 'Team Owner' || p.role === 'Both'));
+            
+            // Collect unique team names from owners and assigned players
+            const teamNames = [...new Set([
+                ...owners.map(o => o.teamName).filter(t => t && t !== 'None'),
+                ...allRegistrants.map(p => p.teamName).filter(t => t && t !== 'None')
+            ])];
+            document.getElementById('auction-table').innerHTML = approvedPlayers.map(p => {
+                // Build team dropdown options dynamically
+                const currentTeam = p.assignedTeam || 'None';
+                const teamOptions = `
+                    <option value="None" ${currentTeam === 'None' ? 'selected' : ''}>None</option>
+                    ${teamNames.map(team => `
+                        <option value="${team}" ${currentTeam === team ? 'selected' : ''}>${team}</option>
+                    `).join('')}
+                `;
+                const currentDesignation = p.teamDesignation || 'Player';
+                const designationOptions = `
+                    <option value="Player" ${currentDesignation === 'Player' ? 'selected' : ''}>Player</option>
+                    <option value="Captain" ${currentDesignation === 'Captain' ? 'selected' : ''}>Captain</option>
+                    <option value="Vice-Captain" ${currentDesignation === 'Vice-Captain' ? 'selected' : ''}>Vice-Captain</option>
+                    <option value="Mentor" ${currentDesignation === 'Mentor' ? 'selected' : ''}>Mentor / Manager</option>
+                `;
+                return `
+                    <tr class="border-b border-slate-800">
+                        <td class="p-3 font-bold text-white">
+                            ${p.fullName} <span class="text-xs text-slate-400 font-normal">(${p.role})</span>
+                        </td>
+                        <td class="p-3">
+                            <input type="number" id="base-${p._id}" value="${p.basePrice || 500}" class="w-24 bg-slate-900 border border-slate-700 rounded-lg p-1.5 text-xs text-white">
+                        </td>
+                        <td class="p-3">
+                            <select id="auction-status-${p._id}" class="bg-slate-900 border border-slate-700 rounded-lg p-1.5 text-xs text-white">
+                                <option value="Unsold" ${p.auctionStatus === 'Unsold' ? 'selected' : ''}>Unsold</option>
+                                <option value="Bidding" ${p.auctionStatus === 'Bidding' ? 'selected' : ''}>Bidding</option>
+                                <option value="Sold" ${p.auctionStatus === 'Sold' ? 'selected' : ''}>Sold</option>
+                            </select>
+                        </td>
+                        <td class="p-3">
+                            <input type="number" id="sold-${p._id}" value="${p.soldPrice || 0}" class="w-28 bg-slate-900 border border-slate-700 rounded-lg p-1.5 text-xs text-white">
+                        </td>
+                        <td class="p-3">
+                            <select id="team-${p._id}" class="w-32 bg-slate-900 border border-slate-700 rounded-lg p-1.5 text-xs text-white">
+                                ${teamOptions}
+                            </select>
+                        </td>
+                        <td class="p-3">
+                            <select id="designation-${p._id}" class="w-full bg-slate-900 border border-slate-700 rounded-xl p-3 text-white text-sm focus:outline-none focus:border-amber-400">
+                                ${designationOptions}
+                            </select>
+                        </td>
+                        <td class="p-3 text-right">
+                            <button onclick="saveAuction('${p._id}')" class="bg-amber-500 hover:bg-amber-600 text-slate-950 font-bold px-3 py-1.5 rounded-lg text-xs transition">Save</button>
+                        </td>
+                    </tr>
+                `;
+            }).join('');
         }
 
         // --- MODAL CONTROLS ---
@@ -609,7 +650,8 @@
                 basePrice: Number(document.getElementById(`base-${id}`).value),
                 auctionStatus: document.getElementById(`auction-status-${id}`).value,
                 soldPrice: Number(document.getElementById(`sold-${id}`).value),
-                assignedTeam: document.getElementById(`team-${id}`).value
+                assignedTeam: document.getElementById(`team-${id}`).value,
+                teamDesignation: document.getElementById(`designation-${id}`).value
             };
             await fetch(`/api/admin/registrant/${id}`, {
                 method: 'PUT',
@@ -981,6 +1023,8 @@
     }
 
     function editPrize(id, title, amount, perks, order) { 
+        // Find prize from your global list
+    
         openPrizeModal(id, title, amount, perks, order); 
     }
 
@@ -996,7 +1040,7 @@
     async function handleSavePrize(e) {
         e.preventDefault();
         const payload = {
-            //id: document.getElementById('prize-id').value,
+            id: document.getElementById('prize-id').value,
             title: document.getElementById('prize-title').value,
             amount: document.getElementById('prize-amount').value,
             perks: document.getElementById('prize-perks').value,

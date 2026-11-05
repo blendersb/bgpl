@@ -169,8 +169,8 @@
             
             // Collect unique team names from owners and assigned players
             const teamNames = [...new Set([
-                ...owners.map(o => o.assignedTeam).filter(t => t && t !== 'None'),
-                ...allRegistrants.map(p => p.assignedTeam).filter(t => t && t !== 'None')
+                ...owners.map(o => o.teamName).filter(t => t && t !== 'None'),
+                ...allRegistrants.map(p => p.teamName).filter(t => t && t !== 'None')
             ])];
 
             if (teamNames.length === 0) {
@@ -179,7 +179,7 @@
             }
 
             grid.innerHTML = teamNames.map(teamName => {
-                const teamOwner = owners.find(o => o.assignedTeam === teamName) || { fullName: 'Unassigned', phone: 'N/A', photoUrl: '' };
+                const teamOwner = owners.find(o => o.teamName === teamName) || { fullName: 'Unassigned', phone: 'N/A', photoUrl: '' };
                 const squad = allRegistrants.filter(p => p.assignedTeam === teamName);
                 const logoUrl = teamOwner.photoUrl || `https://api.dicebear.com/7.x/identicon/svg?seed=${encodeURIComponent(teamName)}`;
 

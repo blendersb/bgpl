@@ -148,10 +148,27 @@
             <!-- Dynamic Photo Carousel -->
             <div class="lg:col-span-2 relative rounded-3xl overflow-hidden bg-slate-900 h-72 md:h-96 border border-slate-800 shadow-2xl group">
                 <img id="carousel-img" src="https://images.unsplash.com/photo-1540747913346-19e32dc3e97e?auto=format&fit=crop&w=1200&q=80" alt="Tournament Slide" class="w-full h-full object-cover transition duration-700 group-hover:scale-105">
+                
                 <div class="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/40 to-transparent flex flex-col justify-end p-6 space-y-2">
-                    <span class="bg-amber-500 text-slate-950 text-xs font-black px-3 py-1 rounded-lg w-max uppercase tracking-wider shadow-lg">Featured Event</span>
-                    <h2 id="carousel-caption" class="text-2xl md:text-3xl font-black text-white tracking-wide">Bamundi Gram Premier League Season 2027</h2>
+                    <!-- <span class="bg-amber-500 text-slate-950 text-xs font-black px-3 py-1 rounded-lg w-max uppercase tracking-wider shadow-lg">Featured Event</span> -->
+                    <h2 id="carousel-caption" class="text-2xl md:text-3xl font-black text-white tracking-wide">Bamundi Gram Premier League 
+                        <span class="bg-gradient-to-r from-amber-400 to-yellow-300 bg-clip-text text-transparent">Session 2027</span>
+                    </h2>
+                    <p class="text-slate-400 text-sm md:text-base from-amber-400 to-yellow-300 leading-relaxed">
+            Welcome to the official hub of BGPL 2027.
+          </p>
+                <div class="flex flex-wrap gap-4 pt-2">
+                    <a href="/register" class="px-6 py-3 rounded-xl bg-gradient-to-r from-amber-500 to-yellow-500 text-slate-950 font-bold hover:brightness-110 shadow-lg shadow-amber-500/20 transition-all flex items-center space-x-1">
+                        <span>Register</span>
+                        <i class="fa-solid fa-arrow-right text-xs"></i>
+                    </a>
+                    <!-- <button onclick="switchTab('register')" class="px-6 py-3 rounded-xl bg-gradient-to-r from-amber-500 to-yellow-500 text-slate-950 font-bold hover:brightness-110 shadow-lg shadow-amber-500/20 transition-all">
+                    Register <i class="fa-solid fa-arrow-right ml-1 text-xs"></i>
+                    </button> -->
+                    
                 </div>
+                </div>
+                
             </div>
 
             <!-- ATTRACTIVE PRIZE MONEY CARD -->
@@ -193,7 +210,7 @@
             </a>
 
             <!-- Button 3: Live Auction -->
-            <a href="/directory?filter=Auction" class="glass-card rounded-2xl p-4 flex items-center space-x-3.5 hover:border-emerald-500/50 transition transform active:scale-95 shadow-xl group relative overflow-hidden">
+            <a href="#" class="glass-card rounded-2xl p-4 flex items-center space-x-3.5 hover:border-emerald-500/50 transition transform active:scale-95 shadow-xl group relative overflow-hidden">
                 <span class="absolute top-2 right-2 flex h-2 w-2">
                     <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
                     <span class="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
@@ -494,8 +511,8 @@
                 
                 if (owners.length > 0) {
                     teamsGrid.innerHTML = owners.map(owner => {
-                        const teamName = owner.assignedTeam && owner.assignedTeam !== 'None' ? owner.assignedTeam : owner.fullName + ' XI';
-                        const logoUrl = owner.photoUrl || 'https://api.dicebear.com/7.x/identicon/svg?seed=' + encodeURIComponent(teamName);
+                        const teamName = owner.teamName || 'Unnamed Team';
+                        const logoUrl = owner.teamLogoUrl || 'https://api.dicebear.com/7.x/identicon/svg?seed=' + encodeURIComponent(teamName);
                         
                         return `
                             <div onclick="openTeamModal('${teamName}', '${owner.fullName}', '${logoUrl}')" class="glass-card rounded-2xl p-4 text-center space-y-3 hover:border-amber-500/50 transition duration-300 cursor-pointer group">
@@ -551,7 +568,7 @@
             document.getElementById('modal-team-logo').src = logoUrl;
 
             // Filter players assigned to this team
-            const squad = globalRegistrants.filter(p => p.assignedTeam === teamName || (p.role === 'Team Owner' && p.fullName === ownerName));
+            const squad = globalRegistrants.filter(p => p.assignedTeam === teamName);
             
             const squadList = document.getElementById('modal-squad-list');
             if (squad.length > 0) {

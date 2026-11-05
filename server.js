@@ -140,7 +140,9 @@ const registrantSchema = new mongoose.Schema({
     auctionStatus: { type: String, enum: ['Unsold', 'Bidding', 'Sold'], default: 'Unsold' },
     basePrice: { type: Number, default: 500 },
     soldPrice: { type: Number, default: 0 },
+    teamName: { type: String, default: '' },
     assignedTeam: { type: String, default: 'None' },
+    teamDesignation: { type: String, default: '' },
     photoUrl: { type: String, default: '' },
     teamLogoUrl: { type: String, default: '' },
     paymentScreenshotUrl: { type: String, default: '' },
@@ -307,7 +309,7 @@ const registrationUploads = upload.fields([
 // --- 1. INITIAL REGISTRATION ROUTE ---
 app.post('/api/register', registrationUploads, async (req, res) => {
     try {
-        const { fullName, role, age, phone, email, password, aadhaar, category, battingStyle, address, description } = req.body;
+        const { fullName, role, age, phone, email, password, aadhaar, category, battingStyle,teamName, address, description } = req.body;
 
         if (!fullName || !phone || !aadhaar || !password) {
             return res.status(400).json({ error: 'Required identity or password fields missing.' });
@@ -335,6 +337,7 @@ app.post('/api/register', registrationUploads, async (req, res) => {
             aadhaar,
             category,
             battingStyle,
+            teamName,
             address,
             description,
             photoUrl,
@@ -387,7 +390,7 @@ app.post('/api/register/auth', async (req, res) => {
 app.put('/api/register/:id', registrationUploads, async (req, res) => {
     try {
         const { id } = req.params;
-        const { fullName, role, age, phone, email, password, newPassword, address, aadhaar, description, category, battingStyle } = req.body;
+        const { fullName, role, age, phone, email, password, newPassword, teamName, address, aadhaar, description, category, battingStyle } = req.body;
 
         const registrant = await Registrant.findById(id);
         if (!registrant) {
@@ -414,7 +417,7 @@ app.put('/api/register/:id', registrationUploads, async (req, res) => {
         if (description) registrant.description = description;
         if (category) registrant.category = category;
         if (battingStyle) registrant.battingStyle = battingStyle;
-
+        if (teamName) registrant.teamName = teamName;
         if (newPassword && newPassword.trim() !== '') {
             registrant.password = await bcrypt.hash(newPassword, 10);
         }

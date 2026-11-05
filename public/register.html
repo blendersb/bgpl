@@ -158,7 +158,11 @@
             </select>
         </div>
     </div>
-
+    <!-- Team Name -->
+    <div id="owner-spec-fields" class="">
+        <label class="block text-xs font-bold text-slate-300 mb-1">Team Name *</label>
+        <input type="text" id="reg-team-name" required placeholder="Enter your team name" class="w-full bg-slate-900 border border-slate-700 rounded-xl p-3 text-white text-sm focus:outline-none focus:border-amber-400">
+    </div>
     <!-- Address & Description -->
     <div>
         <label class="block text-xs font-bold text-slate-300 mb-1">Address / Village *</label>
@@ -249,7 +253,8 @@
     function toggleRoleFields() {
         const role = document.getElementById('reg-role').value;
         const playerSpec = document.getElementById('player-spec-fields');
-        const photoGroup = document.getElementById('photo-upload-group');
+        const ownerSpec = document.getElementById('owner-spec-fields');
+        //const photoGroup = document.getElementById('photo-upload-group');
         const logoGroup = document.getElementById('team-logo-upload-group');
         const feeAmountEl = document.getElementById('fee-amount');
         const upiDeeplink = document.getElementById('upi-deeplink');
@@ -257,17 +262,19 @@
         let currentFee = 500;
         if (role === 'Player') {
             playerSpec.classList.remove('hidden');
-            photoGroup.classList.remove('hidden');
+            //photoGroup.classList.remove('hidden');
             logoGroup.classList.add('hidden');
+            ownerSpec.classList.add('hidden');
             currentFee = tournamentConfig.playerFee;
         } else if (role === 'Team Owner') {
             playerSpec.classList.add('hidden');
-            photoGroup.classList.add('hidden');
+            //photoGroup.classList.add('hidden');
             logoGroup.classList.remove('hidden');
+            ownerSpec.classList.remove('hidden');
             currentFee = tournamentConfig.ownerFee;
         } else {
             playerSpec.classList.remove('hidden');
-            photoGroup.classList.remove('hidden');
+            //photoGroup.classList.remove('hidden');
             logoGroup.classList.remove('hidden');
             currentFee = tournamentConfig.bothFee;
         }
@@ -328,12 +335,12 @@
         formData.append('password', document.getElementById('reg-password').value);
         const aadhaarVal = document.getElementById('reg-aadhaar').value;
         if (aadhaarVal) formData.append('aadhaar', aadhaarVal);
-        
         formData.append('category', document.getElementById('reg-category').value);
         formData.append('battingStyle', document.getElementById('reg-style').value);
+        formData.append('teamName', document.getElementById('reg-team-name').value);
         formData.append('address', document.getElementById('reg-address').value);
         formData.append('description', document.getElementById('reg-description').value);
-
+        
         // Optional files (Checked before appending)
         const photoInput = document.getElementById('reg-photo-file');
         const logoInput = document.getElementById('reg-logo-file');
