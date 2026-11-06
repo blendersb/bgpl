@@ -40,3 +40,63 @@ function showAlert(msg, isError = false) {
         }, 300); // Matches transition duration
     }, 4000);
 }
+
+
+function compressImage(file, maxSizeKB = 150, maxWidth = 800, quality = 0.7) {
+    return new Promise((resolve, reject) => {
+        // If file is already smaller than target, return it as-is
+        if (file.size <= maxSizeKB * 1024) {
+            return resolve(file);
+        }
+
+        const reader = new FileReader();
+        reader.readAsDataURL(file);
+        reader.onload = (event) => {
+            const img = new Image();
+            img.src = event.target.result;
+            img.onload = () => {
+                const canvas = document.createElement('canvas');
+                let width = img.width;
+                let height = img.height;
+
+                // Scale down dimensions proportionally if image is too large
+                if (width > maxWidth) {
+                    height = Math.round((height * maxWidth) / width);
+                    width = maxWidth;
+                }
+
+                canvas.width = width;
+                canvas.height = height;
+
+                const ctx = canvas.getContext('2d');
+                ctx.drawImage(img, 0, 0, width, height);
+
+                // Iteratively reduce quality until under target size
+                let currentQuality = quality;
+                const attemptCompression = () => {
+                    canvas.toBlob((blob) => {
+                        if (!blob) {
+                            return reject(new Error('Canvas compression failed.'));
+                        }
+
+                        if (blob.size <= maxSizeKB * 1024 || currentQuality <= 0.1) {
+                            // Convert blob back to a File object
+                            const compressedFile = new File([blob], file.name, {
+                                type: 'image/jpeg',
+                                lastModified: Date.now()
+                            });
+                            resolve(compressedFile);
+                        } else {
+                            currentQuality -= 0.1;
+                            attemptCompression();
+                        }
+                    }, 'image/jpeg', currentQuality);
+                };
+
+                attemptCompression();
+            };
+            img.onerror = (error) => reject(error);
+        };
+        reader.onerror = (error) => reject(error);
+    });
+}

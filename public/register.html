@@ -330,7 +330,6 @@
 
         const editId = document.getElementById('reg-id') ? document.getElementById('reg-id').value : null;
         const formData = new FormData();
-
         // Text fields
         formData.append('fullName', document.getElementById('reg-name').value);
         formData.append('role', document.getElementById('reg-role').value);
@@ -351,10 +350,40 @@
         const logoInput = document.getElementById('reg-logo-file');
         const paymentInput = document.getElementById('reg-payment-file');
 
-        if (photoInput && photoInput.files[0]) formData.append('photo', photoInput.files[0]);
-        if (logoInput && logoInput.files[0]) formData.append('teamLogo', logoInput.files[0]);
-        if (paymentInput && paymentInput.files[0]) formData.append('paymentScreenshot', paymentInput.files[0]);
+        //if (photoInput && photoInput.files[0]) formData.append('photo', photoInput.files[0]);
+        if (photoInput && photoInput.files[0]) {
+            try {
+                const compressedPhoto = await compressImage(photoInput.files[0], 150); // Target < 150 KB
+                formData.append('photo', compressedPhoto);
+            } catch (err) {
+                console.error("Photo compression failed, using original:", err);
+                formData.append('photo', photoInput.files[0]);
+            }
+        }
 
+        //if (logoInput && logoInput.files[0]) formData.append('teamLogo', logoInput.files[0]);
+        if (logoInput && logoInput.files[0]) {
+            try {
+                const compressedLogo = await compressImage(logoInput.files[0], 150); // Target < 150 KB
+                formData.append('teamLogo', compressedLogo);
+            } catch (err) {
+                console.error("Logo compression failed, using original:", err);
+                formData.append('teamLogo', logoInput.files[0]);
+            }
+        }
+    
+        
+        
+        //if (paymentInput && paymentInput.files[0]) formData.append('paymentScreenshot', paymentInput.files[0]);
+        if (paymentInput && paymentInput.files[0]) {
+            try {
+                const compressedPayment = await compressImage(paymentInput.files[0], 150); // Target < 150 KB
+                formData.append('paymentScreenshot', compressedPayment);
+            } catch (err) {
+                console.error("Payment screenshot compression failed, using original:", err);
+                formData.append('paymentScreenshot', paymentInput.files[0]);
+            }
+        }
         const url = editId ? `/api/register/${editId}` : '/api/register';
         const method = editId ? 'PUT' : 'POST';
 
