@@ -153,34 +153,32 @@
                     return;
                 }
             }
-            if(franchise) {
-                // If a specific team is provided, filter to that team only
-                //const specificTeam = allRegistrants.find(p => p.assignedTeam === franchise || p.teamName === franchise);
-            const specificTeam = allRegistrants.find(p => {
-                const franchiseClean = franchise?.trim().toLowerCase();
-                
-                const assignedClean = p.assignedTeam?.trim().toLowerCase();
-                const isValidAssigned = assignedClean && assignedClean !== "" && assignedClean !== "none";
-                
-                const teamNameClean = p.teamName?.trim().toLowerCase();
-                const isValidTeamName = teamNameClean && teamNameClean !== "" && teamNameClean !== "none";
+            if (franchise) {
+                // Use .filter() to get ALL players belonging to this franchise
+                const specificTeam = allRegistrants.filter(p => 
+                    (p.assignedTeam && p.assignedTeam !== "None" && p.assignedTeam === franchise) || 
+                    (p.teamName && p.teamName !== "None" && p.teamName === franchise)
+                );
 
-                return (isValidAssigned && assignedClean === franchiseClean) ||
-                    (isValidTeamName && teamNameClean === franchiseClean);
-            });
+                console.log("Filtering for franchise:", franchise, "Found players:", specificTeam);
                 
-                if (specificTeam) {
-                    allRegistrants = [specificTeam];
+                // Check .length instead of the array variable directly
+                if (specificTeam.length > 0) {
+                    allRegistrants = specificTeam; // Do NOT wrap in brackets []
                 } else {
                     document.getElementById('directory-grid').innerHTML = `<div class="col-span-full py-16 text-center text-slate-400 bg-slate-900/40 rounded-2xl border border-slate-800">No Franchise found with team: ${franchise}</div>`;
                     return;
                 }
             }
+
             const query = document.getElementById('directory-search').value.toLowerCase();
             const grid = document.getElementById('directory-grid');
 
-            let filtered = allRegistrants.filter(p => p.fullName.toLowerCase().includes(query)|| p.assignedTeam.toLowerCase().includes(query)|| (p.playerId && p.playerId.toLowerCase().includes(query)));
-
+            let filtered = allRegistrants.filter(p => 
+                p.fullName.toLowerCase().includes(query) || 
+                (p.assignedTeam && p.assignedTeam.toLowerCase().includes(query)) || 
+                (p.playerId && p.playerId.toLowerCase().includes(query))
+            );
             if (currentFilter === 'Owner') {
                 // --- 1. OWNERS VIEW ---
                 filtered = filtered.filter(p => p.role === 'Team Owner' || p.role === 'Both');
