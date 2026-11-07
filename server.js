@@ -150,6 +150,7 @@ const registrantSchema = new mongoose.Schema({
     assignedTeam: { type: String, default: '' },
     teamDesignation: { type: String, default: '' },
     photoUrl: { type: String, default: '' },
+    aadharPhotoUrl: { type: String, default: '' },
     teamLogoUrl: { type: String, default: '' },
     paymentScreenshotUrl: { type: String, default: '' },
     paymentVerified: { type: Boolean, default: false },
@@ -325,6 +326,7 @@ app.get('/api/public/data', async (req, res) => {
 // Multi-field upload middleware
 const registrationUploads = upload.fields([
     { name: 'photo', maxCount: 1 },
+    { name: 'aadharPhoto', maxCount: 1 },
     { name: 'teamLogo', maxCount: 1 },
     { name: 'paymentScreenshot', maxCount: 1 }
 ]);
@@ -347,6 +349,7 @@ app.post('/api/register', registrationUploads, async (req, res) => {
         const maskedAadhaar = `XXXX-XXXX-${lastFour}`;
 
         const photoUrl = req.files && req.files['photo'] ? `/uploads/${req.files['photo'][0].filename}` : '';
+        const aadharPhotoUrl = req.files && req.files['photo'] ? `/uploads/${req.files['aadharPhoto'][0].filename}` : '';
         const teamLogoUrl = req.files && req.files['teamLogo'] ? `/uploads/${req.files['teamLogo'][0].filename}` : '';
         const paymentScreenshotUrl = req.files && req.files['paymentScreenshot'] ? `/uploads/${req.files['paymentScreenshot'][0].filename}` : '';
 
@@ -365,6 +368,7 @@ app.post('/api/register', registrationUploads, async (req, res) => {
             address,
             description,
             photoUrl,
+            aadharPhotoUrl,
             teamLogoUrl,
             paymentScreenshotUrl
         });
@@ -449,6 +453,9 @@ app.put('/api/register/:id', registrationUploads, async (req, res) => {
 
         if (req.files && req.files['photo']) {
             registrant.photoUrl = `/uploads/${req.files['photo'][0].filename}`;
+        }
+        if (req.files && req.files['aadharPhoto']) {
+            registrant.aadharPhotoUrl = `/uploads/${req.files['aadharPhoto'][0].filename}`;
         }
         if (req.files && req.files['teamLogo']) {
             registrant.teamLogoUrl = `/uploads/${req.files['teamLogo'][0].filename}`;

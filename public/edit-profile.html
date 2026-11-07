@@ -232,6 +232,13 @@
                         <p id="current-photo-status" class="text-[10px] text-slate-400 mt-1"></p>
                     </div>
 
+                    <!-- aadhar Photo Upload (Player / Both) -->
+                    <div id="edit-aadhar-photo-upload-group">
+                        <label class="block text-xs font-bold text-slate-300 mb-1">Update Aadhar</label>
+                        <input type="file" id="edit-aadhar-photo-file" accept="image/*" class="w-full bg-slate-900 border border-slate-700 rounded-xl p-2.5 text-white text-xs file:mr-4 file:py-1.5 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-amber-500 file:text-slate-950 hover:file:bg-amber-400">
+                        <p id="current-aadhar-photo-status" class="text-[10px] text-slate-400 mt-1"></p>
+                    </div>
+
                     <!-- Team Logo Upload (Team Owner / Both) -->
                     <div id="edit-team-logo-upload-group" class="hidden">
                         <label class="block text-xs font-bold text-slate-300 mb-1">Update Team Logo (Local File)</label>
@@ -383,6 +390,11 @@
                     } else {
                         document.getElementById('current-photo-status').innerText = `⚠ No member photo uploaded yet.`;
                     }
+                    if (user.aadharPhotoUrl) {
+                        document.getElementById('current-aadhar-photo-status').innerHTML = `✓ Aadhar uploaded. <a href="${user.aadharPhotoUrl}" target="_blank" class="text-amber-400 underline ml-1">View Current Aadhar</a>`;
+                    } else {
+                        document.getElementById('current-aadhar-photo-status').innerText = `⚠ No Aadhar uploaded yet.`;
+                    }
 
                     // Team Logo Status Preview
                     if (user.teamLogoUrl) {
@@ -439,6 +451,9 @@
             // Files
             const photoFile = document.getElementById('edit-photo-file').files[0];
             if (photoFile) formData.append('photo', photoFile);
+
+            const aadharPhotoFile = document.getElementById('edit-aadhar-photo-file').files[0];
+            if (aadharPhotoFile) formData.append('aadharPhoto', aadharPhotoFile);
 
             const logoFile = document.getElementById('edit-logo-file').files[0];
             if (logoFile) formData.append('teamLogo', logoFile);

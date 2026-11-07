@@ -118,8 +118,8 @@
             <label class="block text-xs font-bold text-slate-300 mb-1">Role *</label>
             <select id="reg-role" onchange="toggleRoleFields()" required class="w-full bg-slate-900 border border-slate-700 rounded-xl p-3 text-white text-sm focus:outline-none focus:border-amber-400">
                 <option value="Player">Player</option>
-                <option value="Team Owner">Team Owner</option>
-                <option value="Both">Both (Player & Owner)</option>
+                <!-- <option value="Team Owner">Team Owner</option> -->
+                <!-- <option value="Both">Both (Player & Owner)</option> -->
             </select>
         </div>
         <div>
@@ -194,8 +194,12 @@
     <div class="space-y-4 pt-2 border-t border-slate-800">
         <!-- Photo Upload (Player / Both) -->
         <div id="photo-upload-group">
-            <label class="block text-xs font-bold text-slate-300 mb-1">Upload Photo (Local File) *</label>
-            <input type="file" id="reg-photo-file" accept="image/*" class="w-full bg-slate-900 border border-slate-700 rounded-xl p-2.5 text-white text-xs file:mr-4 file:py-1.5 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-amber-500 file:text-slate-950 hover:file:bg-amber-400">
+            <label class="block text-xs font-bold text-slate-300 mb-1">Upload profile Photo *</label>
+            <input type="file" id="reg-photo-file" required accept="image/*" class="w-full bg-slate-900 border border-slate-700 rounded-xl p-2.5 text-white text-xs file:mr-4 file:py-1.5 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-amber-500 file:text-slate-950 hover:file:bg-amber-400">
+        </div>
+        <div id="aadhar-upload-group">
+            <label class="block text-xs font-bold text-slate-300 mb-1">Upload Aadhar (Both Side in Same Page)*</label>
+            <input type="file" id="reg-aadhar-file" required accept="image/*" class="w-full bg-slate-900 border border-slate-700 rounded-xl p-2.5 text-white text-xs file:mr-4 file:py-1.5 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-amber-500 file:text-slate-950 hover:file:bg-amber-400">
         </div>
 
         <!-- Team Logo Upload (Team Owner / Both) -->
@@ -360,6 +364,7 @@
 
         // Optional files (Checked before appending)
         const photoInput = document.getElementById('reg-photo-file');
+        const aadharPhotoInput = document.getElementById('reg-aadhar-file');
         const logoInput = document.getElementById('reg-logo-file');
         const paymentInput = document.getElementById('reg-payment-file');
 
@@ -371,6 +376,16 @@
             } catch (err) {
                 console.error("Photo compression failed, using original:", err);
                 formData.append('photo', photoInput.files[0]);
+            }
+        }
+
+        if (aadharPhotoInput && aadharPhotoInput.files[0]) {
+            try {
+                const compressedAadharPhoto = await compressImage(aadharPhotoInput.files[0], 150); // Target < 150 KB
+                formData.append('aadharPhoto', compressedAadharPhoto);
+            } catch (err) {
+                console.error("Photo compression failed, using original:", err);
+                formData.append('aadharPhoto', aadharPhotoInput.files[0]);
             }
         }
 
