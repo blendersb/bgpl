@@ -147,7 +147,7 @@ const registrantSchema = new mongoose.Schema({
     basePrice: { type: Number, default: 500 },
     soldPrice: { type: Number, default: 0 },
     teamName: { type: String, default: '' },
-    assignedTeam: { type: String, default: 'None' },
+    assignedTeam: { type: String, default: '' },
     teamDesignation: { type: String, default: '' },
     photoUrl: { type: String, default: '' },
     teamLogoUrl: { type: String, default: '' },
@@ -306,6 +306,14 @@ app.get('/api/public/data', async (req, res) => {
             query.role = { $in: ['Player', 'Both'] };
         } else if (filter === 'Owner') {
             query.role = { $in: ['Team Owner', 'Both'] };
+        }
+        else if (filter === 'Team') {
+
+            query.$or = [
+                { assignedTeam: { $exists: true, $ne: null, $ne: "" } },
+                { teamName: { $exists: true, $ne: null, $ne: "" } }
+            ];
+
         }
         const approvedPlayers = await Registrant.find(query).select('-__v');
         res.json({ notices, matches, prizes, committee, slides, players: approvedPlayers, rules, about });

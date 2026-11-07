@@ -138,6 +138,7 @@
             .then(res => res.json())
             .then(data => {
                 allRegistrants = data.players || [];
+                console.log("Fetched Registrants:", allRegistrants,currentFilter);
                 renderDirectory();
             });
 
@@ -154,7 +155,20 @@
             }
             if(franchise) {
                 // If a specific team is provided, filter to that team only
-                const specificTeam = allRegistrants.find(p => p.assignedTeam === franchise);
+                //const specificTeam = allRegistrants.find(p => p.assignedTeam === franchise || p.teamName === franchise);
+            const specificTeam = allRegistrants.find(p => {
+                const franchiseClean = franchise?.trim().toLowerCase();
+                
+                const assignedClean = p.assignedTeam?.trim().toLowerCase();
+                const isValidAssigned = assignedClean && assignedClean !== "" && assignedClean !== "none";
+                
+                const teamNameClean = p.teamName?.trim().toLowerCase();
+                const isValidTeamName = teamNameClean && teamNameClean !== "" && teamNameClean !== "none";
+
+                return (isValidAssigned && assignedClean === franchiseClean) ||
+                    (isValidTeamName && teamNameClean === franchiseClean);
+            });
+                
                 if (specificTeam) {
                     allRegistrants = [specificTeam];
                 } else {
