@@ -126,6 +126,16 @@
             <label class="block text-xs font-bold text-slate-300 mb-1">Age *</label>
             <input type="number" id="reg-age" required min="10" max="70" placeholder="e.g. 24" class="w-full bg-slate-900 border border-slate-700 rounded-xl p-3 text-white text-sm focus:outline-none focus:border-amber-400">
         </div>
+        <div>
+            <label class="block text-xs font-bold text-slate-300 mb-1">Jersey Size</label>
+            <select id="reg-jersey-size" class="w-full bg-slate-900 border border-slate-700 rounded-xl p-3 text-white text-sm focus:outline-none focus:border-amber-400">
+                <option value="S">S</option>
+                <option value="M">M</option>
+                <option value="L">L</option>
+                <option value="XL">XL</option>
+                <option value="XXL">XXL</option>
+            </select>
+        </div>
     </div>
 
     <!-- Phone & Aadhaar -->
@@ -152,7 +162,8 @@
                 <option value="Batsman">Batsman</option>
                 <option value="Bowler">Bowler</option>
                 <option value="All-Rounder">All-Rounder</option>
-                <option value="Wicket-Keeper">Wicket-Keeper Batsman</option>
+                <option value="Wicket-Keeper">Wicket-Keeper</option>
+                <option value="Wicket-Keeper + Batsman">Wicket-Keeper + Batsman</option>
             </select>
         </div>
         <div>
@@ -162,6 +173,7 @@
                 <option value="Left-Handed">Left-Handed</option>
             </select>
         </div>
+
     </div>
     <!-- Team Name -->
     <div id="owner-spec-fields" class="">
@@ -340,7 +352,8 @@
         const aadhaarVal = document.getElementById('reg-aadhaar').value;
         if (aadhaarVal) formData.append('aadhaar', aadhaarVal);
         formData.append('category', document.getElementById('reg-category').value);
-        formData.append('battingStyle', document.getElementById('reg-style').value);
+        formData.append('style', document.getElementById('reg-style').value);
+        formData.append('jerseySize', document.getElementById('reg-jersey-size').value);
         formData.append('teamName', document.getElementById('reg-team-name').value);
         formData.append('address', document.getElementById('reg-address').value);
         formData.append('description', document.getElementById('reg-description').value);

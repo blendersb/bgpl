@@ -1201,6 +1201,14 @@ function openPlayerModal(id) {
         <!-- Show only for Players or Both -->
         ${(player.role === 'Player' || player.role === 'Both') ? `
             <div class="flex justify-between bg-slate-950/40 p-2.5 rounded-lg">
+                <span class="text-slate-500">Category:</span> 
+                <span class="font-bold text-amber-400">${player.category || 'Unassigned'}</span>
+            </div>
+            <div class="flex justify-between bg-slate-950/40 p-2.5 rounded-lg">
+                <span class="text-slate-500">Batting / Bowling Style:</span> 
+                <span class="font-bold text-white">${player.style || 'N/A'}</span>
+            </div>
+            <div class="flex justify-between bg-slate-950/40 p-2.5 rounded-lg">
                 <span class="text-slate-500">Assigned Team:</span> 
                 <span class="font-bold text-amber-400">${player.assignedTeam || 'Unassigned'}</span>
             </div>
@@ -1208,10 +1216,7 @@ function openPlayerModal(id) {
                 <span class="text-slate-500">Designation / Role:</span> 
                 <span class="font-bold text-white">${player.teamDesignation || 'N/A'}</span>
             </div>
-            <div class="flex justify-between bg-slate-950/40 p-2.5 rounded-lg">
-                <span class="text-slate-500">Batting / Bowling Style:</span> 
-                <span class="font-bold text-white">${player.battingStyle || 'N/A'}</span>
-            </div>
+            
             
             <div class="flex justify-between bg-slate-950/40 p-2.5 rounded-lg">
                 <span class="text-slate-500">Auction Status:</span> 

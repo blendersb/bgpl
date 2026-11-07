@@ -143,6 +143,7 @@ const registrantSchema = new mongoose.Schema({
     description: { type: String, default: '' },
     status: { type: String, enum: ['Pending', 'Approved', 'Rejected'], default: 'Pending' },
     auctionStatus: { type: String, enum: ['Unsold', 'Bidding', 'Sold'], default: 'Unsold' },
+    category: { type: String, enum: ['Batsman', 'Bowler', 'All-Rounder','Wicket-Keeper','Wicket-Keeper + Batsman'], default: 'All Rounder' },
     basePrice: { type: Number, default: 500 },
     soldPrice: { type: Number, default: 0 },
     teamName: { type: String, default: '' },
@@ -152,6 +153,8 @@ const registrantSchema = new mongoose.Schema({
     teamLogoUrl: { type: String, default: '' },
     paymentScreenshotUrl: { type: String, default: '' },
     paymentVerified: { type: Boolean, default: false },
+    style : { type: String, enum: ['Right-Handed', 'Left-Handed'], default: 'Right-Handed' },
+    jerseySize : { type: String, enum: ['S', 'M', 'L', 'XL','XXL'], default: 'M' },
     // pendingEdit: {
     //     fullName: { type: String },
     //     photoUrl: { type: String },
@@ -321,7 +324,7 @@ const registrationUploads = upload.fields([
 // --- 1. INITIAL REGISTRATION ROUTE ---
 app.post('/api/register', registrationUploads, async (req, res) => {
     try {
-        const { fullName, role, age, phone, email, password, aadhaar, category, battingStyle,teamName, address, description } = req.body;
+        const { fullName, role, age, phone, email, password, aadhaar, category, style, jerseySize, teamName, address, description } = req.body;
 
         if (!fullName || !phone || !aadhaar || !password) {
             return res.status(400).json({ error: 'Required identity or password fields missing.' });
@@ -348,7 +351,8 @@ app.post('/api/register', registrationUploads, async (req, res) => {
             password, // Will be hashed automatically by pre-save hook
             aadhaar,
             category,
-            battingStyle,
+            style,
+            jerseySize,
             teamName,
             address,
             description,
@@ -402,7 +406,7 @@ app.post('/api/register/auth', async (req, res) => {
 app.put('/api/register/:id', registrationUploads, async (req, res) => {
     try {
         const { id } = req.params;
-        const { fullName, role, age, phone, email, password, newPassword, teamName, address, aadhaar, description, category, battingStyle } = req.body;
+        const { fullName, role, age, phone, email, password, newPassword, teamName, address, aadhaar, description, category, style, jerseySize } = req.body;
 
         const registrant = await Registrant.findById(id);
         if (!registrant) {
@@ -428,7 +432,8 @@ app.put('/api/register/:id', registrationUploads, async (req, res) => {
         if (address) registrant.address = address;
         if (description) registrant.description = description;
         if (category) registrant.category = category;
-        if (battingStyle) registrant.battingStyle = battingStyle;
+        if (style) registrant.style = style;
+        if (jerseySize) registrant.jerseySize = jerseySize;
         if (teamName) registrant.teamName = teamName;
         if (newPassword && newPassword.trim() !== '') {
             registrant.password = await bcrypt.hash(newPassword, 10);

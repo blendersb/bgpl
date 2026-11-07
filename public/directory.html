@@ -177,24 +177,38 @@
                 }
 
                 grid.innerHTML = filtered.map(owner => `
-                    <div class="glass-card rounded-2xl overflow-hidden border border-slate-800 shadow-xl flex flex-col justify-between hover:border-amber-500/50 transition">
-                        <div>
-                            <div class="h-52 overflow-hidden bg-slate-950 relative">
-                                <img src="${owner.photoUrl || 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=400&q=80'}" class="w-full h-full object-cover">
-                                <span class="absolute top-3 right-3 bg-indigo-500/20 backdrop-blur text-indigo-400 border border-indigo-500/30 text-[10px] font-extrabold px-2.5 py-1 rounded-md uppercase tracking-wider">Team Owner</span>
-                            </div>
-                            <div class="p-5 space-y-3">
-                                <h4 class="font-black text-white text-lg tracking-wide truncate">${owner.fullName}</h4>
-                                <div class="space-y-1.5 text-xs text-slate-300 pt-2 border-t border-slate-800">
-                                    <div class="flex justify-between"><span class="text-slate-500">Franchise Team:</span> <span class="font-bold text-amber-400">${owner.assignedTeam && owner.assignedTeam !== 'None' ? owner.assignedTeam : 'Independent'}</span></div>
-                                    <div class="flex justify-between"><span class="text-slate-500">Phone:</span> <span class="font-medium text-slate-300">${owner.phone || 'N/A'}</span></div>
+                        <div class="glass-card rounded-2xl overflow-hidden border border-slate-800 bg-slate-900/60 shadow-2xl flex flex-row items-stretch p-3 gap-4 w-full max-w-md">
+                        <!-- Left Side: Photo with Badge -->
+                        <div class="w-36 sm:w-40 h-auto min-h-[160px] rounded-xl overflow-hidden relative flex-shrink-0 bg-slate-950">
+                            <img src="${owner.photoUrl || 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=400&q=80'}" class="w-full h-full object-cover">
+                            <span class="absolute top-2 left-2 bg-amber-500 text-slate-950 text-[10px] font-black px-2 py-0.5 rounded uppercase tracking-wider shadow">PLAYER</span>
+                        </div>
+
+                        <!-- Right Side: Name, Details & Button -->
+                        <div class="flex-1 flex flex-col justify-between min-w-0 py-1">
+                            <div class="space-y-2.5">
+                                <h3 class="font-black text-white text-2xl tracking-tight truncate">${owner.fullName}</h3>
+                                
+                                <div class="space-y-1.5 text-xs">
+                                    <div class="flex justify-between items-center gap-2">
+                                        <span class="text-slate-400 font-medium">Franchise Team:</span>
+                                        <span class="font-bold text-amber-400 tracking-wide">${owner.assignedTeam && owner.assignedTeam !== 'None' ? owner.assignedTeam : 'Independent'}</span>
+                                    </div>
+                                    <div class="flex justify-between items-center gap-2">
+                                        <span class="text-slate-400 font-medium">Phone:</span> 
+                                        <span class="font-bold text-emerald-400">${owner.phone || 'N/A'}</span>
+                                    </div>
+                                    
                                 </div>
                             </div>
-                        </div>
-                        <div class="p-5 pt-0">
-                            <button onclick='openOwnerModal(${JSON.stringify(owner)})' class="w-full bg-indigo-500/20 border border-indigo-500/30 text-indigo-400 hover:bg-indigo-500 hover:text-slate-950 font-bold py-2.5 rounded-xl transition text-xs">
-                                <i class="fa-solid fa-circle-info mr-1"></i> Show Details
-                            </button>
+
+                            <div class="pt-3">
+                                <button onclick='openOwnerModal(${JSON.stringify(owner)})' class="w-full bg-amber-400 hover:bg-amber-300 text-slate-950 font-bold py-2 px-3 rounded-xl transition text-xs flex items-center justify-center gap-2 shadow-lg shadow-amber-400/10">
+                                    <i class="fa-solid fa-user text-xs"></i>
+                                    <span>Show Details</span>
+                                    <i class="fa-solid fa-circle-info text-xs"></i>
+                                </button>
+                            </div>
                         </div>
                     </div>
                 `).join('');
@@ -263,27 +277,43 @@
                 }
 
                 grid.innerHTML = filtered.map(player => `
-                    <div class="glass-card rounded-2xl overflow-hidden border border-slate-800 shadow-xl flex flex-col justify-between hover:border-slate-700 transition">
-                        <div>
-                            <div class="h-48 overflow-hidden bg-slate-950 relative">
-                                <img src="${player.photoUrl || 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=400&q=80'}" class="w-full h-full object-cover">
-                                <span class="absolute top-3 right-3 bg-slate-950/80 backdrop-blur text-amber-400 border border-amber-500/30 text-[10px] font-extrabold px-2.5 py-1 rounded-md uppercase tracking-wider">${player.role}</span>
-                            </div>
-                            <div class="p-5 space-y-3">
-                                <h4 class="font-black text-white text-lg tracking-wide truncate">${player.fullName}</h4>
-                                <div class="space-y-1.5 text-xs text-slate-300 pt-2 border-t border-slate-800">
-                                    <div class="flex justify-between"><span class="text-slate-500">Player ID:</span> <span class="font-bold text-amber-400">${player.playerId || 'N/A'}</span></div>
-                                    <div class="flex justify-between"><span class="text-slate-500">Auction Status:</span> <span class="font-bold text-emerald-300">${player.auctionStatus || 'Unsold'}</span></div>
-                                    <div class="flex justify-between"><span class="text-slate-500">Assigned Team:</span> <span class="font-bold text-amber-400">${player.assignedTeam || 'Unassigned'}</span></div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="p-5 pt-0">
-                            <button onclick='openPlayerModal(${JSON.stringify(player)})' class="w-full bg-amber-500/10 border border-amber-500/30 text-amber-400 hover:bg-amber-500 hover:text-slate-950 font-bold py-2.5 rounded-xl transition text-xs">
-                                <i class="fa-solid fa-circle-info mr-1"></i> Show Details
-                            </button>
-                        </div>
-                    </div>
+                    <div class="glass-card rounded-2xl overflow-hidden border border-slate-800 bg-slate-900/60 shadow-2xl flex flex-row items-stretch p-3 gap-4 w-full max-w-md">
+    <!-- Left Side: Photo with Badge -->
+    <div class="w-36 sm:w-40 h-auto min-h-[160px] rounded-xl overflow-hidden relative flex-shrink-0 bg-slate-950">
+        <img src="${player.photoUrl || 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=400&q=80'}" class="w-full h-full object-cover">
+        <span class="absolute top-2 left-2 bg-amber-500 text-slate-950 text-[10px] font-black px-2 py-0.5 rounded uppercase tracking-wider shadow">PLAYER</span>
+    </div>
+
+    <!-- Right Side: Name, Details & Button -->
+    <div class="flex-1 flex flex-col justify-between min-w-0 py-1">
+        <div class="space-y-2.5">
+            <h3 class="font-black text-white text-2xl tracking-tight truncate">${player.fullName}</h3>
+            
+            <div class="space-y-1.5 text-xs">
+                <div class="flex justify-between items-center gap-2">
+                    <span class="text-slate-400 font-medium">Player ID:</span> 
+                    <span class="font-bold text-amber-400 tracking-wide">${player.playerId || 'N/A'}</span>
+                </div>
+                <div class="flex justify-between items-center gap-2">
+                    <span class="text-slate-400 font-medium">Auction Status:</span> 
+                    <span class="font-bold text-emerald-400">${player.auctionStatus || 'Unsold'}</span>
+                </div>
+                <div class="flex justify-between items-center gap-2">
+                    <span class="text-slate-400 font-medium">Assigned Team:</span> 
+                    <span class="font-bold text-white truncate max-w-[130px]">${player.assignedTeam || 'Unassigned'}</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="pt-3">
+            <button onclick='openPlayerModal(${JSON.stringify(player)})' class="w-full bg-amber-400 hover:bg-amber-300 text-slate-950 font-bold py-2 px-3 rounded-xl transition text-xs flex items-center justify-center gap-2 shadow-lg shadow-amber-400/10">
+                <i class="fa-solid fa-user text-xs"></i>
+                <span>Show Details</span>
+                <i class="fa-solid fa-circle-info text-xs"></i>
+            </button>
+        </div>
+    </div>
+</div>
                 `).join('');
             }
         }
@@ -300,21 +330,23 @@ function openPlayerModal(player) {
                     </div>
                 </div>
                 <div class="space-y-2 text-xs text-slate-300">
-                    <div class="flex justify-between bg-slate-950/40 p-2.5 rounded-lg"><span class="text-slate-500">About:</span> <span class="font-bold text-white">${player.description || 'N/A'}</span></div>
-<div class="flex justify-between bg-slate-950/40 p-2.5 rounded-lg"><span class="text-slate-500">Phone:</span> <span class="font-bold text-white">${player.phone || 'N/A'}</span></div>
+                    <div class="flex justify-between bg-slate-950/40 p-2.5 rounded-lg"><span class="text-slate-500">Phone:</span> <span class="font-bold text-white">${player.phone || 'N/A'}</span></div>
                     <div class="flex justify-between bg-slate-950/40 p-2.5 rounded-lg"><span class="text-slate-500">Address:</span> <span class="font-bold text-white">${player.address || 'N/A'}</span></div>
                     <div class="flex justify-between bg-slate-950/40 p-2.5 rounded-lg"><span class="text-slate-500">Email:</span> <span class="font-bold text-white">${player.email || 'N/A'}</span></div>
                     <div class="flex justify-between bg-slate-950/40 p-2.5 rounded-lg"><span class="text-slate-500">Age:</span> <span class="font-bold text-white">${player.age || 'N/A'}</span></div>
-                    <div class="flex justify-between bg-slate-950/40 p-2.5 rounded-lg"><span class="text-slate-500">Batting Style:</span> <span class="font-bold text-white">${player.battingStyle || 'N/A'}</span></div>
+                    <div class="flex justify-between bg-slate-950/40 p-2.5 rounded-lg"><span class="text-slate-500">Category:</span> <span class="font-bold text-white">${player.category || 'N/A'}</span></div>
+                    <div class="flex justify-between bg-slate-950/40 p-2.5 rounded-lg"><span class="text-slate-500">Batting / Bowling Style:</span> <span class="font-bold text-white">${player.style || 'N/A'}</span></div>
+                    <div class="flex justify-between bg-slate-950/40 p-2.5 rounded-lg"><span class="text-slate-500">Jersey Size:</span> <span class="font-bold text-white">${player.jerseySize || 'N/A'}</span></div>
                     <div class="flex justify-between bg-slate-950/40 p-2.5 rounded-lg"><span class="text-slate-500">Team:</span> <span class="font-bold text-white">${player.assignedTeam || 'N/A'}</span></div>
                     <div class="flex justify-between bg-slate-950/40 p-2.5 rounded-lg"><span class="text-slate-500">Designation:</span> <span class="font-bold text-white">${player.teamDesignation || 'N/A'}</span></div>
                     <div class="flex justify-between bg-slate-950/40 p-2.5 rounded-lg"><span class="text-slate-500">Auction Status:</span> <span class="font-bold text-emerald-400">${player.auctionStatus || 'Unsold'} (₹${player.soldPrice || 500})</span></div>
-                    <div class="bg-slate-950/40 p-2.5 rounded-lg space-y-1">
-                        <span class="text-slate-500 block">Bio / Description:</span>
-                        <p class="text-slate-300 italic">${player.description || 'No description provided.'}</p>
-                    </div>
+                    
                 </div>
             `;
+            // <div class="bg-slate-950/40 p-2.5 rounded-lg space-y-1">
+            //     <span class="text-slate-500 block">Bio / Description:</span>
+            //     <p class="text-slate-300 italic">${player.description || 'No description provided.'}</p>
+            // </div>
             document.getElementById('details-modal').classList.remove('hidden');
     }
 
