@@ -349,7 +349,7 @@ app.post('/api/register', registrationUploads, async (req, res) => {
         const maskedAadhaar = `XXXX-XXXX-${lastFour}`;
 
         const photoUrl = req.files && req.files['photo'] ? `/uploads/${req.files['photo'][0].filename}` : '';
-        const aadharPhotoUrl = req.files && req.files['photo'] ? `/uploads/${req.files['aadharPhoto'][0].filename}` : '';
+        const aadharPhotoUrl = req.files && req.files['photaadharPhotoo'] ? `/uploads/${req.files['aadharPhoto'][0].filename}` : '';
         const teamLogoUrl = req.files && req.files['teamLogo'] ? `/uploads/${req.files['teamLogo'][0].filename}` : '';
         const paymentScreenshotUrl = req.files && req.files['paymentScreenshot'] ? `/uploads/${req.files['paymentScreenshot'][0].filename}` : '';
 
@@ -418,20 +418,30 @@ app.post('/api/register/auth', async (req, res) => {
 app.put('/api/register/:id', registrationUploads, async (req, res) => {
     try {
         const { id } = req.params;
-        const { fullName, role, age, phone, email, password, newPassword, teamName, address, aadhaar, description, category, style, jerseySize ,adminEdit} = req.body;
-
+        const { fullName, role, age, phone, email, password, newPassword, teamName, address, aadhaar, description, category, style, jerseySize } = req.body;
+        // Properly parse adminEdit string from FormData to boolean
+        const adminEdit = req.body.adminEdit === 'true' || req.body.adminEdit === true;
         const registrant = await Registrant.findById(id);
         if (!registrant) {
             return res.status(404).json({ error: 'Registrant not found.' });
         }
 
-        if (!password) {
-            return res.status(400).json({ error: 'Current password is required to save changes.' });
-        }
+        if (!adminEdit) {
+            if (!password) {
+                return res.status(400).json({ error: 'Current password is required to save changes.' });
+            }
 
-        const isMatch = await bcrypt.compare(password, registrant.password);
-        if (!isMatch || !adminEdit) {
-            return res.status(401).json({ error: 'Incorrect password. Update denied.' });
+            const plainPassword = String(Array.isArray(password) ? password[0] : password || '').trim();
+            const storedHash = String(registrant.password || '').trim();
+
+            if (!storedHash) {
+                return res.status(400).json({ error: 'No password found for this account.' });
+            }
+
+            const isMatch = await bcrypt.compare(plainPassword, storedHash);
+            if (!isMatch) {
+                return res.status(401).json({ error: 'Incorrect password. Update denied.' });
+            }
         }
 
         // Update fields if provided

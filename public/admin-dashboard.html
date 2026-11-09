@@ -383,16 +383,7 @@
                     <label class="block text-xs font-bold text-slate-300 mb-1">Age *</label>
                     <input type="number" id="reg-age" required min="10" max="70" placeholder="e.g. 24" class="w-full bg-slate-950 border border-slate-700 rounded-xl p-3 text-white text-sm focus:outline-none focus:border-amber-400">
                 </div>
-                <div>
-                    <label class="block text-xs font-bold text-slate-300 mb-1">Jersey Size</label>
-                    <select id="reg-jersey-size" class="w-full bg-slate-950 border border-slate-700 rounded-xl p-3 text-white text-sm focus:outline-none focus:border-amber-400">
-                        <option value="S">S</option>
-                        <option value="M">M</option>
-                        <option value="L">L</option>
-                        <option value="XL">XL</option>
-                        <option value="XXL">XXL</option>
-                    </select>
-                </div>
+                
             </div>
 
             <!-- Phone & Aadhaar -->
@@ -428,6 +419,16 @@
                     <select id="reg-style" class="w-full bg-slate-950 border border-slate-700 rounded-xl p-3 text-white text-sm focus:outline-none focus:border-amber-400">
                         <option value="Right-Handed">Right-Handed</option>
                         <option value="Left-Handed">Left-Handed</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-slate-300 mb-1">Jersey Size</label>
+                    <select id="reg-jersey-size" class="w-full bg-slate-950 border border-slate-700 rounded-xl p-3 text-white text-sm focus:outline-none focus:border-amber-400">
+                        <option value="S">S</option>
+                        <option value="M">M</option>
+                        <option value="L">L</option>
+                        <option value="XL">XL</option>
+                        <option value="XXL">XXL</option>
                     </select>
                 </div>
             </div>
@@ -790,6 +791,7 @@
 
     // --- MODAL CONTROLS ---
     function openAddModal() {
+        
         document.getElementById('modal-title').innerText = "Add Player or Team Owner";
         document.getElementById('registration-form').reset();
         document.getElementById('reg-id').value = "";
@@ -802,6 +804,7 @@
     }
 
     function openEditModal(id) {
+        
         const r = allRegistrants.find(item => item._id === id);
         console.log('edit data',r._id);
         if (!r) return;
@@ -810,8 +813,6 @@
         document.getElementById('current-aadhar-photo-status').classList.remove('hidden');
         document.getElementById('current-logo-status').classList.remove('hidden');
         document.getElementById('current-payment-status').classList.remove('hidden');
-
-
         document.getElementById('reg-id').value = r._id || '';
         // Text fields
         document.getElementById('reg-name').value = r.fullName || '';
@@ -911,11 +912,15 @@
         // Generate UPI deep link (upi://pay?pa=...&am=...)
         //upiDeeplink.href = `upi://pay?pa=${encodeURIComponent(tournamentConfig.upiId)}&pn=BGPL%202027&am=${currentFee}&cu=INR`;
     }
-    
+    // function resetRegistrationForm() {
+    //     document.getElementById('reg-id') = '';
+        
+    // }
     async function handleRegistration(e) {
         e.preventDefault();
 
         const editId = document.getElementById('reg-id') ? document.getElementById('reg-id').value : null;
+        
         const formData = new FormData();
         // Text fields
         formData.append('fullName', document.getElementById('reg-name').value);
@@ -925,7 +930,6 @@
         formData.append('email', document.getElementById('reg-email').value);
         formData.append('password', document.getElementById('reg-password').value);
         formData.append('adminEdit', true);
-        formData.append('password',document.getElementById('reg-password').value);
         formData.append('newPassword',document.getElementById('reg-password').value);
         const aadhaarVal = document.getElementById('reg-aadhaar').value;
         if (aadhaarVal) formData.append('aadhaar', aadhaarVal);
@@ -997,9 +1001,11 @@
 
             const data = await res.json();
             res.ok ? showAlert(data.message, false) : showAlert(data.message, true);
-            if (res.ok && !editId) {
+            if (res.ok) {
                 document.getElementById('registration-form').reset();
                 closeModal();
+                loadPublicData();
+                loadAdminData();
             }
         } catch (err) {
             console.error("Submission error:", err);
@@ -1607,6 +1613,65 @@ function closeDetailsModal() {
     document.getElementById('details-modal').classList.add('hidden');
 }
 
+async function compressImage(file, maxSizeKB = 150, maxWidth = 800, quality = 0.7) {
+        return new Promise((resolve, reject) => {
+            // If file is already smaller than target, return it as-is
+            if (file.size <= maxSizeKB * 1024) {
+                return resolve(file);
+            }
+
+            const reader = new FileReader();
+            reader.readAsDataURL(file);
+            reader.onload = (event) => {
+                const img = new Image();
+                img.src = event.target.result;
+                img.onload = () => {
+                    const canvas = document.createElement('canvas');
+                    let width = img.width;
+                    let height = img.height;
+
+                    // Scale down dimensions proportionally if image is too large
+                    if (width > maxWidth) {
+                        height = Math.round((height * maxWidth) / width);
+                        width = maxWidth;
+                    }
+
+                    canvas.width = width;
+                    canvas.height = height;
+
+                    const ctx = canvas.getContext('2d');
+                    ctx.drawImage(img, 0, 0, width, height);
+
+                    // Iteratively reduce quality until under target size
+                    let currentQuality = quality;
+                    const attemptCompression = () => {
+                        canvas.toBlob((blob) => {
+                            if (!blob) {
+                                return reject(new Error('Canvas compression failed.'));
+                            }
+
+                            if (blob.size <= maxSizeKB * 1024 || currentQuality <= 0.1) {
+                                // Convert blob back to a File object
+                                const compressedFile = new File([blob], file.name, {
+                                    type: 'image/jpeg',
+                                    lastModified: Date.now()
+                                });
+                                resolve(compressedFile);
+                            } else {
+                                currentQuality -= 0.1;
+                                attemptCompression();
+                            }
+                        }, 'image/jpeg', currentQuality);
+                    };
+
+                    attemptCompression();
+                };
+                img.onerror = (error) => reject(error);
+            };
+            reader.onerror = (error) => reject(error);
+        });
+    }
+
     // Initialize table on load  
     loadConfig();
     // Ensure loadPublicData() is called when initializing the admin dashboard
@@ -1614,5 +1679,6 @@ function closeDetailsModal() {
     // Initialize Admin Dashboard Data
     loadAdminData();
 </script>
+
 </body>
 </html>
