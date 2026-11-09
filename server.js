@@ -418,7 +418,7 @@ app.post('/api/register/auth', async (req, res) => {
 app.put('/api/register/:id', registrationUploads, async (req, res) => {
     try {
         const { id } = req.params;
-        const { fullName, role, age, phone, email, password, newPassword, teamName, address, aadhaar, description, category, style, jerseySize } = req.body;
+        const { fullName, role, age, phone, email, password, newPassword, teamName, address, aadhaar, description, category, style, jerseySize ,adminEdit} = req.body;
 
         const registrant = await Registrant.findById(id);
         if (!registrant) {
@@ -430,7 +430,7 @@ app.put('/api/register/:id', registrationUploads, async (req, res) => {
         }
 
         const isMatch = await bcrypt.compare(password, registrant.password);
-        if (!isMatch) {
+        if (!isMatch || !adminEdit) {
             return res.status(401).json({ error: 'Incorrect password. Update denied.' });
         }
 

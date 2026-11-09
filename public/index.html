@@ -143,6 +143,33 @@
             </div>
         </div>
 
+        <!-- COUNT DOWN BANNER -->
+        <div class="bg-slate-900 border border-slate-800 rounded-3xl p-6 text-center shadow-xl max-w-md mx-auto">
+    <h3 class="text-xs font-bold uppercase tracking-wider text-amber-400 mb-3">
+        <i class="fa-solid fa-clock mr-1"></i> Registration Closes In
+    </h3>
+    
+    <!-- Countdown Timer Grid -->
+    <div id="countdown-timer" class="grid grid-cols-4 gap-2 text-white">
+        <div class="bg-slate-950 border border-slate-800 p-3 rounded-2xl">
+            <span id="cd-days" class="text-2xl sm:text-3xl font-black text-amber-400">00</span>
+            <p class="text-[10px] text-slate-400 uppercase tracking-tight mt-1">Days</p>
+        </div>
+        <div class="bg-slate-950 border border-slate-800 p-3 rounded-2xl">
+            <span id="cd-hours" class="text-2xl sm:text-3xl font-black text-white">00</span>
+            <p class="text-[10px] text-slate-400 uppercase tracking-tight mt-1">Hours</p>
+        </div>
+        <div class="bg-slate-950 border border-slate-800 p-3 rounded-2xl">
+            <span id="cd-mins" class="text-2xl sm:text-3xl font-black text-white">00</span>
+            <p class="text-[10px] text-slate-400 uppercase tracking-tight mt-1">Mins</p>
+        </div>
+        <div class="bg-slate-950 border border-slate-800 p-3 rounded-2xl">
+            <span id="cd-secs" class="text-2xl sm:text-3xl font-black text-amber-500 animate-pulse">00</span>
+            <p class="text-[10px] text-slate-400 uppercase tracking-tight mt-1">Secs</p>
+        </div>
+    </div>
+</div>
+
         <!-- HERO BANNER CAROUSEL & ATTRACTIVE PRIZE POOL -->
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
             <!-- Dynamic Photo Carousel -->
@@ -357,9 +384,9 @@
             <div class="space-y-3">
                 <h4 class="font-black text-white text-sm uppercase tracking-wider text-amber-400">Tournament Grounds</h4>
                 <p class="text-slate-400 leading-relaxed">
-                    <i class="fa-solid fa-location-dot text-amber-500 mr-2"></i>Komarpur Railway Station Play Ground, Bamundi, Purba Bardhaman, West Bengal, India
+                    <i class="fa-solid fa-location-dot text-amber-500 mr-2"></i>Rajmata Dighir Par play ground, Bamundi, Purba Bardhaman 
                 </p>
-                <p class="text-slate-400"><i class="fa-solid fa-phone text-amber-500 mr-2"></i>Helpline: +91 **********</p>
+                <p class="text-slate-400"><i class="fa-solid fa-phone text-amber-500 mr-2"></i>Helpline: +91 7076317963</p>
             </div>
 
             <!-- Quick Links -->
@@ -626,6 +653,39 @@
                 icon.className = 'fa-solid fa-bars text-lg';
             }
         }
+
+        // Set the target date: December 18, 2026, at 23:59:59 IST
+        const countDownDate = new Date("Dec 18, 2026 23:59:59").getTime();
+
+        const timerInterval = setInterval(() => {
+            const now = new Date().getTime();
+            const distance = countDownDate - now;
+
+            if (distance < 0) {
+                clearInterval(timerInterval);
+                document.getElementById("countdown-timer").innerHTML = `
+                    <div class="col-span-full py-4 text-rose-400 font-bold text-sm bg-slate-950 rounded-2xl border border-rose-500/20">
+                        Registration Closed
+                    </div>
+                `;
+                return;
+            }
+
+            // Time calculations for days, hours, minutes and seconds
+            const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+            const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+            const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+            // Display the result with leading zeros if needed
+            document.getElementById("cd-days").innerText = String(days).padStart(2, '0');
+            document.getElementById("cd-hours").innerText = String(hours).padStart(2, '0');
+            document.getElementById("cd-mins").innerText = String(minutes).padStart(2, '0');
+            document.getElementById("cd-secs").innerText = String(seconds).padStart(2, '0');
+        }, 1000);
+
+
+
     </script>
     <script src="./static/js/common.js"></script>
 </body>

@@ -340,47 +340,190 @@
     </main>
 
     <!-- MODAL: ADD / EDIT REGISTRANT (PLAYER OR TEAM OWNER) -->
-    <div id="registrant-modal" class="hidden fixed inset-0 bg-slate-950/80 backdrop-blur-sm flex justify-center items-center z-50 p-4">
-        <div class="bg-slate-900 border border-slate-700 rounded-2xl max-w-md w-full p-6 space-y-4 shadow-2xl">
-            <div class="flex justify-between items-center">
-                <h3 id="modal-title" class="text-lg font-bold text-amber-400">Add Player or Team Owner</h3>
-                <button onclick="closeModal()" class="text-slate-400 hover:text-white text-xl">&times;</button>
+    <div id="registrant-modal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-sm">
+    <!-- Scrollable Modal Box -->
+    <div class="bg-slate-900 border border-slate-800 rounded-3xl w-full max-w-xl max-h-[90vh] overflow-y-auto shadow-2xl p-6 sm:p-8 custom-scrollbar">
+        
+        <!-- Modal Header -->
+        <div class="flex justify-between items-center pb-4 mb-4 border-b border-slate-800">
+            <div>
+                <h3 id="modal-title" class="text-lg font-black text-white">Registrant Details</h3>
+                
             </div>
-            <form id="registrant-form" onsubmit="handleSaveRegistrant(event)" class="space-y-3">
-                <input type="hidden" id="modal-reg-id">
-                <div>
-                    <label class="block text-xs text-slate-400 mb-1">Full Name</label>
-                    <input type="text" id="modal-name" required class="w-full bg-slate-800 border border-slate-700 rounded-xl p-3 text-white text-sm">
-                </div>
-                <div class="grid grid-cols-2 gap-2">
-                    <div>
-                        <label class="block text-xs text-slate-400 mb-1">Role</label>
-                        <select id="modal-role" class="w-full bg-slate-800 border border-slate-700 rounded-xl p-3 text-white text-sm">
-                            <option value="Player">Player</option>
-                            <option value="Team Owner">Team Owner</option>
-                            <option value="Both">Both</option>
-                        </select>
-                    </div>
-                    <div>
-                        <label class="block text-xs text-slate-400 mb-1">Phone Number</label>
-                        <input type="tel" id="modal-phone" required class="w-full bg-slate-800 border border-slate-700 rounded-xl p-3 text-white text-sm">
-                    </div>
-                </div>
-                <div>
-                    <label class="block text-xs text-slate-400 mb-1">Aadhaar Number (Will be masked automatically)</label>
-                    <input type="text" id="modal-aadhaar" required placeholder="XXXX XXXX XXXX" class="w-full bg-slate-800 border border-slate-700 rounded-xl p-3 text-white text-sm">
-                </div>
-                <div>
-                    <label class="block text-xs text-slate-400 mb-1">Photo URL</label>
-                    <input type="text" id="modal-photo" placeholder="https://..." class="w-full bg-slate-800 border border-slate-700 rounded-xl p-3 text-white text-sm">
-                </div>
-                <div class="flex justify-end space-x-2 pt-2">
-                    <button type="button" onclick="closeModal()" class="bg-slate-800 text-slate-300 px-4 py-2 rounded-xl text-xs font-bold">Cancel</button>
-                    <button type="submit" class="bg-amber-500 hover:bg-amber-600 text-slate-950 px-5 py-2 rounded-xl text-xs font-bold">Save Record</button>
-                </div>
-            </form>
+            <button onclick="closeModal()" class="text-slate-400 hover:text-white p-2 rounded-xl bg-slate-800/50 hover:bg-slate-800 transition">
+                <i class="fa-solid fa-xmark text-sm"></i>
+            </button>
         </div>
+
+        <!-- Scrollable Form Content -->
+        <form id="registration-form" onsubmit="handleRegistration(event)" class="space-y-4">
+            <input type="hidden" id="reg-id">
+            
+            <!-- Full Name -->
+            <div>
+                <label class="block text-xs font-bold text-slate-300 mb-1">Full Name *</label>
+                <input type="text" id="reg-name" required placeholder="Enter full name" class="w-full bg-slate-950 border border-slate-700 rounded-xl p-3 text-white text-sm focus:outline-none focus:border-amber-400">
+            </div>
+            <div>
+                <label class="block text-xs font-bold text-slate-300 mb-1">Create Password *</label>
+                <input type="password" id="reg-password" required placeholder="Choose a secure password for future edits" class="w-full bg-slate-950 border border-slate-700 rounded-xl p-3 text-white text-sm focus:outline-none focus:border-amber-400">
+            </div>
+
+            <!-- Role Selection -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div>
+                    <label class="block text-xs font-bold text-slate-300 mb-1">Role *</label>
+                    <select id="reg-role" onchange="toggleRoleFields()" required class="w-full bg-slate-950 border border-slate-700 rounded-xl p-3 text-white text-sm focus:outline-none focus:border-amber-400">
+                        <option value="Player">Player</option>
+                        <option value="Team Owner">Team Owner</option>
+                        <option value="Both">Both</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-slate-300 mb-1">Age *</label>
+                    <input type="number" id="reg-age" required min="10" max="70" placeholder="e.g. 24" class="w-full bg-slate-950 border border-slate-700 rounded-xl p-3 text-white text-sm focus:outline-none focus:border-amber-400">
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-slate-300 mb-1">Jersey Size</label>
+                    <select id="reg-jersey-size" class="w-full bg-slate-950 border border-slate-700 rounded-xl p-3 text-white text-sm focus:outline-none focus:border-amber-400">
+                        <option value="S">S</option>
+                        <option value="M">M</option>
+                        <option value="L">L</option>
+                        <option value="XL">XL</option>
+                        <option value="XXL">XXL</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- Phone & Aadhaar -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div>
+                    <label class="block text-xs font-bold text-slate-300 mb-1">Phone Number *</label>
+                    <input type="tel" id="reg-phone" required placeholder="10-digit mobile number" class="w-full bg-slate-950 border border-slate-700 rounded-xl p-3 text-white text-sm focus:outline-none focus:border-amber-400">
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-slate-300 mb-1">Aadhaar Number *</label>
+                    <input type="text" id="reg-aadhaar" required placeholder="XXXX XXXX XXXX" class="w-full bg-slate-950 border border-slate-700 rounded-xl p-3 text-white text-sm focus:outline-none focus:border-amber-400">
+                </div>
+            </div>
+            <div>
+                <label class="block text-xs font-bold text-slate-300 mb-1">Email Address *</label>
+                <input type="email" id="reg-email" required placeholder="Enter email address" class="w-full bg-slate-950 border border-slate-700 rounded-xl p-3 text-white text-sm focus:outline-none focus:border-amber-400">
+            </div>
+
+            <!-- PLAYER SPECIFIC FIELDS -->
+            <div id="player-spec-fields" class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div>
+                    <label class="block text-xs font-bold text-slate-300 mb-1">Player Category *</label>
+                    <select id="reg-category" class="w-full bg-slate-950 border border-slate-700 rounded-xl p-3 text-white text-sm focus:outline-none focus:border-amber-400">
+                        <option value="Batsman">Batsman</option>
+                        <option value="Bowler">Bowler</option>
+                        <option value="All-Rounder">All-Rounder</option>
+                        <option value="Wicket-Keeper">Wicket-Keeper</option>
+                        <option value="Wicket-Keeper + Batsman">Wicket-Keeper + Batsman</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-slate-300 mb-1">Batting / Bowling Style *</label>
+                    <select id="reg-style" class="w-full bg-slate-950 border border-slate-700 rounded-xl p-3 text-white text-sm focus:outline-none focus:border-amber-400">
+                        <option value="Right-Handed">Right-Handed</option>
+                        <option value="Left-Handed">Left-Handed</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- owner-spec-fields -->
+            <div id="owner-spec-fields">
+                <label class="block text-xs font-bold text-slate-300 mb-1">Team Name *</label>
+                <input type="text" id="reg-team-name" placeholder="Enter your team name" class="w-full bg-slate-950 border border-slate-700 rounded-xl p-3 text-white text-sm focus:outline-none focus:border-amber-400">
+            </div>
+
+            <!-- Address & Description -->
+            <div>
+                <label class="block text-xs font-bold text-slate-300 mb-1">Address / Village *</label>
+                <input type="text" id="reg-address" required placeholder="Full residential address" class="w-full bg-slate-950 border border-slate-700 rounded-xl p-3 text-white text-sm focus:outline-none focus:border-amber-400">
+            </div>
+            <div>
+                <label class="block text-xs font-bold text-slate-300 mb-1">Player Bio / Description</label>
+                <textarea id="reg-description" placeholder="Brief details about cricketing experience, previous teams, etc." class="w-full bg-slate-950 border border-slate-700 rounded-xl p-3 text-white text-sm h-20 focus:outline-none focus:border-amber-400"></textarea>
+            </div>
+
+            <!-- LOCAL FILE UPLOADS -->
+            <div class="space-y-4 pt-2 border-t border-slate-800">
+                <div id="photo-upload-group">
+                    <label class="block text-xs font-bold text-slate-300 mb-1">Upload Photo (Local File) *</label>
+                    <input type="file" id="reg-photo-file" accept="image/*" class="w-full bg-slate-950 border border-slate-700 rounded-xl p-2.5 text-white text-xs file:mr-4 file:py-1.5 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-amber-500 file:text-slate-950 hover:file:bg-amber-400">
+                    <p id="current-photo-status" class="text-[10px] text-slate-400 mt-1"></p>
+                </div>
+                <div id="aadhar-upload-group">
+                    <label class="block text-xs font-bold text-slate-300 mb-1">Upload Aadhar (Both Side in Same Page)*</label>
+                    <input type="file" id="reg-aadhar-file" required accept="image/*" class="w-full bg-slate-900 border border-slate-700 rounded-xl p-2.5 text-white text-xs file:mr-4 file:py-1.5 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-amber-500 file:text-slate-950 hover:file:bg-amber-400">
+                    <p id="current-aadhar-photo-status" class="text-[10px] text-slate-400 mt-1"></p>
+                    
+                </div>
+
+                <div id="team-logo-upload-group" class="hidden">
+                    <label class="block text-xs font-bold text-slate-300 mb-1">Upload Team Logo (Local File) *</label>
+                    <input type="file" id="reg-logo-file" accept="image/*" class="w-full bg-slate-950 border border-slate-700 rounded-xl p-2.5 text-white text-xs file:mr-4 file:py-1.5 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-indigo-500 file:text-white hover:file:bg-indigo-400">
+                    <p id="current-logo-status" class="text-[10px] text-slate-400 mt-1"></p>
+                    
+                </div>
+
+
+                <!-- PAYMENT & FEE BOX -->
+                <!-- <div class="bg-slate-950/80 border border-slate-800 p-5 rounded-2xl space-y-4">
+                    <div class="flex justify-between items-center">
+                        <div>
+                            <p class="text-xs text-slate-400">Required Registration Fee</p>
+                            <h4 id="fee-amount" class="text-2xl font-black text-amber-400">₹--</h4>
+                        </div>
+                        <div class="text-right">
+                            <p class="text-[10px] text-slate-400">Pay via any UPI App</p>
+                            <p id="display-upi-id" class="text-xs font-bold text-emerald-400">Loading UPI...</p>
+                        </div>
+                    </div>
+
+                    <div class="flex flex-col sm:flex-row items-center gap-4 pt-3 border-t border-slate-800">
+                        <div class="w-32 h-32 bg-slate-900 p-2 rounded-xl border border-slate-800 flex items-center justify-center flex-shrink-0">
+                            <img id="qr-code-img" src="" alt="Payment QR Code" class="w-full h-full object-contain rounded-lg">
+                        </div>
+                        <div class="space-y-1.5 flex-1 text-xs text-slate-300 text-center sm:text-left">
+                            <p class="font-bold text-white">How to pay:</p>
+                            <p>1. Scan the QR code using Google Pay, PhonePe, Paytm, or BHIM.</p>
+                            <p>2. Complete the payment corresponding to your role fee.</p>
+                            <p>3. Upload your payment screenshot below to submit verification.</p>
+                            <a id="upi-deeplink" href="#" class="inline-block mt-2 bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 hover:bg-emerald-500 hover:text-slate-950 font-bold px-4 py-2 rounded-xl transition">
+                                <i class="fa-solid fa-mobile-screen-button mr-1"></i> Pay via UPI App
+                            </a>
+                        </div>
+                    </div>
+                </div> -->
+                <!-- Payment Screenshot Upload (Hidden if paymentVerified is true) -->
+                     <div id="reg-qr" class=" bg-slate-900/80 border border-slate-700 p-5 rounded-2xl space-y-4">
+                        <div class="flex justify-between items-center">
+                            <div>
+                                <p class="text-xs text-slate-400">Required Registration Fee</p>
+                                <h4 id="fee-amount" class="text-2xl font-black text-amber-400">₹--</h4>
+                            </div>
+                            
+                        </div>
+                     </div>
+                <div>
+                    <label class="block text-xs font-bold text-slate-300 mb-1">Upload Payment Screenshot (Local File) *</label>
+                    <input type="file" id="reg-payment-file" accept="image/*" class="w-full bg-slate-950 border border-slate-700 rounded-xl p-2.5 text-white text-xs file:mr-4 file:py-1.5 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-emerald-500 file:text-slate-950 hover:file:bg-emerald-400">
+                    <p id="current-payment-status" class="text-[10px] text-slate-400 mt-1"></p>
+                </div>
+            </div>
+
+            <!-- Submit Button -->
+            <div class="pt-2">
+                <button type="submit" class="w-full bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 text-slate-950 font-black py-3.5 rounded-xl shadow-lg transition transform active:scale-95">
+                    Submit Registration
+                </button>
+            </div>
+        </form>
     </div>
+</div>
 
     <!-- PRIZE EDIT/ADD MODAL -->
     <div id="prize-modal" class="hidden fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-50 flex items-center justify-center p-4">
@@ -475,7 +618,21 @@
         });
         document.getElementById(`btn-${tabId}`).className = 'px-4 py-2 rounded-xl bg-amber-500 text-slate-950 font-bold transition';
     }
+    let tournamentConfig = { playerFee: 500, ownerFee: 2000, bothFee: 2500, upiId: 'bgpl2027@upi', qrCodeUrl: '' };
 
+    // Fetch config on load
+    fetch('/api/public/config')
+        .then(res => res.json())
+        .then(data => {
+            if (data) {
+                tournamentConfig = data;
+                //document.getElementById('display-upi-id').innerText = data.upiId || 'bgpl2027@upi';
+                // if (data.qrCodeUrl) {
+                //     document.getElementById('qr-code-img').src = data.qrCodeUrl;
+                // }
+                toggleRoleFields(); // Refresh fee values
+            }
+        });
     async function loadAdminData() {
         try {
             // Analytics
@@ -634,65 +791,221 @@
     // --- MODAL CONTROLS ---
     function openAddModal() {
         document.getElementById('modal-title').innerText = "Add Player or Team Owner";
-        document.getElementById('registrant-form').reset();
-        document.getElementById('modal-reg-id').value = "";
+        document.getElementById('registration-form').reset();
+        document.getElementById('reg-id').value = "";
         document.getElementById('registrant-modal').classList.remove('hidden');
+        /// status 
+        document.getElementById('current-photo-status').classList.add('hidden');
+        document.getElementById('current-aadhar-photo-status').classList.add('hidden');
+        document.getElementById('current-logo-status').classList.add('hidden');
+        document.getElementById('current-payment-status').classList.add('hidden');
     }
 
     function openEditModal(id) {
         const r = allRegistrants.find(item => item._id === id);
+        console.log('edit data',r._id);
         if (!r) return;
-        document.getElementById('modal-title').innerText = "Edit Registrant Details";
-        document.getElementById('modal-reg-id').value = r._id;
-        document.getElementById('modal-name').value = r.fullName;
-        document.getElementById('modal-role').value = r.role;
-        document.getElementById('modal-phone').value = r.phone;
-        document.getElementById('modal-aadhaar').value = ""; // Don't expose original Aadhaar
-        document.getElementById('modal-photo').value = r.photoUrl || "";
-        document.getElementById('registrant-modal').classList.remove('hidden');
+        openAddModal();
+        document.getElementById('current-photo-status').classList.remove('hidden');
+        document.getElementById('current-aadhar-photo-status').classList.remove('hidden');
+        document.getElementById('current-logo-status').classList.remove('hidden');
+        document.getElementById('current-payment-status').classList.remove('hidden');
+
+
+        document.getElementById('reg-id').value = r._id || '';
+        // Text fields
+        document.getElementById('reg-name').value = r.fullName || '';
+        document.getElementById('reg-role').value = r.role || '';
+        document.getElementById('reg-age').value = r.age || '';
+        document.getElementById('reg-phone').value = r.phone || '';
+        document.getElementById('reg-email').value = r.email || '';
+        document.getElementById('reg-aadhaar').value = r.aadhaar || '';
+        if(r.category) document.getElementById('reg-category').value = r.category || '';
+        if (r.style) document.getElementById('reg-style').value = r.style || '';
+        if (r.jerseySize) document.getElementById('reg-jersey-size').value = r.jerseySize || '';
+        if(r.teamName) document.getElementById('reg-team-name').value = r.teamName || '';
+        document.getElementById('reg-address').value = r.address || '';
+        document.getElementById('reg-description').value = r.description || '';
+
+        // Optional files (Checked before appending)
+        const photoInput = document.getElementById('reg-photo-file');
+        const aadharPhotoInput = document.getElementById('reg-aadhar-file');
+        const logoInput = document.getElementById('reg-logo-file');
+        const paymentInput = document.getElementById('reg-payment-file');
+        photoInput.removeAttribute('required');
+        aadharPhotoInput.removeAttribute('required');
+        logoInput.removeAttribute('required');
+        paymentInput.removeAttribute('required');
+        if (r.photoUrl) {
+            document.getElementById('current-photo-status').innerHTML = `✓ Photo uploaded. <a href="${r.photoUrl}" target="_blank" class="text-amber-400 underline ml-1">View Current Photo</a>`;
+            
+        } else {
+            document.getElementById('current-photo-status').innerText = `⚠ No member photo uploaded yet.`;
+        }
+        if (r.aadharPhotoUrl) {
+            document.getElementById('current-aadhar-photo-status').innerHTML = `✓ Aadhar uploaded. <a href="${r.aadharPhotoUrl}" target="_blank" class="text-amber-400 underline ml-1">View Current Aadhar</a>`;
+        } else {
+            document.getElementById('current-aadhar-photo-status').innerText = `⚠ No Aadhar uploaded yet.`;
+        }
+
+        // Team Logo Status Preview
+        if (r.teamLogoUrl) {
+            document.getElementById('current-logo-status').innerHTML = `✓ Team logo uploaded. <a href="${r.teamLogoUrl}" target="_blank" class="text-indigo-400 underline ml-1">View Current Logo</a>`;
+        } else {
+            document.getElementById('current-logo-status').innerText = `⚠ No team logo uploaded yet.`;
+        }
+
+        // Payment Status Preview
+        if (r.paymentVerified && r.paymentScreenshotUrl) {
+            document.getElementById('current-payment-status').innerHTML = `<span class="text-emerald-400 font-bold">✓ Payment screenshot uploaded. <a href="${r.paymentScreenshotUrl}" target="_blank" class="text-emerald-400 underline ml-1">View Screenshot</a> <br> ✓ Payment Verified by Admin</span>`;
+            //document.getElementById('reg-qr').classList.add('hidden');
+        } else if (r.paymentVerified && !r.paymentScreenshotUrl) {
+            document.getElementById('current-payment-status').innerHTML = `✓ Payment Verified by Admin <br> ⚠ No payment screenshot uploaded yet`;
+            //document.getElementById('reg-qr').classList.remove('hidden');
+        } else if (!r.paymentVerified && r.paymentScreenshotUrl) {
+            document.getElementById('current-payment-status').innerHTML = `✓ Payment screenshot uploaded. <a href="${r.paymentScreenshotUrl}" target="_blank" class="text-emerald-400 underline ml-1">View Screenshot</a> <br> ⚠ Payment Not Verified by Admin `;
+            //document.getElementById('reg-qr').classList.remove('hidden');
+        }  else {
+            document.getElementById('current-payment-status').innerText = `⚠ No payment screenshot uploaded yet.`;
+            //document.getElementById('reg-qr').classList.remove('hidden');
+        }
+        
+
+
+ 
     }
 
     function closeModal() {
         document.getElementById('registrant-modal').classList.add('hidden');
     }
+    function toggleRoleFields() {
+        const role = document.getElementById('reg-role').value;
+        const playerSpec = document.getElementById('player-spec-fields');
+        const ownerSpec = document.getElementById('owner-spec-fields');
+        //const photoGroup = document.getElementById('photo-upload-group');
+        const logoGroup = document.getElementById('team-logo-upload-group');
+        const feeAmountEl = document.getElementById('fee-amount');
+        //const upiDeeplink = document.getElementById('upi-deeplink');
 
-    async function handleSaveRegistrant(e) {
-        e.preventDefault();
-        const id = document.getElementById('modal-reg-id').value;
-        const payload = {
-            fullName: document.getElementById('modal-name').value,
-            role: document.getElementById('modal-role').value,
-            phone: document.getElementById('modal-phone').value,
-            aadhaar: document.getElementById('modal-aadhaar').value,
-            photoUrl: document.getElementById('modal-photo').value
-        };
-
-        if (id) {
-            // Edit existing
-            await fetch(`/api/admin/registrant/${id}`, {
-                method: 'PUT',
-                headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
-                body: JSON.stringify(payload)
-            });
-            showAlert("Registrant updated successfully!");
+        let currentFee = 500;
+        if (role === 'Player') {
+            playerSpec.classList.remove('hidden');
+            //photoGroup.classList.remove('hidden');
+            logoGroup.classList.add('hidden');
+            ownerSpec.classList.add('hidden');
+            currentFee = tournamentConfig.playerFee;
+        } else if (role === 'Team Owner') {
+            playerSpec.classList.add('hidden');
+            //photoGroup.classList.add('hidden');
+            logoGroup.classList.remove('hidden');
+            ownerSpec.classList.remove('hidden');
+            currentFee = tournamentConfig.ownerFee;
         } else {
-            // Add new (via public register endpoint)
-            const res = await fetch('/api/register', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(payload)
-            });
-            if (res.ok) showAlert("New registrant added successfully!");
-            else {
-                const err = await res.json();
-                showAlert(err.error || "Failed to add registrant.", false);
-                return;
+            playerSpec.classList.remove('hidden');
+            //photoGroup.classList.remove('hidden');
+            logoGroup.classList.remove('hidden');
+            currentFee = tournamentConfig.bothFee;
+        }
+
+        feeAmountEl.innerText = `₹${currentFee}`;
+        // Generate UPI deep link (upi://pay?pa=...&am=...)
+        //upiDeeplink.href = `upi://pay?pa=${encodeURIComponent(tournamentConfig.upiId)}&pn=BGPL%202027&am=${currentFee}&cu=INR`;
+    }
+    
+    async function handleRegistration(e) {
+        e.preventDefault();
+
+        const editId = document.getElementById('reg-id') ? document.getElementById('reg-id').value : null;
+        const formData = new FormData();
+        // Text fields
+        formData.append('fullName', document.getElementById('reg-name').value);
+        formData.append('role', document.getElementById('reg-role').value);
+        formData.append('age', document.getElementById('reg-age').value);
+        formData.append('phone', document.getElementById('reg-phone').value);
+        formData.append('email', document.getElementById('reg-email').value);
+        formData.append('password', document.getElementById('reg-password').value);
+        formData.append('adminEdit', true);
+        formData.append('password',document.getElementById('reg-password').value);
+        formData.append('newPassword',document.getElementById('reg-password').value);
+        const aadhaarVal = document.getElementById('reg-aadhaar').value;
+        if (aadhaarVal) formData.append('aadhaar', aadhaarVal);
+        formData.append('category', document.getElementById('reg-category').value);
+        formData.append('style', document.getElementById('reg-style').value);
+        formData.append('jerseySize', document.getElementById('reg-jersey-size').value);
+        formData.append('teamName', document.getElementById('reg-team-name').value);
+        formData.append('address', document.getElementById('reg-address').value);
+        formData.append('description', document.getElementById('reg-description').value);
+
+        // Optional files (Checked before appending)
+        const photoInput = document.getElementById('reg-photo-file');
+        const aadharPhotoInput = document.getElementById('reg-aadhar-file');
+        const logoInput = document.getElementById('reg-logo-file');
+        const paymentInput = document.getElementById('reg-payment-file');
+
+        //if (photoInput && photoInput.files[0]) formData.append('photo', photoInput.files[0]);
+        if (photoInput && photoInput.files[0]) {
+            try {
+                const compressedPhoto = await compressImage(photoInput.files[0], 150); // Target < 150 KB
+                formData.append('photo', compressedPhoto);
+            } catch (err) {
+                console.error("Photo compression failed, using original:", err);
+                formData.append('photo', photoInput.files[0]);
             }
         }
-        closeModal();
-        loadAdminData();
-    }
 
+        if (aadharPhotoInput && aadharPhotoInput.files[0]) {
+            try {
+                const compressedAadharPhoto = await compressImage(aadharPhotoInput.files[0], 150); // Target < 150 KB
+                formData.append('aadharPhoto', compressedAadharPhoto);
+            } catch (err) {
+                console.error("Photo compression failed, using original:", err);
+                formData.append('aadharPhoto', aadharPhotoInput.files[0]);
+            }
+        }
+
+        //if (logoInput && logoInput.files[0]) formData.append('teamLogo', logoInput.files[0]);
+        if (logoInput && logoInput.files[0]) {
+            try {
+                const compressedLogo = await compressImage(logoInput.files[0], 150); // Target < 150 KB
+                formData.append('teamLogo', compressedLogo);
+            } catch (err) {
+                console.error("Logo compression failed, using original:", err);
+                formData.append('teamLogo', logoInput.files[0]);
+            }
+        }
+    
+        
+        
+        //if (paymentInput && paymentInput.files[0]) formData.append('paymentScreenshot', paymentInput.files[0]);
+        if (paymentInput && paymentInput.files[0]) {
+            try {
+                const compressedPayment = await compressImage(paymentInput.files[0], 150); // Target < 150 KB
+                formData.append('paymentScreenshot', compressedPayment);
+            } catch (err) {
+                console.error("Payment screenshot compression failed, using original:", err);
+                formData.append('paymentScreenshot', paymentInput.files[0]);
+            }
+        }
+        const url = editId ? `/api/register/${editId}` : '/api/register';
+        const method = editId ? 'PUT' : 'POST';
+
+        try {
+            const res = await fetch(url, {
+                method: method,
+                body: formData // Browser sets multipart/form-data boundary automatically
+            });
+
+            const data = await res.json();
+            res.ok ? showAlert(data.message, false) : showAlert(data.message, true);
+            if (res.ok && !editId) {
+                document.getElementById('registration-form').reset();
+                closeModal();
+            }
+        } catch (err) {
+            console.error("Submission error:", err);
+        }
+    }
+    
     async function updateStatus(id, status,paymentVerified) {
         await fetch(`/api/admin/registrant/${id}`, {
             method: 'PUT',
