@@ -207,6 +207,10 @@
                                         <span class="font-bold text-amber-400 tracking-wide">${owner.assignedTeam && owner.assignedTeam !== 'None' ? owner.assignedTeam : 'Independent'}</span>
                                     </div>
                                     <div class="flex justify-between items-center gap-2">
+                                        <span class="text-slate-400 font-medium">Wallet Balance:</span>
+                                        <span class="font-bold text-amber-400 tracking-wide">${(owner && owner.wallletBalance)? Number(owner.wallletBalance) : Number(0)}</span>
+                                    </div>
+                                    <div class="flex justify-between items-center gap-2">
                                         <span class="text-slate-400 font-medium">Phone:</span> 
                                         <span class="font-bold text-emerald-400">${owner.phone || 'N/A'}</span>
                                     </div>
@@ -267,7 +271,7 @@
                             <!-- Summary Stats -->
                             <div class="grid grid-cols-2 gap-4 text-xs text-slate-300 bg-slate-950/40 p-3 rounded-xl border border-slate-800/60">
                                 <div><span class="text-slate-500 block">Total Squad Members:</span> <span class="font-bold text-white text-sm">${squad.length}</span></div>
-                                <div><span class="text-slate-500 block">Franchise Status:</span> <span class="font-bold text-emerald-400 text-sm">Active</span></div>
+                                <div><span class="text-slate-500 block">Wallet Balance:</span> <span class="font-bold text-emerald-400 text-sm">${(teamOwner && teamOwner.wallletBalance)? Number(teamOwner.wallletBalance) : Number(0)}</span></div>
                             </div>
 
                             <!-- Action Button -->

@@ -13,6 +13,7 @@ const multer = require('multer');
 const fs = require('fs');
 const app = express();
 const bcrypt = require('bcrypt');
+const { type } = require('os');
 // ==========================================
 // 1. SECURITY & MIDDLEWARE CONFIGURATION
 // ==========================================
@@ -152,6 +153,7 @@ const registrantSchema = new mongoose.Schema({
     photoUrl: { type: String, default: '' },
     aadharPhotoUrl: { type: String, default: '' },
     teamLogoUrl: { type: String, default: '' },
+    walletBalance: {type: Number, default: 0},
     paymentScreenshotUrl: { type: String, default: '' },
     paymentVerified: { type: Boolean, default: false },
     style : { type: String, enum: ['Right-Handed', 'Left-Handed'], default: 'Right-Handed' },
@@ -344,6 +346,11 @@ app.post('/api/register', registrationUploads, async (req, res) => {
         if (existing) {
             return res.status(400).json({ error: 'A registration with this phone number already exists.' });
         }
+        let walletBalance = 0;
+                // Check if role is Team Owner or Both
+        if (role === 'Team Owner' || role === 'Both') {
+            walletBalance = 25000;
+        }
 
         const lastFour = aadhaar.slice(-4);
         const maskedAadhaar = `XXXX-XXXX-${lastFour}`;
@@ -370,7 +377,8 @@ app.post('/api/register', registrationUploads, async (req, res) => {
             photoUrl,
             aadharPhotoUrl,
             teamLogoUrl,
-            paymentScreenshotUrl
+            paymentScreenshotUrl,
+            walletBalance
         });
 
         await registrant.save();
