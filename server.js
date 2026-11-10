@@ -324,6 +324,40 @@ app.get('/api/public/data', async (req, res) => {
         res.status(500).json({ error: 'Could not fetch tournament data.' });
     }
 });
+
+
+app.get('/api/public/dataall', async (req, res) => {
+    try {
+        const { filter } = req.query;
+        const notices = await Notice.find().sort({ createdAt: -1 });
+        const matches = await Match.find({ status: 'Scheduled' }).sort({ matchDate: 1 });
+        const prizes = await Prize.find({}).sort({ order: 1, amount: -1 });
+        const committee = await Committee.find({}).sort({ order: 1 });
+        const slides = await Slide.find().sort({ order: 1 });
+        //const approvedPlayers = await Registrant.find({ status: 'Approved' }).select('-__v');
+        const rules = await Rule.find().sort({ ruleNumber: 1 });
+        const about = await About.findOne() || { title: 'About the League', content: 'The Bamundi Gram Premier League (BGPL) brings together local cricket talent...' };
+        // Build query filter based on request parameter
+        let query = {};
+        if (filter === 'Player') {
+            query.role = { $in: ['Player', 'Both'] };
+        } else if (filter === 'Owner') {
+            query.role = { $in: ['Team Owner', 'Both'] };
+        }
+        else if (filter === 'Team') {
+
+            query.$or = [
+                { assignedTeam: { $exists: true, $ne: null, $ne: "" } },
+                { teamName: { $exists: true, $ne: null, $ne: "" } }
+            ];
+
+        }
+        const approvedPlayers = await Registrant.find(query).select('-__v');
+        res.json({ notices, matches, prizes, committee, slides, players: approvedPlayers, rules, about });
+    } catch (err) {
+        res.status(500).json({ error: 'Could not fetch tournament data.' });
+    }
+});
 // Submit New Player / Owner Registration
 // Multi-field upload middleware
 const registrationUploads = upload.fields([
@@ -618,15 +652,57 @@ app.post('/api/admin/registrants/:id/handle-edits', verifyAdminJwt, async (req, 
 });
 
 // Update Registrant (Approval Status / Auction Prices)
+// app.put('/api/admin/registrant/:id', verifyAdminJwt, async (req, res) => {
+//     try {
+//         const updated = await Registrant.findByIdAndUpdate(req.params.id, req.body, { new: true });
+//         res.json({ success: true, updated });
+//     } catch (err) {
+//         res.status(500).json({ error: 'Failed to update record.' });
+//     }
+// });
+// Update Registrant (Approval Status / Auction Prices & Wallet Deduction)
 app.put('/api/admin/registrant/:id', verifyAdminJwt, async (req, res) => {
     try {
+        const { assignedTeam, soldPrice } = req.body;
+        
+        // Find the player being updated first to check previous assignment
+        const targetPlayer = await Registrant.findById(req.params.id);
+        if (!targetPlayer) {
+            return res.status(404).json({ error: 'Registrant not found.' });
+        }
+
+        // If a player is newly sold or their sold price/team changed, handle wallet deduction for the owner
+        const finalSoldPrice = Number(soldPrice) || 0;
+        const finalTeam = assignedTeam ? assignedTeam.trim() : '';
+
+        if (finalTeam && finalSoldPrice > 0 && targetPlayer.assignedTeam !== finalTeam) {
+            // Find the owner of this team (Role must be Team Owner or Both, and teamName matches case-insensitively)
+            const teamOwner = await Registrant.findOne({
+                role: { $in: ['Team Owner', 'Both'] },
+                teamName: { $regex: new RegExp(`^${finalTeam}$`, 'i') }
+            });
+
+            if (teamOwner) {
+                const currentBalance = teamOwner.walletBalance ? (typeof teamOwner.walletBalance.toNumber === 'function' ? teamOwner.walletBalance.toNumber() : Number(teamOwner.walletBalance)) : 0;
+
+                if (currentBalance < finalSoldPrice) {
+                    return res.status(400).json({ error: `Insufficient wallet balance for team owner "${teamOwner.fullName}" (${finalTeam}). Available: ₹${currentBalance}, Required: ₹${finalSoldPrice}` });
+                }
+
+                // Deduct from owner wallet and save
+                teamOwner.walletBalance = currentBalance - finalSoldPrice;
+                await teamOwner.save();
+            }
+        }
+
+        // Perform the update
         const updated = await Registrant.findByIdAndUpdate(req.params.id, req.body, { new: true });
-        res.json({ success: true, updated });
+        res.json({ success: true, updated, message: 'Auction details saved successfully!' });
     } catch (err) {
-        res.status(500).json({ error: 'Failed to update record.' });
+        console.error("Auction update error:", err);
+        res.status(500).json({ error: err.message || 'Failed to update record.' });
     }
 });
-
 // Delete Registrant
 app.delete('/api/admin/registrant/:id', verifyAdminJwt, async (req, res) => {
     try {

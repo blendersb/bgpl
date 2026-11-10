@@ -134,7 +134,7 @@
             else headerTitle.innerText = "Tournament Directory";
         }
         // Fetch data with filter applied
-        fetch(`/api/public/data${currentFilter !== 'All' ? `?filter=${currentFilter}` : ''}`)
+        fetch(`/api/public/dataall${currentFilter !== 'All' ? `?filter=${currentFilter}` : ''}`)
             .then(res => res.json())
             .then(data => {
                 allRegistrants = data.players || [];
@@ -208,7 +208,7 @@
                                     </div>
                                     <div class="flex justify-between items-center gap-2">
                                         <span class="text-slate-400 font-medium">Wallet Balance:</span>
-                                        <span class="font-bold text-amber-400 tracking-wide">${(owner && owner.wallletBalance)? Number(owner.wallletBalance) : Number(0)}</span>
+                                        <span class="font-bold text-amber-400 tracking-wide">${(owner && owner.walletBalance)? Number(owner.walletBalance) : Number(0)}</span>
                                     </div>
                                     <div class="flex justify-between items-center gap-2">
                                         <span class="text-slate-400 font-medium">Phone:</span> 
@@ -271,7 +271,7 @@
                             <!-- Summary Stats -->
                             <div class="grid grid-cols-2 gap-4 text-xs text-slate-300 bg-slate-950/40 p-3 rounded-xl border border-slate-800/60">
                                 <div><span class="text-slate-500 block">Total Squad Members:</span> <span class="font-bold text-white text-sm">${squad.length}</span></div>
-                                <div><span class="text-slate-500 block">Wallet Balance:</span> <span class="font-bold text-emerald-400 text-sm">${(teamOwner && teamOwner.wallletBalance)? Number(teamOwner.wallletBalance) : Number(0)}</span></div>
+                                <div><span class="text-slate-500 block">Wallet Balance:</span> <span class="font-bold text-emerald-400 text-sm">${(teamOwner && teamOwner.walletBalance)? Number(teamOwner.walletBalance) : Number(0)}</span></div>
                             </div>
 
                             <!-- Action Button -->
@@ -309,6 +309,10 @@
                 <div class="flex justify-between items-center gap-2">
                     <span class="text-slate-400 font-medium">Player ID:</span> 
                     <span class="font-bold text-amber-400 tracking-wide">${player.playerId || 'N/A'}</span>
+                </div>
+                <div class="flex justify-between items-center gap-2">
+                    <span class="text-slate-400 font-medium">Payment Status:</span> 
+                    <span class="font-bold text-emerald-400">${ (player.paymentVerified)? 'Verified': 'Pending'}</span>
                 </div>
                 <div class="flex justify-between items-center gap-2">
                     <span class="text-slate-400 font-medium">Auction Status:</span> 
@@ -356,7 +360,10 @@ function openPlayerModal(player) {
                     <div class="flex justify-between bg-slate-950/40 p-2.5 rounded-lg"><span class="text-slate-500">Team:</span> <span class="font-bold text-white">${player.assignedTeam || 'N/A'}</span></div>
                     <div class="flex justify-between bg-slate-950/40 p-2.5 rounded-lg"><span class="text-slate-500">Designation:</span> <span class="font-bold text-white">${player.teamDesignation || 'N/A'}</span></div>
                     <div class="flex justify-between bg-slate-950/40 p-2.5 rounded-lg"><span class="text-slate-500">Auction Status:</span> <span class="font-bold text-emerald-400">${player.auctionStatus || 'Unsold'} (₹${player.soldPrice || 500})</span></div>
-                    
+                    <div class="bg-slate-950/40 p-2.5 rounded-lg space-y-1">
+                        <span class="text-slate-500 block">Bio / Description:</span>
+                        <p class="text-slate-300 italic">${player.description || 'No description provided.'}</p>
+                    </div>
                 </div>
             `;
             // <div class="bg-slate-950/40 p-2.5 rounded-lg space-y-1">
