@@ -628,28 +628,7 @@ app.get('/api/admin/registrants', verifyAdminJwt, async (req, res) => {
 });
 
 // Approve or Reject Staged Profile Edits
-app.post('/api/admin/registrants/:id/handle-edits', verifyAdminJwt, async (req, res) => {
-    try {
-        const { action } = req.body; // 'approve' or 'reject'
-        const registrant = await Registrant.findById(req.params.id);
-        if (!registrant || !registrant.pendingEdit?.hasPendingChanges) {
-            return res.status(400).json({ error: 'No pending edits found.' });
-        }
 
-        if (action === 'approve') {
-            registrant.fullName = registrant.pendingEdit.fullName || registrant.fullName;
-            registrant.photoUrl = registrant.pendingEdit.photoUrl || registrant.photoUrl;
-            registrant.paymentScreenshotUrl = registrant.pendingEdit.paymentScreenshotUrl || registrant.paymentScreenshotUrl;
-            registrant.maskedAadhaar = registrant.pendingEdit.maskedAadhaar || registrant.maskedAadhaar;
-        }
-
-        registrant.pendingEdit = { hasPendingChanges: false };
-        await registrant.save();
-        res.json({ success: true, message: `Profile edit request ${action}d.` });
-    } catch (err) {
-        res.status(500).json({ error: 'Failed to process edit request.' });
-    }
-});
 
 // Update Registrant (Approval Status / Auction Prices)
 // app.put('/api/admin/registrant/:id', verifyAdminJwt, async (req, res) => {
@@ -704,15 +683,77 @@ app.put('/api/admin/registrant/:id', verifyAdminJwt, async (req, res) => {
     }
 });
 // Delete Registrant
+// app.delete('/api/admin/registrant/:id', verifyAdminJwt, async (req, res) => {
+//     try {
+//         await Registrant.findByIdAndDelete(req.params.id);
+//         res.json({ success: true, message: 'Registrant record deleted.' });
+//     } catch (err) {
+//         res.status(500).json({ error: 'Failed to delete record.' });
+//     }
+// });
+
+// Update Registrant (Approval Status / Auction Prices & Wallet Deduction)
+// Delete Registrant & Refund Team Owner's Wallet Balance
 app.delete('/api/admin/registrant/:id', verifyAdminJwt, async (req, res) => {
     try {
+        const registrant = await Registrant.findById(req.params.id);
+        if (!registrant) {
+            return res.status(404).json({ error: 'Registrant not found.' });
+        }
+
+        // Scenario 1: Deleting a Player -> Refund sold price to team owner's wallet
+        if (registrant.role === 'Player') {
+            const soldPrice = Number(registrant.soldPrice) || 0;
+            const assignedTeam = registrant.assignedTeam ? registrant.assignedTeam.trim() : '';
+
+            if (assignedTeam && soldPrice > 0) {
+                // Find the owner of this team
+                const teamOwner = await Registrant.findOne({
+                    role: { $in: ['Team Owner', 'Both'] },
+                    teamName: { $regex: new RegExp(`^${assignedTeam}$`, 'i') }
+                });
+
+                if (teamOwner) {
+                    const currentBalance = teamOwner.walletBalance 
+                        ? (typeof teamOwner.walletBalance.toNumber === 'function' ? teamOwner.walletBalance.toNumber() : Number(teamOwner.walletBalance)) 
+                        : 0;
+
+                    // Refund the sold price back to the team owner's wallet
+                    // Refund the sold price and cap it strictly at the 25,000 maximum limit
+                    const totalBalance = currentBalance + soldPrice;
+                    teamOwner.walletBalance = Math.min(25000, totalBalance);
+                    await teamOwner.save();
+                }
+            }
+        }
+
+        // Scenario 2: Deleting a Team Owner -> Reset all players assigned to this team
+        if ((registrant.role === 'Team Owner' || registrant.role === 'Both') && registrant.teamName) {
+            const teamName = registrant.teamName.trim();
+            if (teamName) {
+                await Registrant.updateMany(
+                    { assignedTeam: { $regex: new RegExp(`^${teamName}$`, 'i') } },
+                    {
+                        $set: {
+                            assignedTeam: '',
+                            soldPrice: 0,
+                            auctionStatus: 'Unsold', // Or whatever your default status is for available players
+                            teamDesignation: ''
+                        }
+                    }
+                );
+            }
+        }
+
+        // Delete the registrant record
         await Registrant.findByIdAndDelete(req.params.id);
-        res.json({ success: true, message: 'Registrant record deleted.' });
+
+        res.json({ success: true, message: 'Registrant deleted and related records updated successfully.' });
     } catch (err) {
+        console.error("Delete error:", err);
         res.status(500).json({ error: 'Failed to delete record.' });
     }
 });
-
 // Manage Notices CRUD
 app.post('/api/admin/notices', verifyAdminJwt, async (req, res) => {
     const notice = new Notice(req.body);
