@@ -470,7 +470,7 @@
     <!-- FRONTEND DATA HYDRATION SCRIPT -->
     <script>
         let globalRegistrants = [];
-        fetch('/api/public/data')
+        fetch('/api/public/dataall')
             .then(res => res.json())
             .then(data => {
                 // Notices Marquee

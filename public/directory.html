@@ -204,7 +204,7 @@
                                 <div class="space-y-1.5 text-xs">
                                     <div class="flex justify-between items-center gap-2">
                                         <span class="text-slate-400 font-medium">Franchise Team:</span>
-                                        <span class="font-bold text-amber-400 tracking-wide">${owner.assignedTeam && owner.assignedTeam !== 'None' ? owner.assignedTeam : 'Independent'}</span>
+                                        <span class="font-bold text-amber-400 tracking-wide">${owner.teamName && owner.teamName !== 'None' ? owner.teamName : 'Independent'}</span>
                                     </div>
                                     <div class="flex justify-between items-center gap-2">
                                         <span class="text-slate-400 font-medium">Wallet Balance:</span>
@@ -384,7 +384,7 @@ function openOwnerModal(owner) {
             </div>
         </div>
         <div class="space-y-2 text-xs text-slate-300">
-            <div class="flex justify-between bg-slate-950/40 p-2.5 rounded-lg"><span class="text-slate-500">Franchise Team:</span> <span class="font-bold text-amber-400">${owner.assignedTeam || 'Independent'}</span></div>
+            <div class="flex justify-between bg-slate-950/40 p-2.5 rounded-lg"><span class="text-slate-500">Franchise Team:</span> <span class="font-bold text-amber-400">${owner.teamName || 'Independent'}</span></div>
             <div class="flex justify-between bg-slate-950/40 p-2.5 rounded-lg"><span class="text-slate-500">Phone:</span> <span class="font-bold text-white">${owner.phone || 'N/A'}</span></div>
             <div class="flex justify-between bg-slate-950/40 p-2.5 rounded-lg"><span class="text-slate-500">Email:</span> <span class="font-bold text-white">${owner.email || 'N/A'}</span></div>
             <div class="flex justify-between bg-slate-950/40 p-2.5 rounded-lg"><span class="text-slate-500">Address:</span> <span class="font-bold text-white">${owner.address || 'N/A'}</span></div>
