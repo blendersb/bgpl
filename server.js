@@ -383,7 +383,7 @@ app.post('/api/register', registrationUploads, async (req, res) => {
         let walletBalance = 0;
                 // Check if role is Team Owner or Both
         if (role === 'Team Owner' || role === 'Both') {
-            walletBalance = 25000;
+            walletBalance = 20000;
         }
 
         const lastFour = aadhaar.slice(-4);
@@ -721,7 +721,7 @@ app.delete('/api/admin/registrant/:id', verifyAdminJwt, async (req, res) => {
                     // Refund the sold price back to the team owner's wallet
                     // Refund the sold price and cap it strictly at the 25,000 maximum limit
                     const totalBalance = currentBalance + soldPrice;
-                    teamOwner.walletBalance = Math.min(25000, totalBalance);
+                    teamOwner.walletBalance = Math.min(20000, totalBalance);
                     await teamOwner.save();
                 }
             }
