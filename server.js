@@ -383,7 +383,7 @@ app.post('/api/register', registrationUploads, async (req, res) => {
         let walletBalance = 0;
                 // Check if role is Team Owner or Both
         if (role === 'Team Owner' || role === 'Both') {
-            walletBalance = 25000;
+            walletBalance = 20000;
         }
 
         const lastFour = aadhaar.slice(-4);
@@ -441,7 +441,7 @@ app.post('/api/register/auth', async (req, res) => {
         if (!registrant) {
             return res.status(404).json({ error: 'Registrant not found.' });
         }
-
+        
         const isMatch = await bcrypt.compare(password, registrant.password);
         if (!isMatch) {
             return res.status(401).json({ error: 'Incorrect password.' });
@@ -449,6 +449,7 @@ app.post('/api/register/auth', async (req, res) => {
 
         // Return user data (excluding password) for pre-filling the edit form
         const userData = registrant.toObject();
+        console.log(userData.password);
         delete userData.password;
         res.json({ success: true, registrant: userData });
     } catch (err) {
@@ -463,6 +464,7 @@ app.put('/api/register/:id', registrationUploads, async (req, res) => {
         const { fullName, role, age, phone, email, password, newPassword, teamName, address, aadhaar, description, category, style, jerseySize } = req.body;
         // Properly parse adminEdit string from FormData to boolean
         const adminEdit = req.body.adminEdit === 'true' || req.body.adminEdit === true;
+        console.log(adminEdit);
         const registrant = await Registrant.findById(id);
         if (!registrant) {
             return res.status(404).json({ error: 'Registrant not found.' });
@@ -484,6 +486,7 @@ app.put('/api/register/:id', registrationUploads, async (req, res) => {
             if (!isMatch) {
                 return res.status(401).json({ error: 'Incorrect password. Update denied.' });
             }
+            
         }
 
         // Update fields if provided
@@ -721,7 +724,7 @@ app.delete('/api/admin/registrant/:id', verifyAdminJwt, async (req, res) => {
                     // Refund the sold price back to the team owner's wallet
                     // Refund the sold price and cap it strictly at the 25,000 maximum limit
                     const totalBalance = currentBalance + soldPrice;
-                    teamOwner.walletBalance = Math.min(25000, totalBalance);
+                    teamOwner.walletBalance = Math.min(20000, totalBalance);
                     await teamOwner.save();
                 }
             }

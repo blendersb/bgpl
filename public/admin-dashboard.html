@@ -871,8 +871,8 @@
             //document.getElementById('reg-qr').classList.remove('hidden');
         }
         
-
-
+        
+        toggleRoleFields();
  
     }
 
@@ -928,9 +928,35 @@
         formData.append('age', document.getElementById('reg-age').value);
         formData.append('phone', document.getElementById('reg-phone').value);
         formData.append('email', document.getElementById('reg-email').value);
-        formData.append('password', document.getElementById('reg-password').value);
-        formData.append('adminEdit', true);
-        formData.append('newPassword',document.getElementById('reg-password').value);
+        //formData.append('password', document.getElementById('reg-password').value);
+        
+        const newPass = document.getElementById('reg-password').value;
+        // if (editId && newPass) {
+        //     formData.append('adminEdit', true);
+        //     formData.append('password', newPass);
+        //     formData.append('newPassword', newPass);
+        // }else if(editId && !newPass) {
+        //     formData.append('adminEdit', true);
+        // }else if (!editId && newPass){
+        //     formData.append('password', newPass);
+        // }
+
+        // Correct Password / Edit Logic
+        if (editId) {
+            formData.append('adminEdit', true);
+            if (newPass && newPass.trim() !== '') {
+                formData.append('newPassword', newPass);
+            }
+        } else {
+            if (newPass && newPass.trim() !== '') {
+                formData.append('password', newPass);
+            } else {
+                showAlert('Password is required for registration.', true);
+                return;
+            }
+        }
+        //if (newPass) formData.append('newPassword', newPass);
+        //formData.append('newPassword',document.getElementById('reg-password').value);
         const aadhaarVal = document.getElementById('reg-aadhaar').value;
         if (aadhaarVal) formData.append('aadhaar', aadhaarVal);
         formData.append('category', document.getElementById('reg-category').value);
