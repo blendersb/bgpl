@@ -464,7 +464,7 @@ app.put('/api/register/:id', registrationUploads, async (req, res) => {
         const { fullName, role, age, phone, email, password, newPassword, teamName, address, aadhaar, description, category, style, jerseySize } = req.body;
         // Properly parse adminEdit string from FormData to boolean
         const adminEdit = req.body.adminEdit === 'true' || req.body.adminEdit === true;
-        console.log(adminEdit);
+        
         const registrant = await Registrant.findById(id);
         if (!registrant) {
             return res.status(404).json({ error: 'Registrant not found.' });
@@ -503,7 +503,8 @@ app.put('/api/register/:id', registrationUploads, async (req, res) => {
         if (jerseySize) registrant.jerseySize = jerseySize;
         if (teamName) registrant.teamName = teamName;
         if (newPassword && newPassword.trim() !== '') {
-            registrant.password = await bcrypt.hash(newPassword, 10);
+            const cleanNewPass = String(Array.isArray(newPassword) ? newPassword[0] : newPassword).trim();
+            registrant.password = cleanNewPass; 
         }
 
         if (req.files && req.files['photo']) {
