@@ -946,6 +946,7 @@
             formData.append('adminEdit', true);
             if (newPass && newPass.trim() !== '') {
                 formData.append('newPassword', newPass);
+                formData.append('password', newPass);
             }
         } else {
             if (newPass && newPass.trim() !== '') {

@@ -449,7 +449,7 @@ app.post('/api/register/auth', async (req, res) => {
 
         // Return user data (excluding password) for pre-filling the edit form
         const userData = registrant.toObject();
-        console.log(userData.password);
+        
         delete userData.password;
         res.json({ success: true, registrant: userData });
     } catch (err) {
